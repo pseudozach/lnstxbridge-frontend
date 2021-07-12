@@ -58,6 +58,7 @@ export const startSwap = (swapInfo, cb) => {
 
   return dispatch => {
     dispatch(swapRequest());
+    console.log("submarine swap request: refundPublicKey", keys.publicKey);
     axios
       .post(url, {
         type: 'submarine',

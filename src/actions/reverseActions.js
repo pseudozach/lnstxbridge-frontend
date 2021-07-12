@@ -68,6 +68,16 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
 
   const amount = toSatoshi(Number.parseFloat(baseAmount));
 
+  // for btc/sov 
+  // {
+  //   "type": "reversesubmarine",
+  //   "pairId": "BTC/SOV",
+  //   "orderSide": "sell",
+  //   "claimAddress": "0xcd2a3d9f938e13cd947ec05abc7fe734df8dd826",
+  //   "invoiceAmount": 50000,
+  //   "preimageHash": "0cb2266c98dd21abb3627392c7e4b8cea61622f19a16f81364e7113bbe7d6c83"
+  // }
+  
   return dispatch => {
     dispatch(reverseSwapRequest());
     axios
@@ -77,6 +87,7 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
         invoiceAmount: amount,
         orderSide: pair.orderSide,
         claimPublicKey: keys.publicKey,
+        claimAddress: swapInfo.address,
         preimageHash: swapInfo.preimageHash,
       })
       .then(response => {
@@ -102,6 +113,7 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
 export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
   dispatch(
     getFeeEstimation(feeEstimation => {
+      console.log("getFeeEstimation swapInfo.quote", swapInfo.quote, " fee set to 0");
       const claimTransaction = getClaimTransaction(
         swapInfo,
         swapResponse,
@@ -137,7 +149,8 @@ const getClaimTransaction = (swapInfo, response, feeEstimation) => {
       },
     ],
     address.toOutputScript(swapInfo.address, getNetwork(swapInfo.quote)),
-    feeEstimation[swapInfo.quote],
+    // feeEstimation[swapInfo.quote],
+    0,
     false
   );
 };

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import View from '../../../components/view';
 import QrCode from '../../../components/qrcode';
-import { toWholeCoins, copyToClipBoard } from '../../../utils';
+import { toWholeCoins, copyToClipBoard, lockFunds } from '../../../utils';
+// import { lockFunds }  from '../../../components/swaptab/swaptabwrapper';
 
 const SendTransactionStyles = () => ({
   wrapper: {
@@ -60,12 +61,14 @@ const SendTransactionStyles = () => ({
 
 const StyledSendTransaction = ({ classes, swapInfo, swapResponse }) => (
   <View className={classes.wrapper}>
+    {swapInfo.base !== 'SOV' ? (
     <View className={classes.qrcode}>
       <QrCode size={250} link={swapResponse.bip21} />
     </View>
+    ): null}
     <View className={classes.info}>
       <p className={classes.text}>
-        Send{' '}
+      {swapInfo.base === 'SOV' ? ( 'Lock' ): 'Send' }
         <b>
           {' '}
           {toWholeCoins(swapResponse.expectedAmount)} {swapInfo.base}{' '}
@@ -87,6 +90,18 @@ const StyledSendTransaction = ({ classes, swapInfo, swapResponse }) => (
           >
             use this tool
           </a>
+        </p>
+      ) : null}
+      {swapInfo.base === 'SOV' ? (
+        <p className={classes.text}>
+          Tap here to trigger Lock Contract Call:{' '}
+          <button
+            onClick={() => lockFunds(swapInfo, swapResponse)}
+            // target={'_blank'}
+            // href="https://litecoin-project.github.io/p2sh-convert/"
+          >
+            Lock
+          </button>
         </p>
       ) : null}
     </View>

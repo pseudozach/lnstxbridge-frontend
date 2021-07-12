@@ -3,6 +3,21 @@ import BigNumber from 'bignumber.js';
 import PropTypes from 'prop-types';
 import { ServiceWarnings } from '../../constants';
 import { decimals } from '../../utils';
+import Web3 from 'web3';
+import Web3Modal from "web3modal";
+
+import { ContractABIs } from 'boltz-core';
+// // @ts-ignore 
+// import { ERC20 } from 'boltz-core/typechain/ERC20';
+// import { ERC20Swap } from 'boltz-core/typechain/ERC20Swap';
+// import { EtherSwap } from 'boltz-core/typechain/EtherSwap';
+import { Signer, providers, Contract, Wallet } from 'ethers';
+
+import {
+  erc20tokenaddress,
+  rbtcswapaddress,
+  erc20swapaddress,
+} from '../../constants';
 
 class SwapTabWrapper extends React.Component {
   constructor(props) {
@@ -21,7 +36,7 @@ class SwapTabWrapper extends React.Component {
       disabled: false,
       error: false,
       inputError: false,
-      base: 'LTC',
+      base: 'SOV',
       quote: 'BTC ⚡',
       minAmount: new BigNumber('0'),
       maxAmount: new BigNumber('0'),
@@ -29,8 +44,141 @@ class SwapTabWrapper extends React.Component {
       quoteAmount: new BigNumber('0'),
       feeAmount: new BigNumber('0'),
       errorMessage: '',
+      web3: null,
+      provider: null,
     };
   }
+
+  connectWallet = async () => {
+    const providerOptions = {
+      /* See Provider Options Section */
+    };
+
+    const web3Modal = new Web3Modal({
+      // network: "mainnet", // optional
+      // cacheProvider: true, // optional
+      // providerOptions // required
+    });
+    // console.log("web3modal defined");
+    const provider = await web3Modal.connect();
+    console.log("web3 provider ready: ", provider);
+    this.provider = provider;
+
+    const web3 = new Web3(provider);
+    console.log("web3 ready: ", web3);
+    this.web3 = web3;
+
+    console.log("web3.eth.accounts.currentProvider.selectedAddress ", web3.eth.accounts.currentProvider.selectedAddress);
+
+
+    var erc20swapabi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"preimage","type":"bytes32"}],"name":"Claim","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"tokenAddress","type":"address"},{"indexed":false,"internalType":"address","name":"claimAddress","type":"address"},{"indexed":true,"internalType":"address","name":"refundAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"Lockup","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"}],"name":"Refund","type":"event"},{"inputs":[{"internalType":"bytes32","name":"preimage","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"hashValues","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lock","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address payable","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lockPrepayMinerfee","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"refund","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"swaps","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"}];
+    var erc20swapcontract = new web3.eth.Contract(erc20swapabi, erc20swapaddress);
+    console.log(erc20swapcontract.methods.lock)
+
+
+  }  
+
+  lockFunds = async (swapInfo, swapResponse) => {
+    console.log("enter lockFunds, swapInfo, swapResponse ", swapInfo, swapResponse);
+    if(!this.web3) {
+      this.connectWallet();
+    }
+
+    console.log("got web3: ", this.web3);
+
+    // const signer = this.connectEthereum(this.provider, this.provider.address);
+    // const { etherSwap, erc20Swap, token } = this.getContracts(signer);
+  
+    const preimageHash = "this.getHexBuffer(argv.preimageHash)";
+    const amount = "BigNumber.from(argv.amount).mul(etherDecimals)";
+  
+    const boltzAddress = "await getBoltzAddress()";
+    console.log("boltzAddress: ", boltzAddress);
+  
+    if (boltzAddress === undefined) {
+      console.log('Could not lock coins because the address of Boltz could not be queried');
+      return;
+    }
+  
+    var erc20swapabi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"preimage","type":"bytes32"}],"name":"Claim","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"tokenAddress","type":"address"},{"indexed":false,"internalType":"address","name":"claimAddress","type":"address"},{"indexed":true,"internalType":"address","name":"refundAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"Lockup","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"}],"name":"Refund","type":"event"},{"inputs":[{"internalType":"bytes32","name":"preimage","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"hashValues","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lock","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address payable","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lockPrepayMinerfee","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"refund","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"swaps","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"}];
+    var erc20swapcontract = this.web3.eth.contract(erc20swapabi).at(erc20swapaddress);
+
+    console.log("web3.eth.accounts[0] ", this.web3.eth.accounts[0]);
+    
+    // erc20swapcontract.lock.sendTransaction(parameter_1,parameter_2,parameter_n,{
+    //             from:web3.eth.accounts[0],
+    //             gas:4000000},function (error, result){ //get callback from function which is your transaction key
+    //                 if(!error){
+    //                     console.log(result);
+    //                 } else{
+    //                     console.log(error);
+    //                 }
+    //         });
+
+
+
+    // let transaction;
+    // : ContractTransaction;
+  
+    // if (argv.token) {
+    //   console.log("rsk erc20Swap.lock to erc20SwapAddress: ", Constants.erc20SwapAddress);
+    //   await token.approve(Constants.erc20SwapAddress, amount);
+    //   console.log("rsk erc20Swap.lock after approve: ", preimageHash, amount, Constants.erc20TokenAddress, boltzAddress, argv.timelock);
+    //   transaction = await erc20Swap.lock(
+    //     preimageHash,
+    //     amount,
+    //     Constants.erc20TokenAddress,
+    //     boltzAddress,
+    //     argv.timelock,
+    //   );
+    // } else {
+    //   console.log("rsk etherSwap.lock to claimAddress: ", boltzAddress);
+    //   transaction = await etherSwap.lock(
+    //     preimageHash,
+    //     boltzAddress,
+    //     argv.timelock,
+    //     {
+    //       value: amount,
+    //     },
+    //   );
+    // }
+  
+    // await transaction.wait(1);
+    // console.log(`Sent ${argv.token ? 'ERC20 token' : 'Rbtc'} in: ${transaction.hash}`);
+  }
+
+  // connectEthereum = (providerUrl, signerAddress) => {
+  //   const provider = new providers.JsonRpcProvider(providerUrl);
+  //   console.log("rsk connectEthereum signerAddress: ", signerAddress);
+  //   return provider.getSigner(signerAddress);
+  // };
+  
+  // getContracts = (signer) => {
+  //   return {
+  //     token: new Contract(
+  //       erc20tokenaddress,
+  //       ContractABIs.ERC20,
+  //       signer,
+  //     ), 
+  //     // as any as ERC20,
+  //     etherSwap: new Contract(
+  //       rbtcswapaddress,
+  //       ContractABIs.EtherSwap,
+  //       signer,
+  //     ),
+  //     //  as any as EtherSwap,
+  //     erc20Swap: new Contract(
+  //       erc20swapaddress,
+  //       ContractABIs.ERC20Swap,
+  //       signer,
+  //     )
+  //     //  as any as ERC20Swap,
+  //   };
+  // };
+
+  getHexBuffer = (input) => {
+    return Buffer.from(input, 'hex');
+  };
 
   updateAssets = (isBase, symbol, isLightning) => {
     if (isBase) {
@@ -77,6 +225,7 @@ class SwapTabWrapper extends React.Component {
   componentDidMount = () => {
     const symbol = this.getSymbol();
     const limits = this.props.limits[symbol];
+    console.log("symbol, limits ", symbol, limits);
     this.setState(
       {
         minAmount: new BigNumber(limits.minimal),
@@ -341,6 +490,8 @@ class SwapTabWrapper extends React.Component {
       switchPair: this.switchPair,
       updatePair: this.updatePair,
       shouldSubmit: this.shouldSubmit,
+      connectWallet: this.connectWallet,
+      lockFunds: this.lockFunds,
       baseStep: this.baseStep,
       quoteStep: this.quoteStep,
     });

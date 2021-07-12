@@ -7,6 +7,7 @@ import View from '../view';
 import Input from '../input';
 import DropDown from '../dropdown';
 import Controls from '../controls';
+import Button from '../button';
 import Text, { InfoText } from '../text';
 import { formatAmount } from '../../utils';
 
@@ -33,8 +34,17 @@ const DeskTopSwapTabContent = ({
   baseStep,
   quoteStep,
   feePercentage,
+  connectWallet,
 }) => (
   <View className={classes.wrapper}>
+    <View className={classes.connectButton}>
+      <Button
+        text={'Connect Wallet'}
+        // error={error || inputError}
+        onPress={error ? () => {} : () => connectWallet()}
+        // errorText={errorMessage}
+      />
+    </View>
     <View className={classes.stats}>
       <InfoText
         title="Min amount"
@@ -130,6 +140,7 @@ const styles = theme => ({
     width: '100%',
     justifyContent: 'space-around',
     alignItems: 'center',
+    marginTop: '5%'
   },
   options: {
     flex: '1 0 70%',
@@ -143,6 +154,15 @@ const styles = theme => ({
   next: {
     backgroundColor: theme.colors.matisseBlue,
     flex: '1 0 15%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  },
+  connectButton: {
+    backgroundColor: theme.colors.tundoraGrey,
+    flex: '1 1 25%',
     justifyContent: 'center',
     alignItems: 'center',
     '&:hover': {
@@ -211,6 +231,7 @@ DeskTopSwapTabContent.propTypes = {
   shouldSubmit: PropTypes.func,
   baseStep: PropTypes.string,
   quoteStep: PropTypes.string,
+  connectWallet: PropTypes.func,
 };
 
 const DeskTopSwapTab = props => (

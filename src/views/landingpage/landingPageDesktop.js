@@ -38,6 +38,9 @@ const LandingPageDeskTopContent = ({
       <NavigationBar />
       <View className={classes.wrapper}>
         <View className={classes.infoWrapper}>
+        <p className={classes.title}>
+            LN - SOV bridge is a fork of the excellent<br /> boltz.exchange.
+          </p>
           <p className={classes.title}>
             Instant, Account-Free & <br /> Non-Custodial.
           </p>

@@ -68,3 +68,9 @@ export const litecoinAddress = process.env.REACT_APP_LITECOIN_ADDRESS;
 
 export const bitcoinInvoice = process.env.REACT_APP_BITCOIN_INVOICE;
 export const litecoinInvoice = process.env.REACT_APP_LITECOIN_INVOICE;
+
+// contracts!
+export const rbtcswapaddress = process.env.REACT_APP_RBTCSWAP_ADDRESS;
+export const erc20swapaddress = process.env.REACT_APP_ERC20SWAP_ADDRESS;
+export const erc20tokenaddress = process.env.REACT_APP_ERC20TOKEN_ADDRESS;
+export const boltzAddress = process.env.REACT_APP_BOLTZ_ADDRESS;

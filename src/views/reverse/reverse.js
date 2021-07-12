@@ -186,11 +186,11 @@ class ReverseSwap extends React.Component {
                 num={1}
                 render={props => (
                   <Controls
-                    error={invalidAddress}
-                    errorText={`Invalid ${getCurrencyName(
-                      swapInfo.quote
-                    )} address`}
-                    errorRender={() => {}}
+                    // error={invalidAddress}
+                    // errorText={`Invalid ${getCurrencyName(
+                    //   swapInfo.quote
+                    // )} address`}
+                    // errorRender={() => {}}
                     loading={!swapInfo.address && !invalidAddress}
                     loadingText={`Input a valid ${getCurrencyName(
                       swapInfo.quote

@@ -18,7 +18,7 @@ const DeskTopNavigationBar = ({ classes }) => (
         className={classes.img}
         alt="logo"
       />
-      <span className={classes.logoText}>Boltz</span>
+      <span className={classes.logoText}>LN - SOV Bridge</span>
       <span className={classes.subLogoText}>{network} beta</span>
     </View>
     <View className={classes.buttons}>
@@ -37,12 +37,12 @@ const DeskTopNavigationBar = ({ classes }) => (
         text="FAQ"
         onPress={() => navigation.navFaq()}
       />
-      <Button
+      {/* <Button
         className={classes.responsiveBtn}
         external
         text="Onion URL"
         to={boltzOnion}
-      />
+      /> */}
       <Button
         className={classes.responsiveBtn}
         external
