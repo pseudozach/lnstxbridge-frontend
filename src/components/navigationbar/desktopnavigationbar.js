@@ -6,7 +6,8 @@ import Button from '../button';
 import { navigation } from '../../actions';
 import { network, boltzOnion } from '../../constants';
 
-const boltz_logo = require('../../asset/icons/boltz_logo.png');
+// boltz_logo
+const boltz_logo = require('../../asset/icons/scuba2.png');
 
 const DeskTopNavigationBar = ({ classes }) => (
   <View className={classes.wrapper}>
@@ -18,7 +19,7 @@ const DeskTopNavigationBar = ({ classes }) => (
         className={classes.img}
         alt="logo"
       />
-      <span className={classes.logoText}>LN - SOV Bridge</span>
+      <span className={classes.logoText}>Stacks.Swap</span>
       <span className={classes.subLogoText}>{network} beta</span>
     </View>
     <View className={classes.buttons}>
@@ -32,18 +33,18 @@ const DeskTopNavigationBar = ({ classes }) => (
         text="Refund"
         onPress={() => navigation.navRefund()}
       />
-      <Button
+      {/* <Button
         className={classes.responsiveBtn}
         text="FAQ"
         onPress={() => navigation.navFaq()}
-      />
+      /> */}
       {/* <Button
         className={classes.responsiveBtn}
         external
         text="Onion URL"
         to={boltzOnion}
       /> */}
-      <Button
+      {/* <Button
         className={classes.responsiveBtn}
         external
         text="Twitter"
@@ -54,12 +55,12 @@ const DeskTopNavigationBar = ({ classes }) => (
         external
         text="API"
         to="https://docs.boltz.exchange/en/latest/"
-      />
+      /> */}
       <Button
         className={classes.responsiveBtn}
         external
         text="Github"
-        to="https://github.com/BoltzExchange"
+        to="https://github.com/pseudozach/lnstxbridge"
       />
     </View>
   </View>
@@ -96,6 +97,7 @@ const styles = theme => ({
   },
   img: {
     alignSelf: 'center',
+    background: theme.colors.white
   },
   logoText: {
     color: theme.colors.white,

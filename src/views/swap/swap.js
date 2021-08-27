@@ -17,6 +17,9 @@ const styles = () => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  stackscolor: {
+    backgroundColor: 'rgba(85,70,255,1)',
+  }
 });
 
 class Swap extends Component {
@@ -97,6 +100,8 @@ class Swap extends Component {
                     redeemScript={swapResponse.redeemScript}
                     privateKey={swapInfo.keys.privateKey}
                     timeoutBlockHeight={swapResponse.timeoutBlockHeight}
+                    swapInfo={swapInfo}
+                    swapResponse={swapResponse}
                   />
                 )}
               />
@@ -130,6 +135,7 @@ class Swap extends Component {
                   <Controls
                     loading={swapStatus.error || !this.props.retrySwap}
                     text={`Next`}
+                    className={classes.stackscolor}
                     loadingText={
                       !this.props.retrySwap
                         ? 'Executing swap...'
@@ -144,6 +150,7 @@ class Swap extends Component {
                 render={props => (
                   <Controls
                     mobile
+                    className={classes.stackscolor}
                     text={'I have downloaded the refund file'}
                     onPress={props.nextStage}
                   />
@@ -167,7 +174,10 @@ class Swap extends Component {
               <StepsWizard.Control
                 num={4}
                 render={() => (
-                  <Controls text={'Swap Again!'} onPress={this.completeSwap} />
+                  <Controls 
+                  text={'Swap Again!'} 
+                  className={classes.stackscolor}
+                  onPress={this.completeSwap} />
                 )}
               />
             </StepsWizard.Controls>

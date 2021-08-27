@@ -22,7 +22,8 @@ const styles = theme => ({
   progress: {
     width: '100%',
     height: '10%',
-    backgroundColor: p => (p.dark ? theme.colors.aeroBlue : theme.colors.white),
+    // theme.colors.aeroBlue
+    backgroundColor: p => (p.dark ? theme.colors.white : theme.colors.white),
     alignItems: 'center',
   },
   content: {

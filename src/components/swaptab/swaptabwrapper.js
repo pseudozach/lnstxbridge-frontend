@@ -1,23 +1,72 @@
 import React from 'react';
 import BigNumber from 'bignumber.js';
 import PropTypes from 'prop-types';
-import { ServiceWarnings } from '../../constants';
+import { network, ServiceWarnings } from '../../constants';
 import { decimals } from '../../utils';
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
 
-import { ContractABIs } from 'boltz-core';
-// // @ts-ignore 
-// import { ERC20 } from 'boltz-core/typechain/ERC20';
-// import { ERC20Swap } from 'boltz-core/typechain/ERC20Swap';
-// import { EtherSwap } from 'boltz-core/typechain/EtherSwap';
-import { Signer, providers, Contract, Wallet } from 'ethers';
+import { StacksTestnet, StacksMainnet, StacksMocknet, StacksRegtest } from '@stacks/network';
+import { AppConfig, UserSession, showConnect, openContractCall, openContractDeploy } from '@stacks/connect';
+import { useConnect, doContractCall } from '@stacks/connect-react';
+
+// import { useHandleClaimHey } from '../../utils/dotx'
+
+import {
+  // uintCV,
+  // intCV,
+  bufferCV,
+  // stringAsciiCV,
+  // stringUtf8CV,
+  // standardPrincipalCV,
+  // trueCV,
+  // makeStandardSTXPostCondition,
+  FungibleConditionCode,
+  // PostConditionMode,
+  // createSTXPostCondition,
+  parsePrincipalString,
+  StacksMessageType,
+  PostConditionType
+} from '@stacks/transactions';
+// import { bufferCV } from '@stacks/transactions/dist/clarity/types/bufferCV';
+
+// import { ContractABIs } from 'boltz-core';
+// // // @ts-ignore 
+// // import { ERC20 } from 'boltz-core/typechain/ERC20';
+// // import { ERC20Swap } from 'boltz-core/typechain/ERC20Swap';
+// // import { EtherSwap } from 'boltz-core/typechain/EtherSwap';
+// import { Signer, providers, Contract, Wallet } from 'ethers';
 
 import {
   erc20tokenaddress,
   rbtcswapaddress,
   erc20swapaddress,
 } from '../../constants';
+import { BN } from 'bn.js';
+import bigInt from 'big-integer';
+
+// const BigNum = require('bn.js');
+// const networkConfig = new NetworkConfig("http://localhost:3999")
+// let networkConfig 
+// {url: 'http://localhost:3999'}
+// const mocknet = new StacksMocknet();
+const mocknet = new StacksMocknet({url: "http://localhost:3999"});
+// mocknet.coreApiUrl = 'http://localhost:3999';
+const testnet = new StacksTestnet();
+const mainnet = new StacksMainnet();
+// const regtest = new StacksRegtest();
+// regtest.coreApiUrl = 'http://localhost:3999';
+let activeNetwork = mocknet
+
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
+
+// only for testing!
+let stxcontractaddres = "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3"; //mocknet
+// stxcontractaddres = "ST15RGYVK9ACFQWMFFA2TVASDVZH38B4VAV4WF6BJ" //testnet
+
+let stxcontractname = "stxswap_v3"
+
 
 class SwapTabWrapper extends React.Component {
   constructor(props) {
@@ -47,6 +96,9 @@ class SwapTabWrapper extends React.Component {
       web3: null,
       provider: null,
     };
+    
+    // const handleFaucetCall = useHandleClaimHey();
+
   }
 
   connectWallet = async () => {
@@ -74,9 +126,206 @@ class SwapTabWrapper extends React.Component {
     var erc20swapabi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"preimage","type":"bytes32"}],"name":"Claim","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"tokenAddress","type":"address"},{"indexed":false,"internalType":"address","name":"claimAddress","type":"address"},{"indexed":true,"internalType":"address","name":"refundAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"Lockup","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"}],"name":"Refund","type":"event"},{"inputs":[{"internalType":"bytes32","name":"preimage","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"hashValues","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lock","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address payable","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lockPrepayMinerfee","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"refund","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"swaps","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"}];
     var erc20swapcontract = new web3.eth.Contract(erc20swapabi, erc20swapaddress);
     console.log(erc20swapcontract.methods.lock)
-
-
   }  
+
+  connectStacksWallet = async () => {
+    console.log("connectStacksWallet");
+    showConnect({
+        appDetails: {
+          name: 'Stacks.Swap',
+          icon: window.location.origin + '/favicon.ico',
+        },
+        redirectTo: '/',
+        finished: () => {
+          window.location.reload();
+        },
+        userSession: userSession,
+    });  
+  }
+
+  lockStx = async (swapInfo, swapResponse) => {
+    console.log("lockStx: ", swapInfo, swapResponse);
+    const postConditionAddress = stxcontractaddres;
+    const postConditionCode = FungibleConditionCode.LessEqual;
+    // const amount = uintCV(parseInt(2000000));
+    const postConditionAmount = new BN(2000000);
+    // const postConditionAmount = new BigNumber(2000000)
+    // const postConditionAmount = Buffer.from('00000000000000000000000000100000','hex');
+    // const postConditions = [
+    //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+    // ];
+    const postConditions = [
+      this.createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+    ];
+    console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
+    // bufferCV(Buffer.from('00000000000000000000000000100000','hex')), -> 1 STX == 1048576₁₀
+
+      // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
+    const functionArgs = [
+      bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+      bufferCV(Buffer.from('00000000000000000000000000100000','hex')),
+      bufferCV(Buffer.from('01','hex')),
+      bufferCV(Buffer.from('01','hex')),
+      bufferCV(Buffer.from('000000000000000000000000000012b4','hex')),
+      // bufferCV(Buffer.from('hello, world')),
+      // bufferCV(Buffer.from('hello, world')),
+      // stringAsciiCV(thisthing.form.question),
+      // uintCV(parseInt(thisthing.form.paypervote)),
+      // standardPrincipalCV(thisthing.form.oracle.trim()),
+      // uintCV(parseInt(unixtime)),
+      // stringAsciiCV("manual"),
+      // uintCV(1234),
+      // intCV(-234),
+      // bufferCV(Buffer.from('hello, world')),
+      // stringUtf8CV('hey-utf8'),
+      // trueCV(),
+    ];
+    console.log("functionArgs: ", JSON.stringify(functionArgs));
+    // return false;
+    const options = {
+      network: activeNetwork,
+      contractAddress: stxcontractaddres,
+      contractName: stxcontractname,
+      functionName: 'lockStx',
+      functionArgs,
+      appDetails: {
+        name: 'stxswap',
+        icon: window.location.origin + './favicon.ico',
+      },
+      authOrigin: "localhost:3888",
+      postConditions,
+      onFinish: data => {
+        console.log('Stacks Transaction:', data.stacksTransaction);
+        console.log('Transaction ID:', data.txId);
+        console.log('Raw transaction:', data.txRaw);
+        // +thisthing.activeNetworkStr
+        const explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=';
+        console.log('View transaction in explorer:', explorerTransactionUrl);
+      // thisthing.isLoading = false;
+     //  	db.ref(thisthing.contractname).push({account: thisthing.userData.profile.stxAddress[thisthing.activeNetworkStr], question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: "https://explorer.stacks.co/txid/"+data.txId+"?chain="+thisthing.activeNetworkStr, resolveTime: thisthing.datetime, unixtime: unixtime, resolveType:"manual", yescount: 0, nocount: 0, balance:0, resolved: false, result: false,  createdAt: firebase.database.ServerValue.TIMESTAMP});
+      // this.$notify({
+      //   title: 'Create Market',
+      //   text: 'Tx broadcasted. Please wait for it to be confirmed: ' + explorerTransactionUrl,
+      //   type: 'success',
+      //   duration: 10000,
+      // });
+      // this.$emit('exit', true);
+      },
+    };
+    console.log("options: ", options);
+    await openContractCall(options);
+
+    // const onFinish = useCallback((data) => {
+    //   // void setIsLoading(false);
+    //   console.log("onFinish ", data)
+    // }, []);
+  
+    // const onCancel = useCallback(() => {
+    //   // void setIsLoading(false);
+    //   console.log("onCancel ", data)
+    // }, []);
+    // // setIsLoading
+
+    // // const { doContractCall } = useConnect();
+    // console.log("doContractCall");
+    // const handleFaucetCall = useHandleClaimHey(network, stxcontractaddres, functionArgs);
+    // handleFaucetCall()
+
+    // void doContractCall({
+    //   stxcontractaddres,
+    //   contractName: 'stxswap_v2',
+    //   functionName: 'lockStx',
+    //   functionArgs: functionArgs,
+    //   onFinish: data => {
+    //     console.log('Stacks Transaction:', data.stacksTransaction);
+    //     console.log('Transaction ID:', data.txId);
+    //     console.log('Raw transaction:', data.txRaw);
+    //     // +thisthing.activeNetworkStr
+    //     const explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=';
+    //     console.log('View transaction in explorer:', explorerTransactionUrl);
+    //   // thisthing.isLoading = false;
+    //  //  	db.ref(thisthing.contractname).push({account: thisthing.userData.profile.stxAddress[thisthing.activeNetworkStr], question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: "https://explorer.stacks.co/txid/"+data.txId+"?chain="+thisthing.activeNetworkStr, resolveTime: thisthing.datetime, unixtime: unixtime, resolveType:"manual", yescount: 0, nocount: 0, balance:0, resolved: false, result: false,  createdAt: firebase.database.ServerValue.TIMESTAMP});
+    //   // this.$notify({
+    //   //   title: 'Create Market',
+    //   //   text: 'Tx broadcasted. Please wait for it to be confirmed: ' + explorerTransactionUrl,
+    //   //   type: 'success',
+    //   //   duration: 10000,
+    //   // });
+    //   // this.$emit('exit', true);
+    //   },
+    //   // onCancel,
+    //   network: mocknet,
+    //   // stxAddress: address,
+    // });
+
+  }
+
+  createSTXPostCondition(principal, conditionCode, amount) {
+    if (typeof principal === 'string') {
+        principal = parsePrincipalString(principal);
+    }
+    return {
+        type: StacksMessageType.PostCondition,
+        conditionType: PostConditionType.STX,
+        principal,
+        conditionCode,
+        amount: this.intToBN(amount, false),
+    };
+  }
+  intToBytes(value, signed, byteLength) {
+    return this.intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
+  }
+  intToBN(value, signed) {
+    const bigInt = this.intToBigInt(value, signed);
+    return new BN(bigInt.toString());
+  }
+  intToBigInt(value, signed) {
+    if (typeof value === 'number') {
+        if (!Number.isInteger(value)) {
+            throw new RangeError(`Invalid value. Values of type 'number' must be an integer.`);
+        }
+        // console.log("156")
+        // return 157;
+        return bigInt(value);
+    }
+    if (typeof value === 'string') {
+        if (value.toLowerCase().startsWith('0x')) {
+            let hex = value.slice(2);
+            hex = hex.padStart(hex.length + (hex.length % 2), '0');
+            value = Buffer.from(hex, 'hex');
+        }
+        else {
+            try {
+              // return 168;
+                return bigInt(value);
+            }
+            catch (error) {
+                if (error instanceof SyntaxError) {
+                    throw new RangeError(`Invalid value. String integer '${value}' is not finite.`);
+                }
+            }
+        }
+    }
+    if (typeof value === 'bigint') {
+        return value;
+    }
+    if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
+        if (signed) {
+            const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
+            // return 184;
+            return bigInt(bn.toString());
+        }
+        else {
+            // return 188;
+            return bigInt(new BN(value, 'be').toString());
+        }
+    }
+    if (value instanceof BN || BN.isBN(value)) {
+        // return 193;
+        return bigInt(value.toString());
+    }
+    throw new TypeError(`Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`);
+  }
 
   lockFunds = async (swapInfo, swapResponse) => {
     console.log("enter lockFunds, swapInfo, swapResponse ", swapInfo, swapResponse);
@@ -225,7 +474,8 @@ class SwapTabWrapper extends React.Component {
   componentDidMount = () => {
     const symbol = this.getSymbol();
     const limits = this.props.limits[symbol];
-    console.log("symbol, limits ", symbol, limits);
+    // console.log("symbol, limits ", symbol, limits);
+    // console.log("swaptabwrapper.229 TODO revert")
     this.setState(
       {
         minAmount: new BigNumber(limits.minimal),
@@ -296,6 +546,7 @@ class SwapTabWrapper extends React.Component {
       const rate = this.props.rates[symbol];
       const limits = this.props.limits[symbol];
       const feePercentage = this.props.fees.percentages[symbol];
+      // console.log("swaptabwrapper.549 minAmount: ", minAmount)
       this.setState(
         {
           rate,
@@ -491,7 +742,12 @@ class SwapTabWrapper extends React.Component {
       updatePair: this.updatePair,
       shouldSubmit: this.shouldSubmit,
       connectWallet: this.connectWallet,
+      connectStacksWallet: this.connectStacksWallet,
+      lockStx: this.lockStx,
       lockFunds: this.lockFunds,
+      createSTXPostCondition: this.createSTXPostCondition,
+      intToBN: this.intToBN,
+      intToBytes: this.intToBytes,
       baseStep: this.baseStep,
       quoteStep: this.quoteStep,
     });

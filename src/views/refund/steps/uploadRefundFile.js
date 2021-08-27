@@ -15,7 +15,8 @@ const UploadRefundFileStyles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: '1vh',
-    backgroundColor: theme.colors.aeroBlue,
+    // backgroundColor: theme.colors.aeroBlue,
+    backgroundColor: theme.colors.white,
   },
   icon: {
     color: theme.colors.turquoise,
@@ -52,6 +53,7 @@ const StyledUploadRefundFile = ({
   setRefundFile,
   setTransactionHash,
   isUploaded,
+  // refundStx,
 }) => (
   <View className={classes.wrapper}>
     {isUploaded ? (
@@ -67,7 +69,7 @@ const StyledUploadRefundFile = ({
         />
       </DropZone>
     )}
-    <p className={`${classes.info} ${classes.mobileInfo}`}>
+    {/* <p className={`${classes.info} ${classes.mobileInfo}`}>
       Paste the hash of the lockup transaction
     </p>
     <InputArea
@@ -75,7 +77,7 @@ const StyledUploadRefundFile = ({
       width={500}
       onChange={setTransactionHash}
       placeholder={`EG: ${lockupTransactionHash}`}
-    />
+    /> */}
   </View>
 );
 
@@ -84,6 +86,7 @@ StyledUploadRefundFile.propTypes = {
   setRefundFile: PropTypes.func.isRequired,
   isUploaded: PropTypes.bool.isRequired,
   setTransactionHash: PropTypes.func.isRequired,
+  // refundStx: PropTypes.func.isRequired,
 };
 
 const UploadRefundFile = injectSheet(UploadRefundFileStyles)(

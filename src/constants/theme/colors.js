@@ -1,8 +1,11 @@
 const colors = {
   seaPink: '#EF9391',
   elephantBlue: '#134357',
-  matisseBlue: '#1677A0',
-  celloBlue: '#1E485B',
+  // matisseBlue: '#1677A0',
+  matisseBlue: 'rgba(85,70,255,1)',
+  // celloBlue: '#1E485B',
+  // celloBlue: 'rgba(75,60,235,1)',
+  celloBlue: 'rgba(85,70,255,1)',
   aeroBlue: '#C2FFF1',
   turquoise: '#50E3C2',
   lightGrey: '#D3D3D3',

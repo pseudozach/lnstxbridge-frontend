@@ -58,6 +58,7 @@ export const litecoinNetwork =
 
 export const bitcoinExplorer = process.env.REACT_APP_BITCOIN_EXPLORER;
 export const litecoinExplorer = process.env.REACT_APP_LITECOIN_EXPLORER;
+export const stacksExplorer = process.env.REACT_APP_STACKS_EXPLORER;
 
 // Sample values
 export const lockupTransactionHash =

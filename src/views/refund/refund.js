@@ -45,6 +45,7 @@ const Refund = ({
   completeRefund,
   refundTransactionHash,
   isFetching,
+  setRefundTransactionHash,
 }) => {
   return (
     <Background>
@@ -79,6 +80,8 @@ const Refund = ({
                 <InputDestinationAddress
                   currency={refundFile.currency}
                   setDestinationAddress={setDestinationAddress}
+                  refundFile={refundFile}
+                  setRefundTransactionHash={setRefundTransactionHash}
                 />
               )}
             />
@@ -117,7 +120,7 @@ const Refund = ({
               render={props => (
                 <Controls
                   loading={isFetching || !destinationAddress}
-                  text={'Generate refund transaction'}
+                  text={'Finish'}
                   mobile
                   onPress={() =>
                     startRefund(
@@ -162,6 +165,7 @@ Refund.propTypes = {
   startRefund: PropTypes.func.isRequired,
   completeRefund: PropTypes.func.isRequired,
   refundTransactionHash: PropTypes.string,
+  setRefundTransactionHash: PropTypes.func.isRequired,
 };
 
 export default injectSheet(styles)(Refund);

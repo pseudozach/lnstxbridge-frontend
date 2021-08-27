@@ -6,7 +6,7 @@ import View from '../view';
 import Button from '../button';
 import { navigation } from '../../actions';
 import { boltzOnion } from '../../constants';
-const boltz_logo = require('../../asset/icons/boltz_logo.png');
+const boltz_logo = require('../../asset/icons/scuba2.png');
 
 class MobileNavigationBar extends React.Component {
   constructor() {
@@ -33,10 +33,10 @@ class MobileNavigationBar extends React.Component {
               src={boltz_logo}
               height={50}
               width={50}
-              className={''}
+              className={classes.img}
               alt="logo"
             />
-            <span className={classes.logoText}>Boltz</span>
+            <span className={classes.logoText}>Stacks.Swap</span>
           </View>
           <MdMenu
             onClick={() => this.toggleMenu()}
@@ -55,7 +55,7 @@ class MobileNavigationBar extends React.Component {
               text="Refund"
               onPress={() => navigation.navRefund()}
             />
-            <Button
+            {/* <Button
               className={classes.btn}
               text="FAQ"
               onPress={() => navigation.navFaq()}
@@ -77,12 +77,12 @@ class MobileNavigationBar extends React.Component {
               external
               text="API"
               to="https://docs.boltz.exchange/en/latest/"
-            />
+            /> */}
             <Button
               className={classes.btn}
               external
               text="Github"
-              to="https://github.com/BoltzExchange"
+              to="https://github.com/pseudozach/lnstxbridge"
             />
           </View>
         ) : (
@@ -126,6 +126,10 @@ const styles = theme => ({
     '&:hover': {
       color: theme.colors.hoverGrey,
     },
+  },
+  img: {
+    // alignSelf: 'center',
+    background: theme.colors.white
   },
   logoText: {
     color: theme.colors.white,

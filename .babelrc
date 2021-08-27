@@ -1,5 +1,8 @@
 {
     "plugins": [
         ["@babel/plugin-proposal-decorators", { "legacy": true }]
-    ]    
+    ],
+    "exclude": [
+        ["babel-plugin-transform-exponentiation-operator"]
+    ]
 }

@@ -13,6 +13,7 @@ import {
   erc20tokenaddress,
   rbtcswapaddress,
   erc20swapaddress,
+  stacksExplorer,
 } from '../constants';
 
 import Web3 from 'web3';
@@ -245,7 +246,12 @@ export const getNetwork = symbol => {
  * Get the block explorer URL for a symbol
  */
 export const getExplorer = symbol => {
-  return symbol === 'BTC' ? bitcoinExplorer : litecoinExplorer;
+  if( symbol === 'STX') {
+    return stacksExplorer
+  } else {
+    return symbol === 'BTC' ? bitcoinExplorer : litecoinExplorer;
+  }
+  
 };
 
 /**
@@ -274,7 +280,7 @@ export const getFeeEstimation = callback => {
       .then(response => callback(response))
       .catch(error => {
         console.log("some issue with fee estimation...")
-        callback({"BTC":2,"RBTC":0,"ETH":0})
+        callback({"BTC":2,"RBTC":0,"ETH":0, "STX":0})
         // window.alert(
         //   `Failed to get fee estimations: ${error.response.data.error}`
         // );

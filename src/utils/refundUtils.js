@@ -4,13 +4,20 @@ export const createRefundQr = (
   currency,
   privateKey,
   redeemScript,
-  timeoutBlockHeight
+  timeoutBlockHeight,
+  preimageHash,
+  amount,
+  contract
 ) => {
+  // console.log("createrefundqr: ", preimageHash, amount)
   const jsonData = JSON.stringify({
     currency,
     privateKey,
     redeemScript,
     timeoutBlockHeight,
+    preimageHash,
+    amount,
+    contract
   });
 
   const qr = new QRious({

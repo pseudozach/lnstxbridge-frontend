@@ -15,7 +15,7 @@ import { bitcoinNetwork, litecoinNetwork } from '../../constants';
 import { generateKeys, randomBytes, navigation } from '../../actions';
 import { getHexString } from '../../utils';
 
-const boltz_logo = require('../../asset/icons/boltz_logo.png');
+const boltz_logo = require('../../asset/icons/scuba2.png');
 
 const LandingPageDeskTopContent = ({
   classes,
@@ -32,31 +32,36 @@ const LandingPageDeskTopContent = ({
   warnings,
 }) => {
   const loading = currencies.length === 0;
+
+
+  // <View className={classes.infoWrapper}>
+  // <p className={classes.title}>
+  //     LN - SOV bridge is a fork of the excellent<br /> boltz.exchange.
+  //   </p>
+  //   <p className={classes.title}>
+  //     Instant, Account-Free & <br /> Non-Custodial.
+  //   </p>
+  //   <p className={classes.description}>
+  //     Trading <br />
+  //     <b>{`Shouldn't`}</b>
+  //     <br />
+  //     Require
+  //     <br />
+  //     An Account.
+  //   </p>
+  //   <Button text="WHY?" onPress={() => toggleModal()} />
+  //   <ModalComponent isOpen={isOpen} onClose={toggleModal}>
+  //     <ModalContent />
+  //   </ModalComponent>
+  // </View>
+
+
   return (
     <BackGround>
       <ReactNotification ref={notificationDom} />
       <NavigationBar />
       <View className={classes.wrapper}>
-        <View className={classes.infoWrapper}>
-        <p className={classes.title}>
-            LN - SOV bridge is a fork of the excellent<br /> boltz.exchange.
-          </p>
-          <p className={classes.title}>
-            Instant, Account-Free & <br /> Non-Custodial.
-          </p>
-          <p className={classes.description}>
-            Trading <br />
-            <b>{`Shouldn't`}</b>
-            <br />
-            Require
-            <br />
-            An Account.
-          </p>
-          <Button text="WHY?" onPress={() => toggleModal()} />
-          <ModalComponent isOpen={isOpen} onClose={toggleModal}>
-            <ModalContent />
-          </ModalComponent>
-        </View>
+
         {loading ? (
           <View className={classes.loading}>
             <img alt="logo" src={boltz_logo} className={classes.loadingLogo} />
@@ -71,6 +76,8 @@ const LandingPageDeskTopContent = ({
               );
 
               const preimage = randomBytes(32);
+              console.log("generated preimage: ", preimage);
+              console.log("preimage, preimagehash: ", getHexString(preimage), getHexString(crypto.sha256(preimage)));
 
               if (state.isReverseSwap) {
                 initReverseSwap({

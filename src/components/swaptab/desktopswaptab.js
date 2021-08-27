@@ -11,6 +11,14 @@ import Button from '../button';
 import Text, { InfoText } from '../text';
 import { formatAmount } from '../../utils';
 
+import { Button as SButton, Box } from '@stacks/ui'
+import { MdAccountBalanceWallet } from 'react-icons/md';
+
+// import { Box, Button, ButtonProps, Stack, StackProps } from '@stacks/ui';
+
+// import Dotxbutton from '../dotxbutton';
+// <Dotxbutton/>
+
 const DeskTopSwapTabContent = ({
   classes,
   feeAmount,
@@ -35,15 +43,24 @@ const DeskTopSwapTabContent = ({
   quoteStep,
   feePercentage,
   connectWallet,
+  connectStacksWallet,
+  lockStx,
 }) => (
   <View className={classes.wrapper}>
     <View className={classes.connectButton}>
       <Button
         text={'Connect Wallet'}
         // error={error || inputError}
-        onPress={error ? () => {} : () => connectWallet()}
+        onPress={error ? () => {} : () => connectStacksWallet()}
         // errorText={errorMessage}
       />
+      {/* <Button
+        text={'Lock STX'}
+        // error={error || inputError}
+        onPress={error ? () => {} : () => lockStx()}
+        // errorText={errorMessage}
+      /> */}
+      
     </View>
     <View className={classes.stats}>
       <InfoText
@@ -80,6 +97,33 @@ const DeskTopSwapTabContent = ({
           onChange={e => updatePair(quote, e)}
         />
       </View>
+
+      {/* <SButton
+          size="large"
+          pl="base-tight"
+          pr={'base'}
+          py="tight"
+          fontSize={2}
+          mode="primary"
+          position="relative"
+          className={classes.sbuttoncl}
+          // ref={ref}
+          onClick={() => lockStx()}
+          borderRadius="10px"
+          // {...rest}
+        >
+          <Box
+            as={MdAccountBalanceWallet}
+            // transform={isSend ? 'unset' : 'scaleY(-1)'}
+            size={'16px'}
+            mr={'2px'}
+          />
+          <Box as="span" ml="2px" fontSize="large">
+            Lock STX
+          </Box>
+        </SButton> */}
+
+
       <MdCompareArrows className={classes.arrows} onClick={switchPair} />
       <View className={classes.select}>
         <Text text="You receive:" className={classes.text} />
@@ -152,13 +196,19 @@ const styles = theme => ({
     justifyContent: 'space-around',
   },
   next: {
-    backgroundColor: theme.colors.matisseBlue,
+    // backgroundColor: theme.colors.matisseBlue,
+    backgroundColor: 'rgba(85,70,255,1)',
     flex: '1 0 15%',
     justifyContent: 'center',
     alignItems: 'center',
     '&:hover': {
       cursor: 'pointer',
     },
+  },
+  sbuttoncl: {
+    margin: 'auto',
+    width: 'fit-content',
+    padding: '15px',
   },
   connectButton: {
     backgroundColor: theme.colors.tundoraGrey,
@@ -232,6 +282,8 @@ DeskTopSwapTabContent.propTypes = {
   baseStep: PropTypes.string,
   quoteStep: PropTypes.string,
   connectWallet: PropTypes.func,
+  connectStacksWallet: PropTypes.func,
+  lockStx: PropTypes.func,
 };
 
 const DeskTopSwapTab = props => (

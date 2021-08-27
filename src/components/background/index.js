@@ -7,7 +7,8 @@ const styles = theme => ({
   wrapper: {
     flex: '1 0',
     minHeight: '100vh',
-    backgroundImage: 'linear-gradient(to bottom, #114357, #f29492)',
+    // backgroundImage: 'linear-gradient(to bottom, #114357, #f29492)',
+    backgroundColor: 'rgb(17, 18, 21)',
     flexDirection: 'column',
     overflowY: 'auto',
   },
@@ -34,7 +35,7 @@ const BackGround = ({ classes, showFooter, children }) => (
 );
 
 BackGround.defaultProps = {
-  showFooter: true,
+  showFooter: false,
 };
 
 BackGround.propTypes = {

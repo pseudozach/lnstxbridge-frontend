@@ -29,18 +29,30 @@ export const setRefundFile = file => {
   return dispatch => {
     qrcodeParser(file).then(res => {
       const fileJson = JSON.parse(res.data);
+      // console.log("setRefundFile: ", fileJson);
 
       const verifyFile = verifyRefundFile(fileJson, [
         'currency',
-        'redeemScript',
-        'privateKey',
+        'preimageHash',
+        'amount',
+        // 'redeemScript',
+        // 'privateKey',
         'timeoutBlockHeight',
+        'contract',
       ]);
 
       dispatch({
         type: actionTypes.SET_REFUND_FILE,
         payload: verifyFile ? fileJson : {},
       });
+
+      // console.log("setTransactionHash");
+      dispatch({
+        type: actionTypes.SET_REFUND_TXHASH,
+        payload: "dummyvalue",
+      });
+
+      // setTransactionHash("dummyvalue");
     });
   };
 };
@@ -110,49 +122,62 @@ export const startRefund = (
   const url = `${boltzApi}/gettransaction`;
   const currency = refundFile.currency;
 
+  // we dont send tx to backend to broadcast, instead user triggers refund via hiro wallet
+  console.log("startRefund: ",destinationAddress)
+
   return dispatch => {
+    // just set the refundtx explorer link and we're all done.
+    dispatch({
+      type: actionTypes.SET_REFUND_TRANSACTION_HASH,
+      payload: destinationAddress,
+    });
+
     dispatch(refundRequest());
-    axios
-      .post(url, {
-        currency,
-        transactionId: transactionHash,
-      })
-      .then(response => {
-        dispatch(
-          getFeeEstimation(feeEstimation => {
-            const {
-              refundTransaction,
-              lockupTransactionId,
-            } = createRefundTransaction(
-              refundFile,
-              response,
-              destinationAddress,
-              currency,
-              feeEstimation
-            );
 
-            dispatch(setRefundTransactionHash(refundTransaction.getId()));
-            dispatch(
-              broadcastRefund(
-                currency,
-                refundTransaction.toHex(),
-                lockupTransactionId,
-                () => {
-                  dispatch(refundResponse(true, response.data));
+    // go to nextstage
+    cb();
 
-                  cb();
-                }
-              )
-            );
-          })
-        );
-      })
-      .catch(error => {
-        const message = error.response.data.error;
+    // axios
+    //   .post(url, {
+    //     currency,
+    //     transactionId: transactionHash,
+    //   })
+    //   .then(response => {
+    //     dispatch(
+    //       getFeeEstimation(feeEstimation => {
+    //         const {
+    //           refundTransaction,
+    //           lockupTransactionId,
+    //         } = createRefundTransaction(
+    //           refundFile,
+    //           response,
+    //           destinationAddress,
+    //           currency,
+    //           feeEstimation
+    //         );
 
-        window.alert(`Failed to refund swap: ${message}`);
-        dispatch(refundResponse(false, message));
-      });
+    //         dispatch(setRefundTransactionHash(refundTransaction.getId()));
+    //         dispatch(
+    //           broadcastRefund(
+    //             currency,
+    //             refundTransaction.toHex(),
+    //             lockupTransactionId,
+    //             () => {
+    //               dispatch(refundResponse(true, response.data));
+
+    //               cb();
+    //             }
+    //           )
+    //         );
+    //       })
+    //     );
+    //   })
+    //   .catch(error => {
+    //     const message = error.response.data.error;
+
+    //     window.alert(`Failed to refund swap: ${message}`);
+    //     dispatch(refundResponse(false, message));
+    //   });
   };
 };
 

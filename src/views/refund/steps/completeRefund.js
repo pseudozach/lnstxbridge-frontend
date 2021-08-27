@@ -12,7 +12,8 @@ const CompleteRefundStyles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    backgroundColor: theme.colors.aeroBlue,
+    // backgroundColor: theme.colors.aeroBlue,
+    backgroundColor: theme.colors.white,
   },
   icon: {
     color: theme.colors.turquoise,
@@ -40,7 +41,7 @@ const StyledCompleteRefund = ({ classes, currency, refundTransactionHash }) => (
     <span className={classes.title}> Success! </span>
     <p className={classes.transaction}>
       <Link
-        to={`${getExplorer(currency)}/${refundTransactionHash}`}
+        to={`${getExplorer(currency)}/txid/0x${refundTransactionHash}`}
         text={'Click here'}
       />{' '}
       to see the refund transaction
