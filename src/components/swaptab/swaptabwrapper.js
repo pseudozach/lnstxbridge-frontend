@@ -57,6 +57,7 @@ const mainnet = new StacksMainnet();
 // const regtest = new StacksRegtest();
 // regtest.coreApiUrl = 'http://localhost:3999';
 let activeNetwork = mocknet
+activeNetwork = testnet
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -85,7 +86,7 @@ class SwapTabWrapper extends React.Component {
       disabled: false,
       error: false,
       inputError: false,
-      base: 'SOV',
+      base: 'STX',
       quote: 'BTC ⚡',
       minAmount: new BigNumber('0'),
       maxAmount: new BigNumber('0'),
@@ -212,7 +213,7 @@ class SwapTabWrapper extends React.Component {
       // this.$emit('exit', true);
       },
     };
-    console.log("options: ", options);
+    console.log("2options: ", options);
     await openContractCall(options);
 
     // const onFinish = useCallback((data) => {
@@ -474,7 +475,7 @@ class SwapTabWrapper extends React.Component {
   componentDidMount = () => {
     const symbol = this.getSymbol();
     const limits = this.props.limits[symbol];
-    // console.log("symbol, limits ", symbol, limits);
+    console.log("symbol, limits ", symbol, limits);
     // console.log("swaptabwrapper.229 TODO revert")
     this.setState(
       {

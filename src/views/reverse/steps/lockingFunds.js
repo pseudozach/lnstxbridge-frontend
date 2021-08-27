@@ -31,6 +31,7 @@ let mocknet = new StacksMocknet();
 const testnet = new StacksTestnet();
 const mainnet = new StacksMainnet();
 let network = mocknet
+network = testnet
 
 const styles = () => ({
   wrapper: {

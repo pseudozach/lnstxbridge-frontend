@@ -45,6 +45,7 @@ let mocknet = new StacksMocknet();
 const testnet = new StacksTestnet();
 const mainnet = new StacksMainnet();
 let activeNetwork = mocknet
+activeNetwork = testnet
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
