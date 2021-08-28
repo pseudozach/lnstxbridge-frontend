@@ -130,7 +130,7 @@ class SwapTabWrapper extends React.Component {
   }  
 
   connectStacksWallet = async () => {
-    console.log("connectStacksWallet");
+    console.log("connectStacksWallet, ", userSession);
     showConnect({
         appDetails: {
           name: 'Stacks.Swap',
@@ -142,6 +142,11 @@ class SwapTabWrapper extends React.Component {
         },
         userSession: userSession,
     });  
+  }
+
+  stacksUserSession = () => {
+    console.log("stacksUserSession: ", userSession);
+    return userSession.isUserSignedIn();
   }
 
   lockStx = async (swapInfo, swapResponse) => {
@@ -675,6 +680,11 @@ class SwapTabWrapper extends React.Component {
   };
 
   shouldSubmit = () => {
+    if(!userSession.isUserSignedIn()) {
+      console.log("1ot signed in yet");
+      alert("Please connect wallet first.");
+      return false;
+    }
     const { error, rate, baseAmount, quoteAmount } = this.state;
     if (error === false && this.rate !== 'Not found') {
       const state = {
@@ -744,6 +754,7 @@ class SwapTabWrapper extends React.Component {
       shouldSubmit: this.shouldSubmit,
       connectWallet: this.connectWallet,
       connectStacksWallet: this.connectStacksWallet,
+      stacksUserSession: this.stacksUserSession,
       lockStx: this.lockStx,
       lockFunds: this.lockFunds,
       createSTXPostCondition: this.createSTXPostCondition,

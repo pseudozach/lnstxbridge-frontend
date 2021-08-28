@@ -50,6 +50,8 @@ activeNetwork = testnet
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
 
+let explorerTransactionUrl = '';
+
 // let stxcontractaddres = "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3"; //mocknet
 // stxcontractaddres = "ST15RGYVK9ACFQWMFFA2TVASDVZH38B4VAV4WF6BJ" //testnet
 
@@ -230,7 +232,7 @@ async function lockStx (swapInfo, swapResponse) {
       console.log('Stacks Transaction:', data.stacksTransaction);
       console.log('Transaction ID:', data.txId);
       console.log('Raw transaction:', data.txRaw);
-      const explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=';
+      explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=testnet';
       console.log('View transaction in explorer:', explorerTransactionUrl);
     },
   };
@@ -389,9 +391,14 @@ const StyledSendTransaction = ({ classes, swapInfo, swapResponse }) => (
         //   </button>
         // </p>
 
-
-
       ) : null}
+
+      {explorerTransactionUrl==='' ? null: (
+        <a 
+          href={explorerTransactionUrl}
+          target="_blank">
+        </a>
+      )}
     </View>
   </View>
 );
