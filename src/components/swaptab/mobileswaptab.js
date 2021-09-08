@@ -7,6 +7,7 @@ import Input from '../input';
 import Controls from '../controls';
 import DropDown from '../dropdown';
 import Text, { InfoText } from '../text';
+import Button from '../button';
 import { formatAmount } from '../../utils';
 import SwapTabWrapper from './swaptabwrapper';
 
@@ -33,8 +34,17 @@ const MobileSwapTabContent = ({
   baseStep,
   quoteStep,
   feePercentage,
+  connectStacksWallet,
 }) => (
   <View className={classes.wrapper}>
+    <View className={classes.connectButton}>
+      <Button
+        text={'Connect Wallet'}
+        // error={error || inputError}
+        onPress={error ? () => {} : () => connectStacksWallet()}
+        // errorText={errorMessage}
+      />
+    </View>
     <View className={classes.info}>
       <InfoText
         title="Min amount"
@@ -190,6 +200,7 @@ MobileSwapTabContent.propTypes = {
   shouldSubmit: PropTypes.func,
   baseStep: PropTypes.string,
   quoteStep: PropTypes.string,
+  connectStacksWallet: PropTypes.func,
 };
 
 const MobileSwapTab = props => (
