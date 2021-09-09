@@ -1,6 +1,16 @@
-# boltz-frontend
+# lnstxbridge-frontend
 
-[![Build Status](https://travis-ci.org/BoltzExchange/boltz-frontend.svg?branch=master)](https://travis-ci.org/BoltzExchange/boltz-frontend)
-[![Discord](https://img.shields.io/discord/547454030801272832.svg)](https://discordapp.com/invite/QBvZGcW)
+* Frontend for [lnstxbridge](https://github.com/pseudozach/lnstxbridge)
 
-Frontend for boltz
+## install
+* clone the repo and install requirements
+`git clone https://github.com/pseudozach/lnstxbridge-frontend.git`  
+`cd lnstxbridge-frontend && npm i`
+
+* make required changes as per your environment to `.env` file
+
+* start the app
+`npm run start`
+
+## use
+* visit `http://localhost:3001`
