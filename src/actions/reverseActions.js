@@ -242,7 +242,8 @@ const handleReverseSwapStatus = (
       break;
 
     case SwapUpdateEvent.TransactionConfirmed:
-      source.close();
+      // dont close the source - wait for invoice.settled
+      // source.close();
 
       claimSwap(dispatch, nextStage, swapInfo, {
         ...response,
@@ -264,6 +265,11 @@ const handleReverseSwapStatus = (
       dispatch(reverseSwapResponse(false, {}));
       break;
 
+    case SwapUpdateEvent.InvoiceSettled:
+      source.close();
+      nextStage();
+      break;
+      
     default:
       console.log(`Unknown swap status: ${JSON.stringify(data)}`);
       break;

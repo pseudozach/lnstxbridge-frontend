@@ -157,6 +157,7 @@ class ReverseSwap extends React.Component {
                   <LockingFunds
                     swapInfo={swapInfo}
                     swapResponse={swapResponse}
+                    swapStatus={swapStatus}
                     setAllowZeroConf={allow => {
                       this.acceptedZeroConf = allow;
 

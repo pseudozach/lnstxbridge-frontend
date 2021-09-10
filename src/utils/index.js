@@ -335,3 +335,14 @@ export const notificationData = (info, alertType) => {
 export const formatAmount = number => {
   return number.toFixed(8).replace(/\.?0+$/, '');
 };
+
+
+let explorerTransactionUrl = 'asdqwe';
+export const getExplorerTransactionUrl = () => {
+  return explorerTransactionUrl;
+}
+export const setExplorerTransactionUrl = (url) => {
+  explorerTransactionUrl = url;
+  return explorerTransactionUrl;
+}
+

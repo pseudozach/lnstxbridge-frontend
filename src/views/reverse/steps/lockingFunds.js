@@ -48,6 +48,15 @@ const styles = () => ({
       fontSize: '16px',
     },
   },
+  texnotop: {
+    fontSize: '30px',
+    paddingLeft: '20px',
+    paddingRight: '20px',
+    '@media (max-width: 425px)': {
+      fontSize: '16px',
+    },
+    marginTop: '0px',
+  },
   sbuttoncl: {
     margin: 'auto',
     width: 'fit-content',
@@ -145,6 +154,7 @@ const claimStx = async (
     onFinish: data => {
       console.log('Stacks claim onFinish:', JSON.stringify(data));
       // reverseSwapResponse(true, swapResponse);
+      // ??? enable this? so swap is marked completed? 
       // nextStage();
     },
     onCancel: data => {
@@ -249,8 +259,9 @@ class LockingFunds extends React.Component {
   }
 
   render() {
-    const { classes, swapInfo, swapResponse, setAllowZeroConf } = this.props;
+    const { classes, swapInfo, swapResponse, setAllowZeroConf, swapStatus } = this.props;
 
+    console.log("lockingfunds.255 , ", swapResponse, swapStatus);
     const link = swapResponse
       ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
       : '#0';
@@ -261,13 +272,11 @@ class LockingFunds extends React.Component {
           Stacks.Swap is locking the <b>{getCurrencyName(swapInfo.quote)}</b> that you
           are ought to receive, this is important to keep the swap atomic and
           trustless. It might take up to 10 minutes.
-          <br />
+          {/* <br /> */}
           <br />
           <Link to={link} text={'Click here'} /> to see the lockup transaction.
           <br />
           <br />
-          Once lockup is complete and you have started paying the HODL invoice, you can trigger 
-          claimStx contract call to finalize the swap and receive your STX.
           {/* If you are #reckless and impatient you can accept the 0-conf
           transaction:
           <Switch
@@ -288,31 +297,36 @@ class LockingFunds extends React.Component {
             activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
           /> */}
         </p>
-        <SButton
-            size="large"
-            pl="base-tight"
-            pr={'base'}
-            py="tight"
-            fontSize={2}
-            mode="primary"
-            position="relative"
-            className={classes.sbuttoncl}
-            // ref={ref}
-            onClick={() => claimStx(swapInfo, swapResponse)}
-            // onClick={refundStx}
-            borderRadius="10px"
-            // {...rest}
-            >
-            <Box
-              as={MdFileDownload}
-              // transform={isSend ? 'unset' : 'scaleY(-1)'}
-              size={'16px'}
-              mr={'2px'}
-            />
-            <Box as="span" ml="2px" fontSize="large">
-              Claim STX
-            </Box>
-          </SButton>
+        {swapStatus ? (<><p className={classes.texnotop}>Lockup is confirmed, you can now trigger 
+          claim contract call to finalize the swap and receive your STX.
+          </p>
+          <SButton
+          size="large"
+          pl="base-tight"
+          pr={'base'}
+          py="tight"
+          fontSize={2}
+          mode="primary"
+          position="relative"
+          // disabled={swapStatus != 'transaction.confirmed'}
+          className={classes.sbuttoncl}
+          // ref={ref}
+          onClick={() => claimStx(swapInfo, swapResponse)}
+          // onClick={refundStx}
+          borderRadius="10px"
+          // {...rest}
+          >
+          <Box
+            as={MdFileDownload}
+            // transform={isSend ? 'unset' : 'scaleY(-1)'}
+            size={'16px'}
+            mr={'2px'}
+          />
+          <Box as="span" ml="2px" fontSize="large">
+            Claim STX
+          </Box>
+        </SButton></>) : null}
+
       </View>
     );
   }
@@ -323,6 +337,7 @@ LockingFunds.propTypes = {
   swapResponse: PropTypes.object.isRequired,
   setAllowZeroConf: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
+  swapStatus: PropTypes.string.isRequired,
 };
 
 export default injectSheet(styles)(LockingFunds);

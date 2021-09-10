@@ -35,15 +35,17 @@ const MobileSwapTabContent = ({
   quoteStep,
   feePercentage,
   connectStacksWallet,
+  stacksUserSession,
 }) => (
   <View className={classes.wrapper}>
     <View className={classes.connectButton}>
-      <Button
-        text={'Connect Wallet'}
+    {stacksUserSession() ? (<Button
+        text={stacksUserSession()}
+        className={classes.loggedintext}
         // error={error || inputError}
         onPress={error ? () => {} : () => connectStacksWallet()}
         // errorText={errorMessage}
-      />
+      />) : null }
     </View>
     <View className={classes.info}>
       <InfoText
@@ -145,6 +147,9 @@ const styles = theme => ({
   selectTitle: {
     fontSize: '24px',
   },
+  loggedintext: {
+    fontSize: 'inherit',
+  },
   select: {
     margin: '20px 0px 20px 0px',
     flexDirection: 'column',
@@ -201,6 +206,7 @@ MobileSwapTabContent.propTypes = {
   baseStep: PropTypes.string,
   quoteStep: PropTypes.string,
   connectStacksWallet: PropTypes.func,
+  stacksUserSession: PropTypes.func,
 };
 
 const MobileSwapTab = props => (

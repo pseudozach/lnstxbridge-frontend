@@ -11,8 +11,8 @@ import Button from '../button';
 import Text, { InfoText } from '../text';
 import { formatAmount } from '../../utils';
 
-import { Button as SButton, Box } from '@stacks/ui'
-import { MdAccountBalanceWallet } from 'react-icons/md';
+// import { Button as SButton, Box } from '@stacks/ui'
+// import { MdAccountBalanceWallet } from 'react-icons/md';
 
 // import { Box, Button, ButtonProps, Stack, StackProps } from '@stacks/ui';
 
@@ -45,15 +45,17 @@ const DeskTopSwapTabContent = ({
   connectWallet,
   connectStacksWallet,
   lockStx,
+  stacksUserSession,
 }) => (
   <View className={classes.wrapper}>
     <View className={classes.connectButton}>
-      <Button
-        text={'Connect Wallet'}
+      {stacksUserSession() ? (<Button
+        text={stacksUserSession()}
+        className={classes.loggedintext}
         // error={error || inputError}
         onPress={error ? () => {} : () => connectStacksWallet()}
         // errorText={errorMessage}
-      />
+      />) : null }
       {/* <Button
         text={'Lock STX'}
         // error={error || inputError}
@@ -83,7 +85,7 @@ const DeskTopSwapTabContent = ({
         <Input
           disable={disabled}
           className={classes.inputMobile}
-          min={0}
+          min={minAmount}
           max={maxAmount}
           step={quoteStep}
           error={inputError}
@@ -219,6 +221,9 @@ const styles = theme => ({
       cursor: 'pointer',
     },
   },
+  loggedintext: {
+    fontSize: 'inherit',
+  },
   nextError: {
     backgroundColor: theme.colors.tundoraGrey,
     flex: '1 0 15%',
@@ -284,6 +289,7 @@ DeskTopSwapTabContent.propTypes = {
   connectWallet: PropTypes.func,
   connectStacksWallet: PropTypes.func,
   lockStx: PropTypes.func,
+  stacksUserSession: PropTypes.func,
 };
 
 const DeskTopSwapTab = props => (

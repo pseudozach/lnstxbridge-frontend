@@ -130,7 +130,17 @@ class SwapTabWrapper extends React.Component {
   }  
 
   connectStacksWallet = async () => {
-    console.log("connectStacksWallet, ", userSession);
+    // console.log("connectStacksWallet, ", userSession);
+    // if(userSession.isUserSignedIn()) {
+    //   let userData = userSession.loadUserData();
+    //   // console.log("userData, network: ", userData, network);
+    //   if(network==="mainnet"){
+    //     let userstxaddress = userData.profile.stxAddress.mainnet;
+    //   } else {
+    //     let userstxaddress = userData.profile.stxAddress.testnet;
+    //   }
+    // }
+
     showConnect({
         appDetails: {
           name: 'Stacks.Swap',
@@ -145,8 +155,24 @@ class SwapTabWrapper extends React.Component {
   }
 
   stacksUserSession = () => {
-    console.log("stacksUserSession: ", userSession);
-    return userSession.isUserSignedIn();
+    // console.log("stacksUserSession: ", userSession);
+    let userstxaddress;
+    if(userSession.isUserSignedIn()) {
+      let userData = userSession.loadUserData();
+      // console.log("userData, network: ", userData, network);
+      if(network==="mainnet"){
+        userstxaddress = userData.profile.stxAddress.mainnet;
+      } else {
+        userstxaddress = userData.profile.stxAddress.testnet;
+      }
+
+      userstxaddress = "Logged in as " + userstxaddress.slice(0,5) + "..." + userstxaddress.slice(-5);
+    }
+    return userstxaddress;
+  }
+
+  stacksLogout = () => {
+    userSession.signUserOut();
   }
 
   lockStx = async (swapInfo, swapResponse) => {
@@ -681,8 +707,9 @@ class SwapTabWrapper extends React.Component {
 
   shouldSubmit = () => {
     if(!userSession.isUserSignedIn()) {
-      console.log("1ot signed in yet");
-      alert("Please connect wallet first.");
+      console.log("not signed in yet");
+      // alert("Please connect wallet first.");
+      this.connectStacksWallet();
       return false;
     }
     const { error, rate, baseAmount, quoteAmount } = this.state;
@@ -762,6 +789,7 @@ class SwapTabWrapper extends React.Component {
       intToBytes: this.intToBytes,
       baseStep: this.baseStep,
       quoteStep: this.quoteStep,
+      stacksLogout: this.stacksLogout,
     });
   }
 }

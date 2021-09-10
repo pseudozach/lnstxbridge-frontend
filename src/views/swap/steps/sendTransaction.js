@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import View from '../../../components/view';
+// import Link from '../../../components/link';
 import QrCode from '../../../components/qrcode';
-import { toWholeCoins, copyToClipBoard, lockFunds } from '../../../utils';
+import { toWholeCoins} from '../../../utils';
+// , copyToClipBoard, lockFunds, getExplorerTransactionUrl, setExplorerTransactionUrl 
 // import { triggerLockStx } from '../../../utils/dotx'
 // import lockStx from '../../../components/swaptab/swaptabwrapper';
 
@@ -50,7 +52,7 @@ activeNetwork = testnet
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
 
-let explorerTransactionUrl = '';
+// let explorerTransactionUrl = '';
 
 // let stxcontractaddres = "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3"; //mocknet
 // stxcontractaddres = "ST15RGYVK9ACFQWMFFA2TVASDVZH38B4VAV4WF6BJ" //testnet
@@ -113,6 +115,10 @@ const SendTransactionStyles = () => ({
   tool: {
     fontSize: '12px',
   },
+  hidden: {
+    display: 'none',
+    margin: 'auto',
+  }
 });
 
 async function lockStx (swapInfo, swapResponse) {
@@ -232,8 +238,14 @@ async function lockStx (swapInfo, swapResponse) {
       console.log('Stacks Transaction:', data.stacksTransaction);
       console.log('Transaction ID:', data.txId);
       console.log('Raw transaction:', data.txRaw);
-      explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=testnet';
+      let explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId;
+      if(activeNetwork==testnet) {
+        explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
+      }
       console.log('View transaction in explorer:', explorerTransactionUrl);
+      document.querySelector('a').href = explorerTransactionUrl;
+      document.querySelector('a').style.display = "block";
+      // this.explorerTransactionUrl = explorerTransactionUrl;
     },
   };
   console.log("options: ", options);
@@ -320,6 +332,107 @@ function intToBigInt(value, signed) {
   throw new TypeError(`Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`);
 }
 
+// class StyledSendTransaction extends React.Component {
+//   state = {
+//     txurl: '',
+//   };
+
+//   onChange = input => {
+//     console.log("onchange ", input);
+//     this.setState({ txurl: input });
+//   };
+
+//   render() {
+//     const { txurl } = this.state;
+//     const { classes, swapInfo, swapResponse } = this.props;
+
+//     return (  <View className={classes.wrapper}>
+//       {/* {swapInfo.base !== 'SOV' ? (
+//       <View className={classes.qrcode}>
+//         <QrCode size={250} link={swapResponse.bip21} />
+//       </View>
+//       ): null} */}
+//       <View className={classes.info}>
+//         <p className={classes.text}>
+//         {swapInfo.base === 'STX' ? ( 'You need to lock' ): 'Send' }
+//           <b>
+//             {' '}
+//             {toWholeCoins(swapResponse.expectedAmount)} {swapInfo.base}{' '}
+//           </b>{' '}
+//           to this contract:
+//         </p>
+//         <p className={classes.address} id="copy">
+//           {swapResponse.address}
+//         </p>
+//         {/* <span className={classes.action} onClick={() => copyToClipBoard()}>
+//           Copy
+//         </span> */}
+//         {swapInfo.base === 'LTC' ? (
+//           <p className={classes.tool}>
+//             If the address does not work with your wallet:{' '}
+//             <a
+//               target={'_blank'}
+//               href="https://litecoin-project.github.io/p2sh-convert/"
+//             >
+//               use this tool
+//             </a>
+//           </p>
+//         ) : null}
+//         {swapInfo.base === 'STX' ? (
+  
+//           <SButton
+//             size="large"
+//             pl="base-tight"
+//             pr={'base'}
+//             py="tight"
+//             fontSize={2}
+//             mode="primary"
+//             position="relative"
+//             className={classes.sbuttoncl}
+//             // ref={ref}
+//             onClick={() => lockStx(swapInfo, swapResponse)}
+//             borderRadius="10px"
+//             // {...rest}
+//             >
+//             <Box
+//               as={MdAccountBalanceWallet}
+//               // transform={isSend ? 'unset' : 'scaleY(-1)'}
+//               size={'16px'}
+//               mr={'2px'}
+//             />
+//             <Box as="span" ml="2px" fontSize="large">
+//               Lock STX
+//             </Box>
+//           </SButton>
+  
+//           // <p className={classes.text}>
+//           //   Tap here to trigger Lock Contract Call:{' '}
+//           //   <button
+//           //     onClick={() => lockStx(swapInfo, swapResponse)}
+//           //     // target={'_blank'}
+//           //     // href="https://litecoin-project.github.io/p2sh-convert/"
+//           //   >
+//           //     Lock
+//           //   </button>
+//           // </p>
+  
+//         ) : null}
+  
+//         <a 
+//           href={txurl}
+//           className={txurl=='' ? classes.hidden : undefined}
+//           target="_blank">View Lock Transaction on Explorer{txurl}
+//         </a>
+  
+//         <Link to={txurl} text={'Click here'} /> to see the lockup transaction.
+  
+//       </View>
+//     </View>
+//     );
+//   }
+
+// }
+
 const StyledSendTransaction = ({ classes, swapInfo, swapResponse }) => (
   <View className={classes.wrapper}>
     {/* {swapInfo.base !== 'SOV' ? (
@@ -393,12 +506,12 @@ const StyledSendTransaction = ({ classes, swapInfo, swapResponse }) => (
 
       ) : null}
 
-      {explorerTransactionUrl==='' ? null: (
-        <a 
-          href={explorerTransactionUrl}
-          target="_blank">
-        </a>
-      )}
+      <a 
+        href=''
+        className={classes.hidden}
+        target="_blank">View Lock Transaction on Explorer
+      </a>
+
     </View>
   </View>
 );
@@ -407,6 +520,7 @@ StyledSendTransaction.propTypes = {
   classes: PropTypes.object.isRequired,
   swapInfo: PropTypes.object.isRequired,
   swapResponse: PropTypes.object.isRequired,
+  // onChange: PropTypes.func.isRequired,
 };
 
 const SendTransaction = injectSheet(SendTransactionStyles)(
@@ -414,3 +528,4 @@ const SendTransaction = injectSheet(SendTransactionStyles)(
 );
 
 export default SendTransaction;
+
