@@ -2,14 +2,15 @@ import React from 'react';
 import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 import View from '../../../components/view';
-import InputArea from '../../../components/inputarea';
-import { getCurrencyName, getSampleAddress } from '../../../utils';
+// import InputArea from '../../../components/inputarea';
+// import { getCurrencyName, getSampleAddress } from '../../../utils';
 
 import { Button as SButton, Box } from '@stacks/ui'
 import { MdFileDownload } from 'react-icons/md';
 
-import lightningPayReq from 'bolt11';
-import { StacksTestnet, StacksMainnet, StacksMocknet } from '@stacks/network';
+// import lightningPayReq from 'bolt11';
+// StacksMainnet
+import { StacksTestnet, StacksMocknet } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
 import {
   bufferCV,
@@ -28,7 +29,7 @@ import { BN } from 'bn.js';
 let mocknet = new StacksMocknet();
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
-const mainnet = new StacksMainnet();
+// const mainnet = new StacksMainnet();
 let activeNetwork = mocknet
 activeNetwork = testnet
 
@@ -141,9 +142,9 @@ function createSTXPostCondition(principal, conditionCode, amount) {
       amount: intToBN(amount, false),
   };
 }
-function intToBytes(value, signed, byteLength) {
-  return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
-}
+// function intToBytes(value, signed, byteLength) {
+//   return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
+// }
 function intToBN(value, signed) {
   const bigInt = intToBigInt(value, signed);
   return new BN(bigInt.toString());

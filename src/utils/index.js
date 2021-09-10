@@ -11,7 +11,7 @@ import {
   bitcoinInvoice,
   litecoinInvoice,
   erc20tokenaddress,
-  rbtcswapaddress,
+  // rbtcswapaddress,
   erc20swapaddress,
   stacksExplorer,
 } from '../constants';
@@ -31,9 +31,9 @@ import lightningPayReq from 'bolt11';
 
 export const lockFunds = async (swapInfo, swapResponse) => {
 
-  const providerOptions = {
-    /* See Provider Options Section */
-  };
+  // const providerOptions = {
+  //   /* See Provider Options Section */
+  // };
 
   const web3Modal = new Web3Modal({
     // network: "mainnet", // optional
@@ -59,14 +59,14 @@ export const lockFunds = async (swapInfo, swapResponse) => {
   for (let index = 0; index < obj.length; index++) {
       const tag = obj[index];
       // console.log("tag: ", tag);
-      if(tag.tagName == "payment_hash"){
+      if(tag.tagName === "payment_hash"){
           console.log("yay: ", tag.data);
           var paymenthash = tag.data;
       }
   }
   console.log("paymenthash: ", paymenthash);
   
-  const preimageHash = getHexBuffer(paymenthash);
+  // const preimageHash = getHexBuffer(paymenthash);
   var preimageHashbuffer = Buffer.from(paymenthash, 'hex');
   console.log("getHexBuffer preimageHash ", paymenthash)
   console.log("preimageHashbuffer ", preimageHashbuffer)

@@ -1,5 +1,5 @@
 import React from 'react';
-import Switch from 'react-switch';
+// import Switch from 'react-switch';
 import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import Link from '../../../components/link';
@@ -9,8 +9,8 @@ import { getCurrencyName, getExplorer } from '../../../utils';
 import { Button as SButton, Box } from '@stacks/ui'
 import { MdFileDownload } from 'react-icons/md';
 
-import lightningPayReq from 'bolt11';
-import { StacksTestnet, StacksMainnet, StacksMocknet } from '@stacks/network';
+// import lightningPayReq from 'bolt11';
+import { StacksTestnet, StacksMocknet } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
 import {
   bufferCV,
@@ -18,18 +18,18 @@ import {
   FungibleConditionCode,
   PostConditionMode,
   // createSTXPostCondition,
-  parsePrincipalString,
-  StacksMessageType,
-  PostConditionType
+  // parsePrincipalString,
+  // StacksMessageType,
+  // PostConditionType
 } from '@stacks/transactions';
 
-import bigInt from 'big-integer';
+// import bigInt from 'big-integer';
 import { BN } from 'bn.js';
 
 let mocknet = new StacksMocknet();
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
-const mainnet = new StacksMainnet();
+// const mainnet = new StacksMainnet();
 let network = mocknet
 network = testnet
 
@@ -105,15 +105,15 @@ const claimStx = async (
   // const contractAddress = 'SPBMRFRPPGCDE3F384WCJPK8PQJGZ8K9QKK7F59X';
   // const contractName = 'test-contract';
 
-  const postConditions = [
-    createSTXPostCondition(
-      // contractAddress,
-      // contractName,
-      swapResponse.lockupAddress,
-      postConditionCode,
-      postConditionAmount
-    )
-  ];
+  // const postConditions = [
+  //   createSTXPostCondition(
+  //     // contractAddress,
+  //     // contractName,
+  //     swapResponse.lockupAddress,
+  //     postConditionCode,
+  //     postConditionAmount
+  //   )
+  // ];
 
   console.log("postConditions: " + contractAddress, contractName, postConditionCode, postConditionAmount)
 
@@ -131,7 +131,7 @@ const claimStx = async (
     bufferCV(Buffer.from('01','hex')),
     bufferCV(Buffer.from(paddedtimelock,'hex')),
   ];
-  console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
+  // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
 
   // const functionArgs = [
   //   bufferCV(preimageHash),
@@ -182,72 +182,72 @@ const claimStx = async (
   // });
 }
 
-const createSTXPostCondition = (principal, conditionCode, amount) => {
-  if (typeof principal === 'string') {
-      principal = parsePrincipalString(principal);
-  }
-  return {
-      type: StacksMessageType.PostCondition,
-      conditionType: PostConditionType.STX,
-      principal,
-      conditionCode,
-      amount: intToBN(amount, false),
-  };
-}
-const intToBytes = (value, signed, byteLength) => {
-  return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
-}
-const intToBN = (value, signed) => {
-  const bigInt = intToBigInt(value, signed);
-  return new BN(bigInt.toString());
-}
-const intToBigInt = (value, signed) => {
-  if (typeof value === 'number') {
-      if (!Number.isInteger(value)) {
-          throw new RangeError(`Invalid value. Values of type 'number' must be an integer.`);
-      }
-      // console.log("156")
-      // return 157;
-      return bigInt(value);
-  }
-  if (typeof value === 'string') {
-      if (value.toLowerCase().startsWith('0x')) {
-          let hex = value.slice(2);
-          hex = hex.padStart(hex.length + (hex.length % 2), '0');
-          value = Buffer.from(hex, 'hex');
-      }
-      else {
-          try {
-            // return 168;
-              return bigInt(value);
-          }
-          catch (error) {
-              if (error instanceof SyntaxError) {
-                  throw new RangeError(`Invalid value. String integer '${value}' is not finite.`);
-              }
-          }
-      }
-  }
-  if (typeof value === 'bigint') {
-      return value;
-  }
-  if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
-      if (signed) {
-          const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
-          // return 184;
-          return bigInt(bn.toString());
-      }
-      else {
-          // return 188;
-          return bigInt(new BN(value, 'be').toString());
-      }
-  }
-  if (value instanceof BN || BN.isBN(value)) {
-      // return 193;
-      return bigInt(value.toString());
-  }
-  throw new TypeError(`Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`);
-}
+// const createSTXPostCondition = (principal, conditionCode, amount) => {
+//   if (typeof principal === 'string') {
+//       principal = parsePrincipalString(principal);
+//   }
+//   return {
+//       type: StacksMessageType.PostCondition,
+//       conditionType: PostConditionType.STX,
+//       principal,
+//       conditionCode,
+//       amount: intToBN(amount, false),
+//   };
+// }
+// const intToBytes = (value, signed, byteLength) => {
+//   return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
+// }
+// const intToBN = (value, signed) => {
+//   const bigInt = intToBigInt(value, signed);
+//   return new BN(bigInt.toString());
+// }
+// const intToBigInt = (value, signed) => {
+//   if (typeof value === 'number') {
+//       if (!Number.isInteger(value)) {
+//           throw new RangeError(`Invalid value. Values of type 'number' must be an integer.`);
+//       }
+//       // console.log("156")
+//       // return 157;
+//       return bigInt(value);
+//   }
+//   if (typeof value === 'string') {
+//       if (value.toLowerCase().startsWith('0x')) {
+//           let hex = value.slice(2);
+//           hex = hex.padStart(hex.length + (hex.length % 2), '0');
+//           value = Buffer.from(hex, 'hex');
+//       }
+//       else {
+//           try {
+//             // return 168;
+//               return bigInt(value);
+//           }
+//           catch (error) {
+//               if (error instanceof SyntaxError) {
+//                   throw new RangeError(`Invalid value. String integer '${value}' is not finite.`);
+//               }
+//           }
+//       }
+//   }
+//   if (typeof value === 'bigint') {
+//       return value;
+//   }
+//   if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
+//       if (signed) {
+//           const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
+//           // return 184;
+//           return bigInt(bn.toString());
+//       }
+//       else {
+//           // return 188;
+//           return bigInt(new BN(value, 'be').toString());
+//       }
+//   }
+//   if (value instanceof BN || BN.isBN(value)) {
+//       // return 193;
+//       return bigInt(value.toString());
+//   }
+//   throw new TypeError(`Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`);
+// }
 
 class LockingFunds extends React.Component {
   constructor() {
@@ -259,7 +259,8 @@ class LockingFunds extends React.Component {
   }
 
   render() {
-    const { classes, swapInfo, swapResponse, setAllowZeroConf, swapStatus } = this.props;
+    // setAllowZeroConf
+    const { classes, swapInfo, swapResponse, swapStatus } = this.props;
 
     console.log("lockingfunds.255 , ", swapResponse, swapStatus);
     const link = swapResponse
@@ -297,7 +298,7 @@ class LockingFunds extends React.Component {
             activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
           /> */}
         </p>
-        {swapStatus ? (<><p className={classes.texnotop}>Lockup is confirmed, you can now trigger 
+        {swapStatus !== 'Could not send onchain coins' ? (<><p className={classes.texnotop}>Lockup is confirmed, you can now trigger 
           claim contract call to finalize the swap and receive your STX.
           </p>
           <SButton

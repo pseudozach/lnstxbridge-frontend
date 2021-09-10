@@ -5,7 +5,7 @@ import { MdMenu } from 'react-icons/md';
 import View from '../view';
 import Button from '../button';
 import { navigation } from '../../actions';
-import { boltzOnion } from '../../constants';
+// import { boltzOnion } from '../../constants';
 const boltz_logo = require('../../asset/icons/scuba2.png');
 
 class MobileNavigationBar extends React.Component {

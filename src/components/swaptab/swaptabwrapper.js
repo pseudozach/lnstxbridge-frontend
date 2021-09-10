@@ -6,9 +6,10 @@ import { decimals } from '../../utils';
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
 
-import { StacksTestnet, StacksMainnet, StacksMocknet, StacksRegtest } from '@stacks/network';
-import { AppConfig, UserSession, showConnect, openContractCall, openContractDeploy } from '@stacks/connect';
-import { useConnect, doContractCall } from '@stacks/connect-react';
+// StacksRegtest, StacksMainnet
+import { StacksTestnet, StacksMocknet } from '@stacks/network';
+import { AppConfig, UserSession, showConnect, openContractCall } from '@stacks/connect';
+// import { useConnect, doContractCall } from '@stacks/connect-react';
 
 // import { useHandleClaimHey } from '../../utils/dotx'
 
@@ -38,8 +39,8 @@ import {
 // import { Signer, providers, Contract, Wallet } from 'ethers';
 
 import {
-  erc20tokenaddress,
-  rbtcswapaddress,
+  // erc20tokenaddress,
+  // rbtcswapaddress,
   erc20swapaddress,
 } from '../../constants';
 import { BN } from 'bn.js';
@@ -53,7 +54,7 @@ import bigInt from 'big-integer';
 const mocknet = new StacksMocknet({url: "http://localhost:3999"});
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
-const mainnet = new StacksMainnet();
+// const mainnet = new StacksMainnet();
 // const regtest = new StacksRegtest();
 // regtest.coreApiUrl = 'http://localhost:3999';
 let activeNetwork = mocknet
@@ -103,9 +104,9 @@ class SwapTabWrapper extends React.Component {
   }
 
   connectWallet = async () => {
-    const providerOptions = {
-      /* See Provider Options Section */
-    };
+    // const providerOptions = {
+    //   /* See Provider Options Section */
+    // };
 
     const web3Modal = new Web3Modal({
       // network: "mainnet", // optional
@@ -189,7 +190,7 @@ class SwapTabWrapper extends React.Component {
     const postConditions = [
       this.createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
     ];
-    console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
+    // console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
     // bufferCV(Buffer.from('00000000000000000000000000100000','hex')), -> 1 STX == 1048576₁₀
 
       // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
@@ -212,7 +213,7 @@ class SwapTabWrapper extends React.Component {
       // stringUtf8CV('hey-utf8'),
       // trueCV(),
     ];
-    console.log("functionArgs: ", JSON.stringify(functionArgs));
+    // console.log("functionArgs: ", JSON.stringify(functionArgs));
     // return false;
     const options = {
       network: activeNetwork,
@@ -370,8 +371,8 @@ class SwapTabWrapper extends React.Component {
     // const signer = this.connectEthereum(this.provider, this.provider.address);
     // const { etherSwap, erc20Swap, token } = this.getContracts(signer);
   
-    const preimageHash = "this.getHexBuffer(argv.preimageHash)";
-    const amount = "BigNumber.from(argv.amount).mul(etherDecimals)";
+    // const preimageHash = "this.getHexBuffer(argv.preimageHash)";
+    // const amount = "BigNumber.from(argv.amount).mul(etherDecimals)";
   
     const boltzAddress = "await getBoltzAddress()";
     console.log("boltzAddress: ", boltzAddress);
@@ -381,8 +382,8 @@ class SwapTabWrapper extends React.Component {
       return;
     }
   
-    var erc20swapabi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"preimage","type":"bytes32"}],"name":"Claim","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"tokenAddress","type":"address"},{"indexed":false,"internalType":"address","name":"claimAddress","type":"address"},{"indexed":true,"internalType":"address","name":"refundAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"Lockup","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"}],"name":"Refund","type":"event"},{"inputs":[{"internalType":"bytes32","name":"preimage","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"hashValues","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lock","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address payable","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lockPrepayMinerfee","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"refund","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"swaps","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"}];
-    var erc20swapcontract = this.web3.eth.contract(erc20swapabi).at(erc20swapaddress);
+    // var erc20swapabi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"preimage","type":"bytes32"}],"name":"Claim","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"tokenAddress","type":"address"},{"indexed":false,"internalType":"address","name":"claimAddress","type":"address"},{"indexed":true,"internalType":"address","name":"refundAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"Lockup","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"preimageHash","type":"bytes32"}],"name":"Refund","type":"event"},{"inputs":[{"internalType":"bytes32","name":"preimage","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"address","name":"refundAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"hashValues","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lock","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address payable","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"lockPrepayMinerfee","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"preimageHash","type":"bytes32"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"tokenAddress","type":"address"},{"internalType":"address","name":"claimAddress","type":"address"},{"internalType":"uint256","name":"timelock","type":"uint256"}],"name":"refund","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"swaps","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"}];
+    // var erc20swapcontract = this.web3.eth.contract(erc20swapabi).at(erc20swapaddress);
 
     console.log("web3.eth.accounts[0] ", this.web3.eth.accounts[0]);
     

@@ -1,15 +1,15 @@
-import axios from 'axios';
+// import axios from 'axios';
 import qrcodeParser from 'qrcode-parser';
-import { ECPair, address, Transaction } from 'bitcoinjs-lib';
-import { constructRefundTransaction, detectSwap } from 'boltz-core';
-import { boltzApi } from '../constants';
+// import { ECPair, address, Transaction } from 'bitcoinjs-lib';
+// import { constructRefundTransaction, detectSwap } from 'boltz-core';
+// import { boltzApi } from '../constants';
 import * as actionTypes from '../constants/actions';
-import {
-  getHexBuffer,
-  getNetwork,
-  // getFeeEstimation,
-  getExplorer,
-} from '../utils';
+// import {
+//   getHexBuffer,
+//   getNetwork,
+//   // getFeeEstimation,
+//   // getExplorer,
+// } from '../utils';
 
 const verifyRefundFile = (fileJSON, keys) => {
   const verify = keys.every(key =>
@@ -84,34 +84,34 @@ export const refundResponse = (success, response) => ({
   },
 });
 
-const createRefundTransaction = (
-  refundFile,
-  response,
-  destinationAddress,
-  currency,
-  feeEstimation
-) => {
-  const redeemScript = getHexBuffer(refundFile.redeemScript);
-  const lockupTransaction = Transaction.fromHex(response.data.transactionHex);
+// const createRefundTransaction = (
+//   refundFile,
+//   response,
+//   destinationAddress,
+//   currency,
+//   feeEstimation
+// ) => {
+//   const redeemScript = getHexBuffer(refundFile.redeemScript);
+//   const lockupTransaction = Transaction.fromHex(response.data.transactionHex);
 
-  // TODO: make sure the provided lockup transaction hash was correct and show more specific error if not
-  return {
-    refundTransaction: constructRefundTransaction(
-      [
-        {
-          redeemScript,
-          txHash: lockupTransaction.getHash(),
-          keys: ECPair.fromPrivateKey(getHexBuffer(refundFile.privateKey)),
-          ...detectSwap(redeemScript, lockupTransaction),
-        },
-      ],
-      address.toOutputScript(destinationAddress, getNetwork(currency)),
-      refundFile.timeoutBlockHeight,
-      feeEstimation[currency]
-    ),
-    lockupTransactionId: lockupTransaction.getId(),
-  };
-};
+//   // TODO: make sure the provided lockup transaction hash was correct and show more specific error if not
+//   return {
+//     refundTransaction: constructRefundTransaction(
+//       [
+//         {
+//           redeemScript,
+//           txHash: lockupTransaction.getHash(),
+//           keys: ECPair.fromPrivateKey(getHexBuffer(refundFile.privateKey)),
+//           ...detectSwap(redeemScript, lockupTransaction),
+//         },
+//       ],
+//       address.toOutputScript(destinationAddress, getNetwork(currency)),
+//       refundFile.timeoutBlockHeight,
+//       feeEstimation[currency]
+//     ),
+//     lockupTransactionId: lockupTransaction.getId(),
+//   };
+// };
 
 export const startRefund = (
   // refundFile,

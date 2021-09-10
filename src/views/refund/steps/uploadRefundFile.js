@@ -3,10 +3,10 @@ import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 import { FaCheckCircle } from 'react-icons/fa';
 import View from '../../../components/view';
-import InputArea from '../../../components/inputarea';
+// import InputArea from '../../../components/inputarea';
 import DropZone from '../../../components/dropzone';
 import FileUpload from '../../../components/fileupload';
-import { lockupTransactionHash } from '../../../constants';
+// import { lockupTransactionHash } from '../../../constants';
 
 const UploadRefundFileStyles = theme => ({
   wrapper: {

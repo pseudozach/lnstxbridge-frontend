@@ -3,14 +3,15 @@ import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import View from '../../../components/view';
 // import Link from '../../../components/link';
-import QrCode from '../../../components/qrcode';
+// import QrCode from '../../../components/qrcode';
 import { toWholeCoins} from '../../../utils';
 // , copyToClipBoard, lockFunds, getExplorerTransactionUrl, setExplorerTransactionUrl 
 // import { triggerLockStx } from '../../../utils/dotx'
 // import lockStx from '../../../components/swaptab/swaptabwrapper';
 
-import { StacksTestnet, StacksMainnet, StacksMocknet } from '@stacks/network';
-import { AppConfig, UserSession, showConnect, openContractCall, openContractDeploy } from '@stacks/connect';
+import { StacksTestnet, StacksMocknet } from '@stacks/network';
+// StacksMainnet, 
+import { openContractCall } from '@stacks/connect';
 // import { useConnect, doContractCall } from '@stacks/connect-react';
 
 import { Button as SButton, Box } from '@stacks/ui'
@@ -45,12 +46,12 @@ import { BN } from 'bn.js';
 let mocknet = new StacksMocknet();
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
-const mainnet = new StacksMainnet();
+// const mainnet = new StacksMainnet();
 let activeNetwork = mocknet
 activeNetwork = testnet
 
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
+// const appConfig = new AppConfig(['store_write', 'publish_data']);
+// const userSession = new UserSession({ appConfig });
 
 // let explorerTransactionUrl = '';
 
@@ -167,7 +168,7 @@ async function lockStx (swapInfo, swapResponse) {
   for (let index = 0; index < obj.length; index++) {
       const tag = obj[index];
       // console.log("tag: ", tag);
-      if(tag.tagName == "payment_hash"){
+      if(tag.tagName === "payment_hash"){
           // console.log("yay: ", tag.data);
           var paymenthash = tag.data;
       }
@@ -219,7 +220,7 @@ async function lockStx (swapInfo, swapResponse) {
     bufferCV(Buffer.from('01','hex')),
     bufferCV(Buffer.from(paddedtimelock,'hex')),
   ];
-  console.log("functionArgs: ", JSON.stringify(functionArgs));
+  // console.log("functionArgs: ", JSON.stringify(functionArgs));
   // return false;
   const options = {
     network: activeNetwork,
@@ -239,7 +240,7 @@ async function lockStx (swapInfo, swapResponse) {
       console.log('Transaction ID:', data.txId);
       console.log('Raw transaction:', data.txRaw);
       let explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId;
-      if(activeNetwork==testnet) {
+      if(activeNetwork===testnet) {
         explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
       }
       console.log('View transaction in explorer:', explorerTransactionUrl);
@@ -277,9 +278,9 @@ function createSTXPostCondition(principal, conditionCode, amount) {
       amount: intToBN(amount, false),
   };
 }
-function intToBytes(value, signed, byteLength) {
-  return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
-}
+// function intToBytes(value, signed, byteLength) {
+//   return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
+// }
 function intToBN(value, signed) {
   const bigInt = intToBigInt(value, signed);
   return new BN(bigInt.toString());
@@ -460,6 +461,7 @@ const StyledSendTransaction = ({ classes, swapInfo, swapResponse }) => (
           If the address does not work with your wallet:{' '}
           <a
             target={'_blank'}
+            rel="noopener noreferrer"
             href="https://litecoin-project.github.io/p2sh-convert/"
           >
             use this tool
@@ -507,7 +509,7 @@ const StyledSendTransaction = ({ classes, swapInfo, swapResponse }) => (
       ) : null}
 
       <a 
-        href=''
+        href='.'
         className={classes.hidden}
         target="_blank">View Lock Transaction on Explorer
       </a>

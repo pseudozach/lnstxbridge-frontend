@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import InjectSheet from 'react-jss';
 import { crypto } from 'bitcoinjs-lib';
 import ReactNotification from 'react-notifications-component';
-import View from '../../components/view';
+// import View from '../../components/view';
 import { getHexString } from '../../utils';
 import BackGround from '../../components/background';
 import LandingPageWrapper from './landingPageWrapper';

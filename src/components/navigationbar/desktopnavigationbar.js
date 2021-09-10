@@ -4,7 +4,8 @@ import injectSheet from 'react-jss';
 import View from '../view';
 import Button from '../button';
 import { navigation } from '../../actions';
-import { network, boltzOnion } from '../../constants';
+import { network } from '../../constants';
+// boltzOnion
 
 // boltz_logo
 const boltz_logo = require('../../asset/icons/scuba2.png');

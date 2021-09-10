@@ -81,7 +81,7 @@ class StyledDownloadRefund extends React.Component {
     for (let index = 0; index < obj.length; index++) {
         const tag = obj[index];
         // console.log("tag: ", tag);
-        if(tag.tagName == "payment_hash"){
+        if(tag.tagName === "payment_hash"){
             // console.log("yay: ", tag.data);
             var paymenthash = tag.data;
         }
