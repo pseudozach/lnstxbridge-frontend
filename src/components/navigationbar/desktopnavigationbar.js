@@ -20,7 +20,7 @@ const DeskTopNavigationBar = ({ classes }) => (
         className={classes.img}
         alt="logo"
       />
-      <span className={classes.logoText}>Stacks.Swap</span>
+      <span className={classes.logoText}>LNStacks.Swap</span>
       <span className={classes.subLogoText}>{network} beta</span>
     </View>
     <View className={classes.buttons}>

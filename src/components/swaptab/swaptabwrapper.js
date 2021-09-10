@@ -144,7 +144,7 @@ class SwapTabWrapper extends React.Component {
 
     showConnect({
         appDetails: {
-          name: 'Stacks.Swap',
+          name: 'LNStacks.Swap',
           icon: window.location.origin + '/favicon.ico',
         },
         redirectTo: '/',
