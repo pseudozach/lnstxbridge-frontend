@@ -227,7 +227,7 @@ async function lockStx (swapInfo, swapResponse) {
     bufferCV(Buffer.from('01','hex')),
     bufferCV(Buffer.from('01','hex')),
     bufferCV(Buffer.from(paddedtimelock,'hex')),
-    standardPrincipalCV(swapInfo.address),
+    standardPrincipalCV(swapResponse.claimAddress),
   ];
   // console.log("functionArgs: ", JSON.stringify(functionArgs));
   // return false;
