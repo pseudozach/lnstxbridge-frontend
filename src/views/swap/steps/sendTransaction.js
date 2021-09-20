@@ -10,7 +10,7 @@ import { stacksNetworkType } from '../../../constants';
 // import { triggerLockStx } from '../../../utils/dotx'
 // import lockStx from '../../../components/swaptab/swaptabwrapper';
 
-import { StacksTestnet, StacksMocknet } from '@stacks/network';
+import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 // StacksMainnet, 
 import { openContractCall } from '@stacks/connect';
 // import { useConnect, doContractCall } from '@stacks/connect-react';
