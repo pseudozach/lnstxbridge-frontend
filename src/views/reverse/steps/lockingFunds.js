@@ -30,7 +30,7 @@ import { BN } from 'bn.js';
 let mocknet = new StacksMocknet();
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
-// const mainnet = new StacksMainnet();
+const mainnet = new StacksMainnet();
 let activeNetwork = mocknet
 
 if(stacksNetworkType==="mocknet"){
