@@ -2,6 +2,7 @@ import React from 'react';
 import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 import View from '../../../components/view';
+import { stacksNetworkType } from '../../../constants';
 // import InputArea from '../../../components/inputarea';
 // import { getCurrencyName, getSampleAddress } from '../../../utils';
 
@@ -10,7 +11,7 @@ import { MdFileDownload } from 'react-icons/md';
 
 // import lightningPayReq from 'bolt11';
 // StacksMainnet
-import { StacksTestnet, StacksMocknet } from '@stacks/network';
+import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
 import {
   bufferCV,
@@ -29,9 +30,16 @@ import { BN } from 'bn.js';
 let mocknet = new StacksMocknet();
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
-// const mainnet = new StacksMainnet();
-let activeNetwork = mocknet
-activeNetwork = testnet
+const mainnet = new StacksMainnet();
+let activeNetwork = mocknet;
+
+if(stacksNetworkType==="mocknet"){
+  activeNetwork = mocknet
+} else if(stacksNetworkType==="testnet"){
+  activeNetwork = testnet
+} else if(stacksNetworkType==="mainnet"){
+  activeNetwork = mainnet
+}
 
 
 const InputDestinationAddressStyles = theme => ({

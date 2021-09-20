@@ -29,6 +29,9 @@ export const ServiceWarnings = {
 // Onion URL
 export const boltzOnion = process.env.REACT_APP_BOLTZ_ONION;
 
+// Network Type
+export const stacksNetworkType = process.env.REACT_APP_STACKS_NETWORK_TYPE;
+
 // API endpoint; will be set to the onion endpoint if Boltz is accessed via Tor
 const splitHost = window.location.hostname.split('.');
 

@@ -5,12 +5,13 @@ import injectSheet from 'react-jss';
 import Link from '../../../components/link';
 import View from '../../../components/view';
 import { getCurrencyName, getExplorer } from '../../../utils';
+import { stacksNetworkType } from '../../../constants';
 
 import { Button as SButton, Box } from '@stacks/ui'
 import { MdFileDownload } from 'react-icons/md';
 
 // import lightningPayReq from 'bolt11';
-import { StacksTestnet, StacksMocknet } from '@stacks/network';
+import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
 import {
   bufferCV,
@@ -30,8 +31,15 @@ let mocknet = new StacksMocknet();
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
 // const mainnet = new StacksMainnet();
-let network = mocknet
-network = testnet
+let activeNetwork = mocknet
+
+if(stacksNetworkType==="mocknet"){
+  activeNetwork = mocknet
+} else if(stacksNetworkType==="testnet"){
+  activeNetwork = testnet
+} else if(stacksNetworkType==="mainnet"){
+  activeNetwork = mainnet
+}
 
 const styles = () => ({
   wrapper: {
@@ -147,7 +155,7 @@ const claimStx = async (
     functionName: 'claimStx',
     functionArgs: functionArgs,
     // validateWithAbi: true,
-    network,
+    network: activeNetwork,
     postConditionMode: PostConditionMode.Allow,
     // postConditions,
     // anchorMode: AnchorMode.Any,

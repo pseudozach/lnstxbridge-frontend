@@ -5,6 +5,7 @@ import View from '../../../components/view';
 // import Link from '../../../components/link';
 // import QrCode from '../../../components/qrcode';
 import { toWholeCoins} from '../../../utils';
+import { stacksNetworkType } from '../../../constants';
 // , copyToClipBoard, lockFunds, getExplorerTransactionUrl, setExplorerTransactionUrl 
 // import { triggerLockStx } from '../../../utils/dotx'
 // import lockStx from '../../../components/swaptab/swaptabwrapper';
@@ -46,9 +47,16 @@ import { BN } from 'bn.js';
 let mocknet = new StacksMocknet();
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
-// const mainnet = new StacksMainnet();
+const mainnet = new StacksMainnet();
 let activeNetwork = mocknet
-activeNetwork = testnet
+
+if(stacksNetworkType==="mocknet"){
+  activeNetwork = mocknet
+} else if(stacksNetworkType==="testnet"){
+  activeNetwork = testnet
+} else if(stacksNetworkType==="mainnet"){
+  activeNetwork = mainnet
+}
 
 // const appConfig = new AppConfig(['store_write', 'publish_data']);
 // const userSession = new UserSession({ appConfig });

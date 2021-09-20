@@ -1,13 +1,13 @@
 import React from 'react';
 import BigNumber from 'bignumber.js';
 import PropTypes from 'prop-types';
-import { network, ServiceWarnings } from '../../constants';
+import { network, ServiceWarnings, stacksNetworkType } from '../../constants';
 import { decimals } from '../../utils';
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
 
 // StacksRegtest, StacksMainnet
-import { StacksTestnet, StacksMocknet } from '@stacks/network';
+import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 import { AppConfig, UserSession, showConnect, openContractCall } from '@stacks/connect';
 // import { useConnect, doContractCall } from '@stacks/connect-react';
 
@@ -54,11 +54,19 @@ import bigInt from 'big-integer';
 const mocknet = new StacksMocknet({url: "http://localhost:3999"});
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
-// const mainnet = new StacksMainnet();
+const mainnet = new StacksMainnet();
 // const regtest = new StacksRegtest();
 // regtest.coreApiUrl = 'http://localhost:3999';
-let activeNetwork = mocknet
-activeNetwork = testnet
+let activeNetwork = mocknet;
+
+if(stacksNetworkType==="mocknet"){
+  activeNetwork = mocknet
+} else if(stacksNetworkType==="testnet"){
+  activeNetwork = testnet
+} else if(stacksNetworkType==="mainnet"){
+  activeNetwork = mainnet
+}
+
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
