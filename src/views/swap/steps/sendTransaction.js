@@ -216,7 +216,8 @@ async function lockStx (swapInfo, swapResponse) {
     )
   ];
 
-  // console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
+  // typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike
+  console.log("postConditions: ", postConditions);
 
     // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
   const functionArgs = [
