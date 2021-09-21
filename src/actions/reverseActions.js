@@ -230,7 +230,8 @@ const handleReverseSwapStatus = (
   console.log("reverseactions status: ", status);
   switch (status) {
     case SwapUpdateEvent.TransactionMempool:
-      console.log(data);
+      console.log("reverseactions data: ", data);
+      // dispatch(setReverseSwapStatus('Lockup is in mempool'));
       dispatch(
         reverseSwapResponse(true, {
           transactionId: data.transaction.id,
