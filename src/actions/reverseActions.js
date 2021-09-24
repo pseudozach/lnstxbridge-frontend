@@ -245,6 +245,7 @@ const handleReverseSwapStatus = (
     case SwapUpdateEvent.TransactionConfirmed:
       // dont close the source - wait for invoice.settled
       // source.close();
+      dispatch(setReverseSwapStatus('Transaction confirmed'));
 
       claimSwap(dispatch, nextStage, swapInfo, {
         ...response,

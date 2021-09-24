@@ -306,7 +306,7 @@ class LockingFunds extends React.Component {
             activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
           /> */}
         </p>
-        {(swapStatus !== 'Could not send onchain coins' || swapStatus !== 'Waiting for confirmation...') ? (<><p className={classes.texnotop}>Lockup is confirmed, you can now trigger 
+        {(swapStatus !== 'Could not send onchain coins' && swapStatus !== 'Waiting for confirmation...') ? (<><p className={classes.texnotop}>Lockup is confirmed, you can now trigger 
           claim contract call to finalize the swap and receive your STX.
           </p>
           <SButton
