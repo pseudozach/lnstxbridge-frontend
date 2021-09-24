@@ -36,7 +36,7 @@ class MobileNavigationBar extends React.Component {
               className={classes.img}
               alt="logo"
             />
-            <span className={classes.logoText}>LNStacks.Swap</span>
+            <span className={classes.logoText}>LNswap.org</span>
           </View>
           <MdMenu
             onClick={() => this.toggleMenu()}
