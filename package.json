@@ -15,11 +15,10 @@
     "extends": "react-app"
   },
   "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all",
-    "not chrome 91"
+    "last 2 chrome version",
+    "last 2 firefox version",
+    "last 2 safari version",
+    "last 2 edge version"
   ],
   "license": "AGPL-3.0",
   "repository": {
@@ -68,8 +67,12 @@
     "webln": "^0.2.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "@babel/plugin-proposal-optional-chaining": "^7.14.5",
+    "@babel/plugin-syntax-bigint": "^7.8.3",
     "@babel/plugin-syntax-decorators": "^7.14.5",
     "babel-eslint": "^10.1.0",
+    "babel-preset-es2020": "^1.0.2",
     "conventional-changelog": "^3.1.24",
     "conventional-changelog-cli": "^2.1.1",
     "eslint-config-google": "^0.13.0",
