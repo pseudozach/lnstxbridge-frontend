@@ -4,6 +4,7 @@
   "scripts": {
     "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
+    "production": "serve -p 443 --ssl-cert fullchain.pem --ssl-key privkey.pem -s build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src",
