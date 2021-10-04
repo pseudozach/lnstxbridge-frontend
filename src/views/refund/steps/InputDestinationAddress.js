@@ -21,7 +21,8 @@ import {
   // createSTXPostCondition,
   parsePrincipalString,
   StacksMessageType,
-  PostConditionType
+  PostConditionType,
+  createContractPrincipal,
 } from '@stacks/transactions';
 
 import bigInt from 'big-integer';
@@ -84,7 +85,8 @@ async function refundStx (refundFile, setRefundTransactionHash, setDestinationAd
 
   // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
   let swapamount = refundFile.amount.toString(16).split(".")[0] + "";
-  let postconditionamount = refundFile.amount + 100000
+  // let postconditionamount = refundFile.amount + 100000
+  let postconditionamount = Math.ceil(parseInt(refundFile.amount));
   // 199610455 -> 199 STX
   console.log("swapamount, postconditionamount: ", swapamount, postconditionamount);
   let paddedamount = swapamount.padStart(32, "0");
@@ -95,9 +97,18 @@ async function refundStx (refundFile, setRefundTransactionHash, setDestinationAd
   const postConditionAddress = stxcontractaddress;
   const postConditionCode = FungibleConditionCode.LessEqual;
   const postConditionAmount = new BN(postconditionamount);
+  // const postConditions = [
+  //   createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+  // ];
   const postConditions = [
-    createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+    makeContractSTXPostCondition(
+      postConditionAddress,
+      stxcontractname,
+      postConditionCode,
+      postConditionAmount
+    )
   ];
+
   console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
 
     // (claimStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
@@ -136,6 +147,19 @@ async function refundStx (refundFile, setRefundTransactionHash, setDestinationAd
   };
   console.log("options: ", options);
   await openContractCall(options);
+}
+
+function makeContractSTXPostCondition(
+  address,
+  contractName,
+  conditionCode,
+  amount
+) {
+  return createSTXPostCondition(
+    createContractPrincipal(address, contractName),
+    conditionCode,
+    amount
+  );
 }
 
 function createSTXPostCondition(principal, conditionCode, amount) {

@@ -12,7 +12,7 @@ import { stacksNetworkType } from '../../../constants';
 
 import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 // StacksMainnet, 
-import { openContractCall } from '@stacks/connect';
+import { openContractCall, UserSession } from '@stacks/connect';
 // import { useConnect, doContractCall } from '@stacks/connect-react';
 
 import { Button as SButton, Box } from '@stacks/ui'
@@ -59,7 +59,8 @@ if(stacksNetworkType==="mocknet"){
 }
 
 // const appConfig = new AppConfig(['store_write', 'publish_data']);
-// const userSession = new UserSession({ appConfig });
+// { appConfig }
+const userSession = new UserSession();
 
 // let explorerTransactionUrl = '';
 
@@ -185,7 +186,8 @@ async function lockStx (swapInfo, swapResponse) {
 
   console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
   let swapamount = (parseInt(swapResponse.expectedAmount) / 100).toString(16).split(".")[0] + "";
-  let postconditionamount = (parseInt(swapResponse.expectedAmount) / 100) *1000;
+  let postconditionamount = Math.ceil(parseInt(swapResponse.expectedAmount) / 100);
+  // *1000
   // 199610455 -> 199 STX
   console.log("swapamount, postconditionamount: ", swapamount, postconditionamount);
   let paddedamount = swapamount.padStart(32, "0");
@@ -193,7 +195,15 @@ async function lockStx (swapInfo, swapResponse) {
   let paddedtimelock = Number(swapResponse.timeoutBlockHeight).toString(16).padStart(32, "0");
   console.log("paddedamount, paddedtimelock: ", paddedamount, paddedtimelock);
 
-  const postConditionAddress = stxcontractaddress;
+  let userData = userSession.loadUserData();
+  
+  let postConditionAddress = stxcontractaddress;
+  if(activeNetwork===mainnet){
+    postConditionAddress = userData.profile.stxAddress.mainnet;
+  } else {
+    postConditionAddress = userData.profile.stxAddress.testnet;
+  }
+
   const postConditionCode = FungibleConditionCode.LessEqual;
   const postConditionAmount = new BN(postconditionamount);
   // const postConditionAmount = new BigNumber(2000000)
@@ -203,21 +213,21 @@ async function lockStx (swapInfo, swapResponse) {
   // ];
 
   // it was working before - not anymore
-  // const postConditions = [
-  //   createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
-  // ];
-
   const postConditions = [
-    makeContractSTXPostCondition(
-      postConditionAddress,
-      stxcontractname,
-      postConditionCode,
-      postConditionAmount
-    )
+    createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
   ];
 
+  // const postConditions = [
+  //   makeContractSTXPostCondition(
+  //     postConditionAddress,
+  //     stxcontractname,
+  //     postConditionCode,
+  //     postConditionAmount
+  //   )
+  // ];
+
   // typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike
-  console.log("postConditions: ", postConditions);
+  console.log("postConditions: ", postConditionAddress, postConditions);
 
     // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
   const functionArgs = [
@@ -243,8 +253,8 @@ async function lockStx (swapInfo, swapResponse) {
       icon: window.location.origin + './favicon.ico',
     },
     // authOrigin: "localhost:3888",
-    // postConditions,
-    postConditionMode: PostConditionMode.Allow,
+    postConditions,
+    // postConditionMode: PostConditionMode.Allow,
     onFinish: data => {
       console.log('Stacks Transaction:', data.stacksTransaction);
       console.log('Transaction ID:', data.txId);
