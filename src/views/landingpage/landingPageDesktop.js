@@ -76,7 +76,7 @@ const LandingPageDeskTopContent = ({
               );
 
               const preimage = randomBytes(32);
-              console.log("generated preimage: ", preimage);
+              // console.log("generated preimage: ", preimage);
               console.log("preimage, preimagehash: ", getHexString(preimage), getHexString(crypto.sha256(preimage)));
 
               if (state.isReverseSwap) {

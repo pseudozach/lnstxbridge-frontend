@@ -331,7 +331,7 @@ const startListening = (
   };
 
   source.onmessage = event => {
-    console.log("reverseactions onmessage");
+    // console.log("reverseactions onmessage");
     handleReverseSwapStatus(
       JSON.parse(event.data),
       source,
