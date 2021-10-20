@@ -97,7 +97,7 @@ const claimStx = async (
 
   // this is wrong
   // let decimalamount = parseInt(amount.toString(),16)
-  console.log("amount, decimalamount: ", amount)
+  console.log("amount: ", amount)
   // let smallamount = decimalamount
   // .div(etherDecimals)
   // let smallamount = amount.toNumber();
@@ -105,7 +105,7 @@ const claimStx = async (
   console.log("smallamount: " + smallamount)
 
   let swapamount = smallamount.toString(16).split(".")[0] + "";
-  let postConditionAmount = Math.ceil(parseInt(swapResponse.expectedAmount) / 100);
+  let postConditionAmount = Math.ceil(parseInt(swapResponse.onchainAmount) / 100);
   console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
 
