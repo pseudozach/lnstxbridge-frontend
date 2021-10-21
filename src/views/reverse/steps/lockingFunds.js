@@ -105,7 +105,7 @@ const claimStx = async (
   console.log("smallamount: " + smallamount)
 
   let swapamount = smallamount.toString(16).split(".")[0] + "";
-  let postConditionAmount = Math.ceil(parseInt(swapResponse.onchainAmount) / 100);
+  let postConditionAmount = new BN(Math.ceil(parseInt(swapResponse.onchainAmount) / 100));
   console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
 
