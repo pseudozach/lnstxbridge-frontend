@@ -175,8 +175,8 @@ const claimStx = async (
     functionArgs: functionArgs,
     // validateWithAbi: true,
     network: activeNetwork,
-    postConditionMode: PostConditionMode.Allow,
-    // postConditions,
+    postConditionMode: PostConditionMode.Deny,
+    postConditions,
     // anchorMode: AnchorMode.Any,
     onFinish: data => {
       console.log('Stacks claim onFinish:', JSON.stringify(data));
