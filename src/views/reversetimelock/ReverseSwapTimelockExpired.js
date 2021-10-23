@@ -73,8 +73,8 @@ class ReverseSwapTimelockExpired extends React.Component {
                   The time lock of the onchain coins expired before they were
                   claimed. Therefore, we refunded the coins back to our platform
                   and aborted the Swap. Please report your Swap ID <i>{id}</i>{' '}
-                  <a href={'https://discordapp.com/invite/cq4dkwQ'}>here</a> to{' '}
-                  learn further details.
+                  <a href={'https://discord.gg/KGSgbJmY'}>here</a> to{' '}
+                  pseudozach#1633 for details.
                 </p>
               </View>
             </View>

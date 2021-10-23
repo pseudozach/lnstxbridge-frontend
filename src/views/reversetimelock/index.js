@@ -5,7 +5,7 @@ import ReverseSwapTimelockExpired from './ReverseSwapTimelockExpired';
 const mapStateToProps = state => ({
   id: state.dataStorage.id,
   asset: state.dataStorage.asset,
-  amount: state.dataStorage.amount,
+  amount: parseInt(state.dataStorage.amount),
 });
 
 const mapDispatchToProps = dispatch => ({
