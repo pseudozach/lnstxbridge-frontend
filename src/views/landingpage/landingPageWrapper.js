@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { requestProvider } from 'webln';
 import { notificationData } from '../../utils';
+import { getLastSwap } from '../../actions/landingPageActions';
 
 class LandingPageWrapper extends React.Component {
   constructor(props) {
@@ -9,12 +10,13 @@ class LandingPageWrapper extends React.Component {
 
     this.state = {
       isOpen: false,
+      lastSwap: {amount: '', link: ''},
     };
 
     this.notificationDom = React.createRef();
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     this.props.getPairs();
     requestProvider()
       .then(provider => {
@@ -24,6 +26,11 @@ class LandingPageWrapper extends React.Component {
       .catch(error => {
         console.log(`Could not enable WebLN: ${error}`);
       });
+    
+    let lastSwap = await getLastSwap();
+    // console.log(`landingpagewrapper.30 lastswap `, lastSwap)
+    this.setState({lastSwap: lastSwap})
+    // this.state.lastSwap = await getLastSwap()
   };
 
   componentDidUpdate = () => {
@@ -47,6 +54,7 @@ class LandingPageWrapper extends React.Component {
       toggleModal: this.toggleModal,
       notificationDom: this.notificationDom,
       webln: this.webln,
+      lastSwap: this.state.lastSwap,
     });
   }
 }

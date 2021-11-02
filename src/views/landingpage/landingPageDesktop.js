@@ -14,6 +14,8 @@ import NavigationBar from '../../components/navigationbar';
 import { bitcoinNetwork, litecoinNetwork } from '../../constants';
 import { generateKeys, randomBytes, navigation } from '../../actions';
 import { getHexString } from '../../utils';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 const boltz_logo = require('../../asset/icons/scuba2.png');
 
@@ -30,9 +32,12 @@ const LandingPageDeskTopContent = ({
   isOpen,
   webln,
   warnings,
+  lastSwap,
 }) => {
   const loading = currencies.length === 0;
-
+  
+  // let ls = await lastSwap();
+  // console.log(`landingpagedesktop.41 `, lastSwap);
 
   // <View className={classes.infoWrapper}>
   // <p className={classes.title}>
@@ -106,11 +111,39 @@ const LandingPageDeskTopContent = ({
           />
         )}
       </View>
+      <Carousel
+        autoFocus={false}
+        autoPlay={false}
+        showArrows={false}
+        showStatus={false}
+        showIndicators={false}
+        showThumbs={false}
+        className={classes.carousel}
+      >
+        <div>
+
+            {/* <img src="asset/scuba1.png" /> */}
+            {/* <p className="legend">Previous Swap Details: </p> */}
+            <a 
+              href={lastSwap.link}
+              target="_blank"
+              className={classes.carouseltext}>
+              Previous Swap Amount: {lastSwap.amount} STX  🔄
+            </a>
+        </div>
+      </Carousel>
     </BackGround>
   );
 };
 
 const styles = theme => ({
+  carouseltext: {
+    color: 'white',
+    textDecoration: 'none',
+  },
+  carousel: {
+    marginBottom: '1em',
+  },
   wrapper: {
     flex: '1 0 100%',
     alignItems: 'center',
@@ -172,6 +205,7 @@ LandingPageDeskTopContent.propTypes = {
   toggleModal: PropTypes.func,
   isOpen: PropTypes.bool,
   webln: PropTypes.object,
+  // lastSwap: PropTypes.object,
 };
 
 const LandingPageDeskTop = props => (
