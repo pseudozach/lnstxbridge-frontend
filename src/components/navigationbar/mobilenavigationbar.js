@@ -55,12 +55,12 @@ class MobileNavigationBar extends React.Component {
               text="Refund"
               onPress={() => navigation.navRefund()}
             />
-            {/* <Button
+            <Button
               className={classes.btn}
               text="FAQ"
               onPress={() => navigation.navFaq()}
             />
-            <Button
+            {/* <Button
               className={classes.btn}
               external
               text="Onion URL"

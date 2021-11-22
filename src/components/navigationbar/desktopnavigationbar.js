@@ -34,11 +34,11 @@ const DeskTopNavigationBar = ({ classes }) => (
         text="Refund"
         onPress={() => navigation.navRefund()}
       />
-      {/* <Button
+      <Button
         className={classes.responsiveBtn}
         text="FAQ"
         onPress={() => navigation.navFaq()}
-      /> */}
+      />
       {/* <Button
         className={classes.responsiveBtn}
         external

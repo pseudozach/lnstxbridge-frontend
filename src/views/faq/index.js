@@ -46,6 +46,7 @@ const styles = theme => ({
 });
 
 const twitterLink = 'https://twitter.com/boltzhq';
+const discordLink = 'https://discord.gg/kyNWQAUwY5';
 
 class Faq extends React.Component {
   render() {
@@ -62,18 +63,18 @@ class Faq extends React.Component {
           </View>
           <View className={classes.questionTab}>
             <Question
-              title={style => <h1 className={style}>What is Boltz?</h1>}
+              title={style => <h1 className={style}>What is LNSwap?</h1>}
               content={style => (
                 <p className={style}>
-                  Boltz is an instant and non custodial crypto currency exchange
-                  that focuses on the adoption of second layer scaling
-                  technologies like the Lightning network and the privacy of its
-                  users. We neither use any trackers nor log any data that could
-                  identify our users. <br /> <br />
-                  Please note that Boltz is currently in its alpha stage so dont
-                  be too reckless when using it. If you experience any issues or
-                  have some feedback feel free to{' '}
-                  <Link to={twitterLink} text={'contact us'} />.
+                  LNSwap is a non custodial crypto currency exchange that
+                  provides a fast, private way of swapping Bitcoin for Stacks
+                  and vice versa. We don't use any trackers or log any data that
+                  could identify our users. <br /> <br />
+                  Please note that this software is currently in alpha stage and
+                  is heavily worked on. If you experience any issues or have
+                  some feedback feel free to join{' '}
+                  <Link to={discordLink} text={'Stacks Discord'} /> and contact
+                  pseudozach#1633 .
                 </p>
               )}
             />
@@ -86,20 +87,20 @@ class Faq extends React.Component {
               content={style => (
                 <p className={style}>
                   Non custodial exchanges give you full control over your funds.
-                  All trades on Boltz are executed in a way that we cannot steal
-                  any money from you. Period.
+                  All trades on LNSwap are executed in a way that we cannot
+                  steal any money from you. Period.
                   <br />
                   <br />
                   Either the trade happens entirely and you get the exact amount
                   of the asset you were promised or you will be able to do a
                   refund. This concept is called <i>atomicity</i> and it is
-                  achieved by Boltz with so-called <i>Submarine Swaps</i>. You
-                  can read more about them in{' '}
+                  achieved with so-called <i>Submarine Swaps</i>. You can read
+                  more about them in{' '}
                   <Link
                     to={
                       'https://medium.com/boltzhq/submarine-swaps-c509ce0fb1db'
                     }
-                    text={'this blog post'}
+                    text={'this blog post from Boltz'}
                   />
                   {'.'}
                   <br />
@@ -108,32 +109,35 @@ class Faq extends React.Component {
                   source code and verify that the claims above are valid because
                   everything is open source and can be found on{' '}
                   <Link
-                    to={'https://github.com/boltzexchange'}
+                    to={'https://github.com/lnstxbridge'}
                     text={'our GitHub'}
                   />
-                  . Also we will soon add a version of our frontend that you can
-                  host yourself and connect to your own node easily.
                 </p>
               )}
             />
             <Question
               title={style => (
-                <h1 className={style}>What wallets are supported by Boltz?</h1>
+                <h1 className={style}>What wallets are supported by LNSwap?</h1>
               )}
               content={style => (
                 <p className={style}>
-                  All regular and Lightning wallets are supported by Boltz.
-                  Although we encourage you to run a full node and manage your
-                  own keys, there are custodial wallets solutions, like{' '}
-                  <Link to={'https://bluewallet.io/'} text={'BlueWallet'} />,
-                  that work out of the box and can make testing Boltz very easy.
+                  All regular and Lightning wallets are supported. Although we
+                  encourage you to run a full node and manage your own keys,
+                  there are custodial wallets solutions, like{' '}
+                  <Link to={'https://bluewallet.io/'} text={'BlueWallet'} /> or{' '}
+                  <Link
+                    to={'https://walletofsatoshi.com'}
+                    text={'Wallet of Satoshi'}
+                  />
+                  , that work out of the box and can make using LNSwap very
+                  easy.
                 </p>
               )}
             />
             <Question
               title={style => (
                 <h1 className={style}>
-                  How to open Lightning channels with Boltz?
+                  How to open Lightning channels with LNSwap?
                 </h1>
               )}
               content={style => (
@@ -147,12 +151,12 @@ class Faq extends React.Component {
                     uri={bitcoinLnd}
                     onionUri={bitcoinLndOnion}
                   />
-                  <NodeInfo
+                  {/* <NodeInfo
                     name={'LTC LND node'}
                     size={150}
                     uri={litecoinLnd}
                     onionUri={litecoinLndOnion}
-                  />
+                  /> */}
                 </p>
               )}
             />
@@ -167,6 +171,22 @@ class Faq extends React.Component {
                   which is a percentage of the traded amount and goes to our
                   pocket for providing a <i>(hopefully)</i> useful service to
                   our users.
+                </p>
+              )}
+            />
+            <Question
+              title={style => <h1 className={style}>Acknowledgements</h1>}
+              content={style => (
+                <p className={style}>
+                  * This work is supported by a grant from{' '}
+                  <Link
+                    to={'https://github.com/stacksgov/Stacks-Grants/issues/204'}
+                    text={'Stacks Foundation'}
+                  />
+                  . Feel free to provide comments/feedback/support/disapproval at the Foundation grant issue. 
+                  This will allow us to shape the way this bridge is developed/used in the future. <br/>
+                  * LN-STX Bridge is a fork of{' '}
+                  <Link to={'https://boltz.exchange'} text={'Boltz'} />.
                 </p>
               )}
             />
