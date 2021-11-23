@@ -142,9 +142,7 @@ class Faq extends React.Component {
               )}
               content={style => (
                 <p className={style}>
-                  We appreciate any channels you open with our Lightning nodes
-                  and <Link to={twitterLink} text={'on request'} /> we will also
-                  open one to you:
+                  We appreciate any channels you open with our Lightning nodes.
                   <NodeInfo
                     name={'BTC LND node'}
                     size={150}

@@ -23,6 +23,9 @@ import {
   StacksMessageType,
   PostConditionType,
   createContractPrincipal,
+  createAssetInfo,
+  makeContractFungiblePostCondition,
+  contractPrincipalCV,
 } from '@stacks/transactions';
 
 import bigInt from 'big-integer';
@@ -130,7 +133,114 @@ async function refundStx (refundFile, setRefundTransactionHash, setDestinationAd
     functionName: 'refundStx',
     functionArgs,
     appDetails: {
-      name: 'stxswap',
+      name: 'lnswap',
+      icon: window.location.origin + './favicon.ico',
+    },
+    // authOrigin: "localhost:3888",
+    postConditions,
+    onFinish: data => {
+      console.log('Stacks Transaction:', data.stacksTransaction);
+      console.log('Transaction ID:', data.txId);
+      console.log('Raw transaction:', data.txRaw);
+      const explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=';
+      console.log('View transaction in explorer:', explorerTransactionUrl);
+      // dispatch(setRefundTransactionHash(refundTransaction.getId()));
+      setDestinationAddress(data.txId);
+    },
+  };
+  console.log("options: ", options);
+  await openContractCall(options);
+}
+
+async function refundToken (refundFile, setRefundTransactionHash, setDestinationAddress) {
+  // console.log("enter refundstx action");
+//   amount: 2002777
+// currency: "STX"
+// preimageHash: "aa3ce25175bfcecd49e303177c8214feda7907821348883d4251a6446c8c43b9"
+// privateKey: "b0e08e2eeea8f1c9a165ed10d5f3455acb6de50a1c6549664666ed5744656f69"
+// timeoutBlockHeight: 19862
+// contract: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3_debug"
+  console.log("refundToken: ", refundFile, setRefundTransactionHash, setDestinationAddress);
+
+  let stxcontractaddress = refundFile.contract.split(".")[0];
+  let stxcontractname = refundFile.contract.split(".")[1];
+
+  let paymenthash = refundFile.preimageHash;
+
+  // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
+  let swapamount = refundFile.amount.toString(16).split(".")[0] + "";
+  // let postconditionamount = refundFile.amount + 100000
+  let postconditionamount = Math.ceil(parseInt(refundFile.amount));
+  // 199610455 -> 199 STX
+  console.log("swapamount, postconditionamount: ", swapamount, postconditionamount);
+  let paddedamount = swapamount.padStart(32, "0");
+
+  let paddedtimelock = Number(refundFile.timeoutBlockHeight).toString(16).padStart(32, "0");
+  console.log("paddedamount, paddedtimelock: ", paddedamount, paddedtimelock);
+
+  const postConditionAddress = stxcontractaddress;
+  const postConditionCode = FungibleConditionCode.LessEqual;
+  const postConditionAmount = new BN(postconditionamount);
+  // const postConditions = [
+  //   createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+  // ];
+
+  const tokenAddress = Buffer.from(refundFile.redeemScript, 'hex').toString('utf8');
+  console.log('refundFile tokenAddress: ', tokenAddress);
+
+  const assetAddress = tokenAddress.split('.')[0];
+  const assetContractName = tokenAddress.split('.')[1];
+  const assetName = assetContractName.split('-')[0];
+  const fungibleAssetInfo = createAssetInfo(
+    assetAddress,
+    assetContractName,
+    assetName
+  );
+
+  const standardFungiblePostCondition = makeContractFungiblePostCondition(
+    postConditionAddress,
+    stxcontractname,
+    postConditionCode,
+    postConditionAmount,
+    fungibleAssetInfo
+  );
+  const postConditions = [
+    // createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+    standardFungiblePostCondition,
+  ];
+  
+  // const postConditions = [
+  //   makeContractSTXPostCondition(
+  //     postConditionAddress,
+  //     stxcontractname,
+  //     postConditionCode,
+  //     postConditionAmount
+  //   )
+  // ];
+
+  console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
+
+    // (refundToken (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)) (tokenPrincipal <ft-trait>))
+  const functionArgs = [
+    // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+    // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
+    bufferCV(Buffer.from(paymenthash, 'hex')),
+    bufferCV(Buffer.from(paddedamount,'hex')),
+    bufferCV(Buffer.from('01','hex')),
+    bufferCV(Buffer.from('01','hex')),
+    bufferCV(Buffer.from(paddedtimelock,'hex')),
+    contractPrincipalCV(assetAddress, assetContractName),
+  ];
+  console.log("functionArgs: ", JSON.stringify(functionArgs));
+  // return false;
+  const options = {
+    network: activeNetwork,
+    contractAddress: stxcontractaddress,
+    contractName: stxcontractname,
+    functionName: 'refundToken',
+    functionArgs,
+    appDetails: {
+      name: 'lnswap',
       icon: window.location.origin + './favicon.ico',
     },
     // authOrigin: "localhost:3888",
@@ -253,7 +363,10 @@ const StyledInputDestinationAddress = ({
       position="relative"
       className={classes.sbuttoncl}
       // ref={ref}
-      onClick={() => refundStx(refundFile, setRefundTransactionHash, setDestinationAddress)}
+      onClick={() => currency === 'STX'
+        ? refundStx(refundFile, setRefundTransactionHash, setDestinationAddress)
+        : refundToken(refundFile, setRefundTransactionHash, setDestinationAddress)
+      }
       // onClick={refundStx}
       borderRadius="10px"
       // {...rest}
@@ -265,7 +378,7 @@ const StyledInputDestinationAddress = ({
         mr={'2px'}
       />
       <Box as="span" ml="2px" fontSize="large">
-        Refund STX
+        Refund {currency}
       </Box>
     </SButton>
 
