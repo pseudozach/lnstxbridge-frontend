@@ -135,7 +135,7 @@ export const startRefund = (
     dispatch(refundRequest());
 
     // go to nextstage
-    cb();
+    // cb();
 
     // axios
     //   .post(url, {
