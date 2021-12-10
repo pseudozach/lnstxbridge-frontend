@@ -36,7 +36,7 @@ import {
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
 
-let mocknet = new StacksMocknet({url: 'https://3999-kumquat-boar-xv11ysj9.ws-us23.gitpod.io'});
+let mocknet = new StacksMocknet();
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
 const mainnet = new StacksMainnet();
