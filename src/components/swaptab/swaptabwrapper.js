@@ -559,14 +559,14 @@ class SwapTabWrapper extends React.Component {
         return;
       }
 
-      if (!this.baseAsset.isLightning && !this.quoteAsset.isLightning) {
-        this.setState({
-          rate: undefined,
-          error: true,
-          errorMessage: 'Coming soon',
-        });
-        return;
-      }
+      // if (!this.baseAsset.isLightning && !this.quoteAsset.isLightning) {
+      //   this.setState({
+      //     rate: undefined,
+      //     error: true,
+      //     errorMessage: 'Coming soon',
+      //   });
+      //   return;
+      // }
 
       // Show an error for reverse swaps if they are disabled
       if (this.reverseSwapsDisabled && this.baseAsset.isLightning) {

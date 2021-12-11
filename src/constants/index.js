@@ -15,6 +15,12 @@ export const SwapUpdateEvent = {
   TransactionRefunded: 'transaction.refunded',
   TransactionConfirmed: 'transaction.confirmed',
 
+  ASTransactionFailed: 'astransaction.failed',
+  ASTransactionMempool: 'astransaction.mempool',
+  ASTransactionClaimed: 'astransaction.claimed',
+  ASTransactionRefunded: 'astransaction.refunded',
+  ASTransactionConfirmed: 'astransaction.confirmed',
+
   SwapExpired: 'swap.expired',
 };
 

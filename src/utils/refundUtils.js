@@ -17,7 +17,7 @@ export const createRefundQr = (
     timeoutBlockHeight,
     preimageHash,
     amount,
-    contract
+    contract,
   });
 
   const qr = new QRious({

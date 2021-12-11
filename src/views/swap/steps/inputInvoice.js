@@ -56,7 +56,12 @@ class StyledInputInvoice extends React.Component {
   }
 
   onChange = input => {
-    if (input.slice(0, 2) === 'ln' || input.slice(0, 10) === 'lightning:') {
+    // accepting STX address for atomic swaps now
+    if (
+      input.slice(0, 2) === 'ln' ||
+      input.slice(0, 10) === 'lightning:' ||
+      input.slice(0, 1) === 'S'
+    ) {
       this.setState({ value: input, error: false }, () =>
         this.props.onChange(input, false)
       );
@@ -71,15 +76,23 @@ class StyledInputInvoice extends React.Component {
     const { error } = this.state;
     const { classes, swapInfo } = this.props;
 
+    console.log('ii.74 ', swapInfo.quote);
+
+    const pasteText =
+      swapInfo.quote === 'BTC' ? 'Lightning invoice for ' : 'Address';
+    // <FaBolt size={25} color="#FFFF00" />
+
     return (
       <View className={classes.wrapper}>
         <p className={classes.title}>
-          Paste or scan a <b>{getCurrencyName(swapInfo.quote)}</b> Lightning {}
-          <FaBolt size={25} color="#FFFF00" /> invoice for <br />
-          <b>
-            {toSatoshi(swapInfo.quoteAmount)}{' '}
-            {getSmallestDenomination(swapInfo.quote)}
-          </b>
+          Paste or scan a <b>{getCurrencyName(swapInfo.quote)}</b> {pasteText}{' '}
+          <br />
+          {swapInfo.quote === 'BTC' ? (
+            <b>
+              {toSatoshi(swapInfo.quoteAmount)}{' '}
+              {getSmallestDenomination(swapInfo.quote)}
+            </b>
+          ) : null}
         </p>
         <InputArea
           width={600}

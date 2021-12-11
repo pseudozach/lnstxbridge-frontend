@@ -49,6 +49,7 @@ class Swap extends Component {
   };
 
   startSwap = cb => {
+    console.log('swap.js startswap ', this.props);
     if (this.props.swapInfo.invoice && this.props.retrySwap) {
       this.props.startSwap(this.props.swapInfo, cb);
     }

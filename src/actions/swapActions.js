@@ -19,6 +19,8 @@ export const initSwap = state => ({
     quoteAmount: state.quoteAmount,
     keys: state.keys,
     pair: state.pair,
+    preimage: state.preimage,
+    preimageHash: state.preimageHash,
   },
 });
 
@@ -49,30 +51,51 @@ export const swapRequest = () => ({
 
 export const startSwap = (swapInfo, cb) => {
   const url = `${boltzApi}/createswap`;
-  let { pair, invoice, keys } = swapInfo;
+  let { pair, invoice, keys, preimageHash, quoteAmount } = swapInfo;
 
   // Trim the "lightning:" prefix, that some wallets add in front of their invoices, if it exists
   if (invoice.slice(0, 10) === 'lightning:') {
     invoice = invoice.slice(10);
   }
+  console.log('atomic swap swapInfo', pair, swapInfo);
+
+  let reqobj;
+  if (pair.id == 'BTC/STX') {
+    reqobj = {
+      type: 'submarine',
+      pairId: pair.id,
+      orderSide: pair.orderSide,
+      claimAddress: invoice,
+      refundPublicKey: keys.publicKey,
+      preimageHash,
+      requestedAmount: parseInt(quoteAmount * 1000000) + '',
+    };
+  } else {
+    reqobj = {
+      type: 'submarine',
+      pairId: pair.id,
+      orderSide: pair.orderSide,
+      invoice: invoice,
+      refundPublicKey: keys.publicKey,
+    };
+  }
+
 
   return dispatch => {
     dispatch(swapRequest());
     console.log("submarine swap request: refundPublicKey", keys.publicKey);
     axios
-      .post(url, {
-        type: 'submarine',
-        pairId: pair.id,
-        orderSide: pair.orderSide,
-        invoice: invoice,
-        refundPublicKey: keys.publicKey,
-      })
+      .post(url, reqobj)
       .then(response => {
+        console.log('1esponse data ', response.data);
         dispatch(swapResponse(true, response.data));
+        console.log('2response data ', response.data);
         startListening(dispatch, response.data.id, cb);
+        console.log('3response data ', response.data);
         cb();
       })
       .catch(error => {
+        console.log('catch error: ', error);
         const message = error.response.data.error;
 
         window.alert(`Failed to execute swap: ${message}`);
@@ -120,6 +143,25 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
     case SwapUpdateEvent.TransactionClaimed:
       source.close();
       callback();
+      break;
+
+    case SwapUpdateEvent.ASTransactionMempool:
+    case SwapUpdateEvent.TransactionMempool:
+      dispatch(
+        setSwapStatus({
+          pending: true,
+          message: 'Transaction is in mempool...',
+        })
+      );
+      break;
+
+    case SwapUpdateEvent.ASTransactionConfirmed:
+      dispatch(
+        setSwapStatus({
+          pending: true,
+          message: 'Atomic Swap is ready',
+        })
+      );
       break;
 
     default:

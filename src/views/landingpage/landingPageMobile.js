@@ -65,6 +65,8 @@ const MobileLandingPageContent = ({
                 ...state,
                 keys,
                 webln,
+                preimage: getHexString(preimage),
+                preimageHash: getHexString(crypto.sha256(preimage)),
               });
 
               navigation.navSwap();

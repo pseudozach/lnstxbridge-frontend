@@ -74,18 +74,21 @@ class StyledDownloadRefund extends React.Component {
 
     // console.log("downloadrefund.74 ", swapInfo, swapResponse);
 
-    var decoded = lightningPayReq.decode(swapInfo.invoice)
-    // console.log("decoded: ", decoded);
-  
-    var obj = decoded.tags;
-    for (let index = 0; index < obj.length; index++) {
+    if (swapInfo.invoice.slice(0, 1) !== 'S') {
+      var decoded = lightningPayReq.decode(swapInfo.invoice);
+      // console.log("decoded: ", decoded);
+
+      var obj = decoded.tags;
+      for (let index = 0; index < obj.length; index++) {
         const tag = obj[index];
         // console.log("tag: ", tag);
-        if(tag.tagName === "payment_hash"){
-            // console.log("yay: ", tag.data);
-            var paymenthash = tag.data;
+        if (tag.tagName === 'payment_hash') {
+          // console.log("yay: ", tag.data);
+          var paymenthash = tag.data;
         }
+      }
     }
+
     // console.log("paymenthash: ", paymenthash);
     let contract = swapResponse.address;
 
@@ -103,8 +106,8 @@ class StyledDownloadRefund extends React.Component {
                 redeemScript,
                 timeoutBlockHeight,
                 paymenthash,
-                parseInt(swapResponse.expectedAmount/100),
-                contract,
+                parseInt(swapResponse.expectedAmount / 100),
+                contract
               )}
               download={'refund.png'}
             >
