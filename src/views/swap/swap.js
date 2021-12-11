@@ -19,7 +19,7 @@ const styles = () => ({
   },
   stackscolor: {
     backgroundColor: 'rgba(85,70,255,1)',
-  }
+  },
 });
 
 class Swap extends Component {
@@ -71,6 +71,7 @@ class Swap extends Component {
       swapResponse,
       swapStatus,
     } = this.props;
+    console.log('swap.js 74 ', swapStatus);
     return (
       <BackGround>
         <Prompt />
@@ -112,6 +113,7 @@ class Swap extends Component {
                   <SendTransaction
                     swapInfo={swapInfo}
                     swapResponse={swapResponse}
+                    swapStatus={swapStatus}
                   />
                 )}
               />
@@ -169,16 +171,18 @@ class Swap extends Component {
                     errorRender={() => {}}
                     loadingRender={() => <Loading />}
                     onPress={props.nextStage}
+                    swapStatus={swapStatus}
                   />
                 )}
               />
               <StepsWizard.Control
                 num={4}
                 render={() => (
-                  <Controls 
-                  text={'Swap Again!'} 
-                  className={classes.stackscolor}
-                  onPress={this.completeSwap} />
+                  <Controls
+                    text={'Swap Again!'}
+                    className={classes.stackscolor}
+                    onPress={this.completeSwap}
+                  />
                 )}
               />
             </StepsWizard.Controls>

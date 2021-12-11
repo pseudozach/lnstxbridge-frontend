@@ -21,7 +21,4 @@ const mapDispatchToProps = dispatch => ({
   startSwap: (info, cb) => dispatch(startSwap(info, cb)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Swap);
+export default connect(mapStateToProps, mapDispatchToProps)(Swap);

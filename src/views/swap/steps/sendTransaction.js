@@ -37,9 +37,10 @@ import {
   parsePrincipalString,
   StacksMessageType,
   PostConditionType,
-  // makeContractSTXPostCondition,
-  createContractPrincipal,
+  makeContractSTXPostCondition,
+  // createContractPrincipal,
   makeStandardFungiblePostCondition,
+  makeContractFungiblePostCondition,
   createAssetInfo,
   contractPrincipalCV,
 } from '@stacks/transactions';
@@ -83,6 +84,7 @@ const SendTransactionStyles = () => ({
     margin: 'auto',
     width: 'fit-content',
     padding: '15px',
+    marginBottom: '4px',
   },
   qrcode: {
     flexDirection: 'column',
@@ -133,6 +135,303 @@ const SendTransactionStyles = () => ({
     margin: 'auto',
   },
 });
+
+const claimStx = async (swapInfo, swapResponse) => {
+  console.log('claimStx begin ', swapInfo, swapResponse);
+
+  let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
+  let contractName = swapResponse.lockupAddress.split('.')[1];
+  console.log('claimStx ', contractAddress, contractName);
+
+  let preimage = swapInfo.preimage;
+  let amount = swapResponse.onchainAmount;
+  let timeLock = swapResponse.timeoutBlockHeight;
+
+  // ${getHexString(preimage)}
+  console.log(
+    `Claiming ${amount} Stx with preimage ${preimage} and timelock ${timeLock}`
+  );
+
+  // this is wrong
+  // let decimalamount = parseInt(amount.toString(),16)
+  console.log('amount: ', amount);
+  // let smallamount = decimalamount
+  // .div(etherDecimals)
+  // let smallamount = amount.toNumber();
+  let smallamount = parseInt(amount / 100) + 1;
+  console.log('smallamount: ' + smallamount);
+
+  let swapamount = smallamount.toString(16).split('.')[0] + '';
+  let postConditionAmount = new BN(
+    Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+  );
+  console.log(`postConditionAmount: ${postConditionAmount}`);
+  // *1000
+
+  // // Add an optional post condition
+  // // See below for details on constructing post conditions
+  const postConditionAddress = contractAddress;
+  const postConditionCode = FungibleConditionCode.LessEqual;
+  // // new BigNum(1000000);
+  // const postConditionAmount = new BN(100000);
+  // const postConditions = [
+  //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+  // ];
+
+  // With a contract principal
+  // const contractAddress = 'SPBMRFRPPGCDE3F384WCJPK8PQJGZ8K9QKK7F59X';
+  // const contractName = 'test-contract';
+
+  // const postConditions = [
+  //   createSTXPostCondition(
+  //     // contractAddress,
+  //     // contractName,
+  //     swapResponse.lockupAddress,
+  //     postConditionCode,
+  //     postConditionAmount
+  //   )
+  // ];
+
+  const postConditions = [
+    makeContractSTXPostCondition(
+      postConditionAddress,
+      contractName,
+      postConditionCode,
+      postConditionAmount
+    ),
+  ];
+
+  console.log(
+    'postConditions: ' + contractAddress,
+    contractName,
+    postConditionCode,
+    postConditionAmount
+  );
+
+  let paddedamount = swapamount.padStart(32, '0');
+  let paddedtimelock = timeLock.toString(16).padStart(32, '0');
+  console.log(
+    'amount, timelock ',
+    smallamount,
+    swapamount,
+    paddedamount,
+    paddedtimelock
+  );
+
+  // (claimStx (preimage (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)))
+  const functionArgs = [
+    // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+    bufferCV(Buffer.from(preimage, 'hex')),
+    bufferCV(Buffer.from(paddedamount, 'hex')),
+    bufferCV(Buffer.from('01', 'hex')),
+    bufferCV(Buffer.from('01', 'hex')),
+    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+  ];
+  // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
+
+  // const functionArgs = [
+  //   bufferCV(preimageHash),
+  //   bufferCV(Buffer.from('00000000000000000000000000100000','hex')),
+  //   bufferCV(Buffer.from('01','hex')),
+  //   bufferCV(Buffer.from('01','hex')),
+  //   bufferCV(Buffer.from('000000000000000000000000000012b3','hex')),
+  // ];
+
+  const txOptions = {
+    contractAddress: contractAddress,
+    contractName: contractName,
+    functionName: 'claimStx',
+    functionArgs: functionArgs,
+    // validateWithAbi: true,
+    network: activeNetwork,
+    postConditionMode: PostConditionMode.Deny,
+    postConditions,
+    // anchorMode: AnchorMode.Any,
+    onFinish: data => {
+      console.log('Stacks claim onFinish:', JSON.stringify(data));
+      // reverseSwapResponse(true, swapResponse);
+      // ??? enable this? so swap is marked completed?
+      // nextStage();
+    },
+    onCancel: data => {
+      console.log('Stacks claim onCancel:', JSON.stringify(data));
+      // reverseSwapResponse(false, swapResponse);
+      // nextStage();
+    },
+  };
+
+  // this.toObject(txOptions)
+  // console.log("stackscli claim.170 txOptions: " + JSON.stringify(txOptions));
+  await openContractCall(txOptions);
+
+  // const transaction = await makeContractCall(txOptions);
+  // return broadcastTransaction(transaction, network);
+
+  // this is from connect
+  // return await openContractCall(txOptions);
+
+  // return this.etherSwap.lock(preimageHash, claimAddress, timeLock, {
+  //   value: amount,
+  //   gasPrice: await getGasPrice(this.etherSwap.provider),
+  // });
+};
+
+const claimToken = async (swapInfo, swapResponse) => {
+  console.log('claimToken:: ', swapInfo, swapResponse);
+  let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
+  let contractName = swapResponse.lockupAddress.split('.')[1];
+  console.log('claimToken ', contractAddress, contractName);
+
+  let preimage = swapInfo.preimage;
+  let amount = swapResponse.onchainAmount;
+  let timeLock = swapResponse.timeoutBlockHeight;
+
+  // ${getHexString(preimage)}
+  console.log(
+    `Claiming ${amount} Sip10 with preimage ${preimage} and timelock ${timeLock}`
+  );
+
+  // this is wrong
+  // let decimalamount = parseInt(amount.toString(),16)
+  console.log('amount: ', amount);
+  // let smallamount = decimalamount
+  // .div(etherDecimals)
+  // let smallamount = amount.toNumber();
+  let smallamount = parseInt(amount / 100) + 1;
+  console.log('smallamount: ' + smallamount);
+
+  let swapamount = smallamount.toString(16).split('.')[0] + '';
+  let postConditionAmount = new BN(
+    Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+  );
+  console.log(`postConditionAmount: ${postConditionAmount}`);
+  // *1000
+
+  // // Add an optional post condition
+  // // See below for details on constructing post conditions
+  const postConditionAddress = contractAddress;
+  const postConditionCode = FungibleConditionCode.LessEqual;
+  // // new BigNum(1000000);
+  // const postConditionAmount = new BN(100000);
+  // const postConditions = [
+  //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+  // ];
+
+  // With a contract principal
+  // const contractAddress = 'SPBMRFRPPGCDE3F384WCJPK8PQJGZ8K9QKK7F59X';
+  // const contractName = 'test-contract';
+
+  // const postConditions = [
+  //   createSTXPostCondition(
+  //     // contractAddress,
+  //     // contractName,
+  //     swapResponse.lockupAddress,
+  //     postConditionCode,
+  //     postConditionAmount
+  //   )
+  // ];
+
+  // const postConditions = [
+  //   makeContractSTXPostCondition(
+  //     postConditionAddress,
+  //     contractName,
+  //     postConditionCode,
+  //     postConditionAmount
+  //   )
+  // ];
+
+  // With a standard principal
+  // const postConditionAddress = postConditionAddress;
+  // const postConditionCode = FungibleConditionCode.LessEqual;
+  // const postConditionAmount = new BN(postconditionamount);
+
+  const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
+    'utf8'
+  );
+  console.log('tokenAddress: ', tokenAddress);
+
+  const assetAddress = tokenAddress.split('.')[0];
+  const assetContractName = tokenAddress.split('.')[1];
+  const assetName = assetContractName.split('-')[0];
+  const fungibleAssetInfo = createAssetInfo(
+    assetAddress,
+    assetContractName,
+    assetName
+  );
+
+  const standardFungiblePostCondition = makeContractFungiblePostCondition(
+    postConditionAddress,
+    contractName,
+    postConditionCode,
+    postConditionAmount,
+    fungibleAssetInfo
+  );
+  const postConditions = [
+    // createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+    standardFungiblePostCondition,
+  ];
+
+  console.log(
+    'postConditions: ' + contractAddress,
+    contractName,
+    postConditionCode,
+    postConditionAmount
+  );
+
+  let paddedamount = swapamount.padStart(32, '0');
+  let paddedtimelock = timeLock.toString(16).padStart(32, '0');
+  console.log(
+    'amount, timelock ',
+    smallamount,
+    swapamount,
+    paddedamount,
+    paddedtimelock
+  );
+
+  // (claimToken (preimage (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)) (tokenPrincipal <ft-trait>))
+  const functionArgs = [
+    // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+    bufferCV(Buffer.from(preimage, 'hex')),
+    bufferCV(Buffer.from(paddedamount, 'hex')),
+    bufferCV(Buffer.from('01', 'hex')),
+    bufferCV(Buffer.from('01', 'hex')),
+    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+    contractPrincipalCV(assetAddress, assetContractName),
+  ];
+  // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
+
+  // const functionArgs = [
+  //   bufferCV(preimageHash),
+  //   bufferCV(Buffer.from('00000000000000000000000000100000','hex')),
+  //   bufferCV(Buffer.from('01','hex')),
+  //   bufferCV(Buffer.from('01','hex')),
+  //   bufferCV(Buffer.from('000000000000000000000000000012b3','hex')),
+  // ];
+
+  const txOptions = {
+    contractAddress: contractAddress,
+    contractName: contractName,
+    functionName: 'claimToken',
+    functionArgs: functionArgs,
+    // validateWithAbi: true,
+    network: activeNetwork,
+    postConditionMode: PostConditionMode.Deny,
+    postConditions,
+    // anchorMode: AnchorMode.Any,
+    onFinish: data => {
+      console.log('Stacks sip10 claim onFinish:', JSON.stringify(data));
+      // reverseSwapResponse(true, swapResponse);
+      // ??? enable this? so swap is marked completed?
+      // nextStage();
+    },
+    onCancel: data => {
+      console.log('Stacks claim onCancel:', JSON.stringify(data));
+      // reverseSwapResponse(false, swapResponse);
+      // nextStage();
+    },
+  };
+  await openContractCall(txOptions);
+};
 
 async function lockStx(swapInfo, swapResponse) {
   console.log('lockStx: ', swapInfo, swapResponse);
@@ -475,18 +774,18 @@ async function lockToken(swapInfo, swapResponse) {
   await openContractCall(options);
 }
 
-function makeContractSTXPostCondition(
-  address,
-  contractName,
-  conditionCode,
-  amount
-) {
-  return createSTXPostCondition(
-    createContractPrincipal(address, contractName),
-    conditionCode,
-    amount
-  );
-}
+// function makeContractSTXPostCondition(
+//   address,
+//   contractName,
+//   conditionCode,
+//   amount
+// ) {
+//   return createSTXPostCondition(
+//     createContractPrincipal(address, contractName),
+//     conditionCode,
+//     amount
+//   );
+// }
 
 function createSTXPostCondition(principal, conditionCode, amount) {
   if (typeof principal === 'string') {
@@ -659,147 +958,183 @@ function intToBigInt(value, signed) {
 
 // }
 
-const StyledSendTransaction = ({ classes, swapInfo, swapResponse, swapStatus }) => (
-  <View className={classes.wrapper}>
-    {/* {swapInfo.base !== 'SOV' ? (
+// const StyledSendTransaction = ({
+//   classes,
+//   swapInfo,
+//   swapResponse,
+//   swapStatus,
+// }) => (
+
+class SendTransaction extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      checked: false,
+    };
+  }
+
+  render() {
+    // setAllowZeroConf
+    const { classes, swapInfo, swapResponse, swapStatus } = this.props;
+
+    console.log('sendtransaction.682 , ', swapResponse, swapStatus);
+    // const link = swapResponse
+    //   ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
+    //   : '#0';
+
+    return (
+      <View className={classes.wrapper}>
+        {/* {swapInfo.base !== 'SOV' ? (
     <View className={classes.qrcode}>
       <QrCode size={250} link={swapResponse.bip21} />
     </View>
     ): null} */}
-    <View className={classes.info}>
-      <p className={classes.text}>
-        {swapInfo.base === 'STX' || swapInfo.base === 'USDA'
-          ? 'You need to lock'
-          : 'Send'}
-        <b>
-          {' '}
-          {toWholeCoins(swapResponse.expectedAmount)} {swapInfo.base}{' '}
-        </b>{' '}
-        to this contract:
-      </p>
-      <p className={classes.address} id="copy">
-        {swapResponse.address}
-      </p>
-      {/* <span className={classes.action} onClick={() => copyToClipBoard()}>
+        <View className={classes.info}>
+          <p className={classes.text}>
+            {swapInfo.base === 'STX' || swapInfo.base === 'USDA'
+              ? 'You need to lock'
+              : 'Send'}
+            <b>
+              {' '}
+              {toWholeCoins(swapResponse.expectedAmount)} {swapInfo.base}{' '}
+            </b>{' '}
+            to this contract:
+          </p>
+          <p className={classes.address} id="copy">
+            {swapResponse.address}
+          </p>
+          {/* <span className={classes.action} onClick={() => copyToClipBoard()}>
         Copy
       </span> */}
-      {swapResponse.bip21 ? (
-        <View className={classes.qrcode}>
-          <QrCode size={250} link={swapResponse.bip21} />
-        </View>
-      ) : null}
-      {swapInfo.base === 'LTC' ? (
-        <p className={classes.tool}>
-          If the address does not work with your wallet:{' '}
-          <a
-            target={'_blank'}
-            rel="noopener noreferrer"
-            href="https://litecoin-project.github.io/p2sh-convert/"
-          >
-            use this tool
+          {swapResponse.bip21 ? (
+            <View className={classes.qrcode}>
+              <QrCode size={250} link={swapResponse.bip21} />
+            </View>
+          ) : null}
+          {swapInfo.base === 'LTC' ? (
+            <p className={classes.tool}>
+              If the address does not work with your wallet:{' '}
+              <a
+                target={'_blank'}
+                rel="noopener noreferrer"
+                href="https://litecoin-project.github.io/p2sh-convert/"
+              >
+                use this tool
+              </a>
+            </p>
+          ) : null}
+          {swapInfo.base === 'STX' || swapInfo.base === 'USDA' ? (
+            <SButton
+              size="large"
+              pl="base-tight"
+              pr={'base'}
+              py="tight"
+              fontSize={2}
+              mode="primary"
+              position="relative"
+              className={classes.sbuttoncl}
+              // ref={ref}
+              onClick={() =>
+                swapInfo.base === 'STX'
+                  ? lockStx(swapInfo, swapResponse)
+                  : lockToken(swapInfo, swapResponse)
+              }
+              borderRadius="10px"
+              // {...rest}
+            >
+              <Box
+                as={MdAccountBalanceWallet}
+                // transform={isSend ? 'unset' : 'scaleY(-1)'}
+                size={'16px'}
+                mr={'2px'}
+              />
+              <Box as="span" ml="2px" fontSize="large">
+                Lock {swapInfo.base}
+              </Box>
+            </SButton>
+          ) : // <p className={classes.text}>
+          //   Tap here to trigger Lock Contract Call:{' '}
+          //   <button
+          //     onClick={() => lockStx(swapInfo, swapResponse)}
+          //     // target={'_blank'}
+          //     // href="https://litecoin-project.github.io/p2sh-convert/"
+          //   >
+          //     Lock
+          //   </button>
+          // </p>
+
+          null}
+
+          {swapResponse.bip21 &&
+          swapStatus &&
+          swapStatus.message === 'Atomic Swap is ready' ? (
+            <SButton
+              size="large"
+              pl="base-tight"
+              pr={'base'}
+              py="tight"
+              fontSize={2}
+              mode="primary"
+              position="relative"
+              className={classes.sbuttoncl}
+              // ref={ref}
+              onClick={() =>
+                swapInfo.quote === 'STX'
+                  ? claimStx(swapInfo, swapResponse)
+                  : claimToken(swapInfo, swapResponse)
+              }
+              borderRadius="10px"
+              // {...rest}
+            >
+              <Box
+                as={MdAccountBalanceWallet}
+                // transform={isSend ? 'unset' : 'scaleY(-1)'}
+                size={'16px'}
+                mr={'2px'}
+              />
+              <Box as="span" ml="2px" fontSize="large">
+                Claim {swapInfo.quote}
+              </Box>
+            </SButton>
+          ) : // <p className={classes.text}>
+          //   Tap here to trigger Lock Contract Call:{' '}
+          //   <button
+          //     onClick={() => lockStx(swapInfo, swapResponse)}
+          //     // target={'_blank'}
+          //     // href="https://litecoin-project.github.io/p2sh-convert/"
+          //   >
+          //     Lock
+          //   </button>
+          // </p>
+
+          // <p>
+          //   {swapResponse.bip21} and{' '}
+          //   {(swapStatus && swapStatus.message) || 'nothing here'}
+          // </p>
+          null}
+
+          <a href="." className={classes.hidden} target="_blank">
+            View Lock Transaction on Explorer
           </a>
-        </p>
-      ) : null}
-      {swapInfo.base === 'STX' || swapInfo.base === 'USDA' ? (
-        <SButton
-          size="large"
-          pl="base-tight"
-          pr={'base'}
-          py="tight"
-          fontSize={2}
-          mode="primary"
-          position="relative"
-          className={classes.sbuttoncl}
-          // ref={ref}
-          onClick={() =>
-            swapInfo.base === 'STX'
-              ? lockStx(swapInfo, swapResponse)
-              : lockToken(swapInfo, swapResponse)
-          }
-          borderRadius="10px"
-          // {...rest}
-        >
-          <Box
-            as={MdAccountBalanceWallet}
-            // transform={isSend ? 'unset' : 'scaleY(-1)'}
-            size={'16px'}
-            mr={'2px'}
-          />
-          <Box as="span" ml="2px" fontSize="large">
-            Lock {swapInfo.base}
-          </Box>
-        </SButton>
-      ) : // <p className={classes.text}>
-      //   Tap here to trigger Lock Contract Call:{' '}
-      //   <button
-      //     onClick={() => lockStx(swapInfo, swapResponse)}
-      //     // target={'_blank'}
-      //     // href="https://litecoin-project.github.io/p2sh-convert/"
-      //   >
-      //     Lock
-      //   </button>
-      // </p>
-
-      null}
-
-      {swapResponse.bip21 && swapStatus ? (
-        <SButton
-          size="large"
-          pl="base-tight"
-          pr={'base'}
-          py="tight"
-          fontSize={2}
-          mode="primary"
-          position="relative"
-          className={classes.sbuttoncl}
-          // ref={ref}
-          onClick={() =>
-            swapInfo.base === 'STX'
-              ? lockStx(swapInfo, swapResponse)
-              : lockToken(swapInfo, swapResponse)
-          }
-          borderRadius="10px"
-          // {...rest}
-        >
-          <Box
-            as={MdAccountBalanceWallet}
-            // transform={isSend ? 'unset' : 'scaleY(-1)'}
-            size={'16px'}
-            mr={'2px'}
-          />
-          <Box as="span" ml="2px" fontSize="large">
-            Lock {swapInfo.base} - {swapStatus}
-          </Box>
-        </SButton>
-      ) : // <p className={classes.text}>
-      //   Tap here to trigger Lock Contract Call:{' '}
-      //   <button
-      //     onClick={() => lockStx(swapInfo, swapResponse)}
-      //     // target={'_blank'}
-      //     // href="https://litecoin-project.github.io/p2sh-convert/"
-      //   >
-      //     Lock
-      //   </button>
-      // </p>
-
-      null}
-
-      <a href="." className={classes.hidden} target="_blank">
-        View Lock Transaction on Explorer
-      </a>
-    </View>
-  </View>
-);
-
-StyledSendTransaction.propTypes = {
+        </View>
+      </View>
+    );
+  }
+}
+SendTransaction.propTypes = {
+  // StyledSendTransaction.propTypes = {
   classes: PropTypes.object.isRequired,
   swapInfo: PropTypes.object.isRequired,
   swapResponse: PropTypes.object.isRequired,
+  swapStatus: PropTypes.object,
   // onChange: PropTypes.func.isRequired,
 };
 
-const SendTransaction = injectSheet(SendTransactionStyles)(
-  StyledSendTransaction
-);
+// const SendTransaction = injectSheet(SendTransactionStyles)(
+//   StyledSendTransaction
+// );
 
-export default SendTransaction;
+export default injectSheet(SendTransactionStyles)(SendTransaction);
+
+// export default SendTransaction;

@@ -106,6 +106,7 @@ export const startSwap = (swapInfo, cb) => {
 
 const handleSwapStatus = (data, source, dispatch, callback) => {
   const status = data.status;
+  console.log('handleSwapStatus ', status);
 
   switch (status) {
     case SwapUpdateEvent.TransactionConfirmed:
@@ -147,6 +148,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
 
     case SwapUpdateEvent.ASTransactionMempool:
     case SwapUpdateEvent.TransactionMempool:
+      console.log('got mempool');
       dispatch(
         setSwapStatus({
           pending: true,
@@ -156,6 +158,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
       break;
 
     case SwapUpdateEvent.ASTransactionConfirmed:
+      console.log('got asconfirmed');
       dispatch(
         setSwapStatus({
           pending: true,
@@ -187,6 +190,7 @@ export const startListening = (dispatch, swapId, callback) => {
     const url = `${boltzApi}/swapstatus`;
 
     const interval = setInterval(() => {
+      console.log('interval');
       axios
         .post(url, {
           id: swapId,
@@ -203,6 +207,7 @@ export const startListening = (dispatch, swapId, callback) => {
   };
 
   source.onmessage = event => {
+    // console.log('onmessage: ', event);
     handleSwapStatus(JSON.parse(event.data), source, dispatch, callback);
   };
 };
