@@ -36,7 +36,7 @@ import {
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
 
-let mocknet = new StacksMocknet();
+let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
 const mainnet = new StacksMainnet();

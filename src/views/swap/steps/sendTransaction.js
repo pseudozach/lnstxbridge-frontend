@@ -48,7 +48,7 @@ import {
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
 
-let mocknet = new StacksMocknet();
+let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
 const mainnet = new StacksMainnet();
@@ -139,8 +139,10 @@ const SendTransactionStyles = () => ({
 const claimStx = async (swapInfo, swapResponse) => {
   console.log('claimStx begin ', swapInfo, swapResponse);
 
-  let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
-  let contractName = swapResponse.lockupAddress.split('.')[1];
+  let contractAddress = swapResponse.contractAddress
+    .split('.')[0]
+    .toUpperCase();
+  let contractName = swapResponse.contractAddress.split('.')[1];
   console.log('claimStx ', contractAddress, contractName);
 
   let preimage = swapInfo.preimage;
@@ -278,8 +280,10 @@ const claimStx = async (swapInfo, swapResponse) => {
 
 const claimToken = async (swapInfo, swapResponse) => {
   console.log('claimToken:: ', swapInfo, swapResponse);
-  let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
-  let contractName = swapResponse.lockupAddress.split('.')[1];
+  let contractAddress = swapResponse.contractAddress
+    .split('.')[0]
+    .toUpperCase();
+  let contractName = swapResponse.contractAddress.split('.')[1];
   console.log('claimToken ', contractAddress, contractName);
 
   let preimage = swapInfo.preimage;
