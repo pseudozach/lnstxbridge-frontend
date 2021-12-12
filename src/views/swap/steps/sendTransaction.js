@@ -136,6 +136,7 @@ const SendTransactionStyles = () => ({
   },
 });
 
+// atomic swap
 const claimStx = async (swapInfo, swapResponse) => {
   console.log('claimStx begin ', swapInfo, swapResponse);
 
@@ -146,8 +147,11 @@ const claimStx = async (swapInfo, swapResponse) => {
   console.log('claimStx ', contractAddress, contractName);
 
   let preimage = swapInfo.preimage;
-  let amount = swapResponse.onchainAmount;
-  let timeLock = swapResponse.timeoutBlockHeight;
+  // let amount = swapResponse.onchainAmount;
+  let amount = Math.floor(swapInfo.quoteAmount * 1000000);
+
+  // let timeLock = swapResponse.timeoutBlockHeight;
+  let timeLock = swapResponse.asTimeoutBlockHeight;
 
   // ${getHexString(preimage)}
   console.log(
@@ -160,13 +164,16 @@ const claimStx = async (swapInfo, swapResponse) => {
   // let smallamount = decimalamount
   // .div(etherDecimals)
   // let smallamount = amount.toNumber();
-  let smallamount = parseInt(amount / 100) + 1;
-  console.log('smallamount: ' + smallamount);
 
-  let swapamount = smallamount.toString(16).split('.')[0] + '';
-  let postConditionAmount = new BN(
-    Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
-  );
+  // no idea why this was needed but it looks wrong anyway
+  // let smallamount = parseInt(amount / 100) + 1;
+  // console.log('smallamount: ' + smallamount);
+
+  // also change postcondition to amount
+  let swapamount = amount.toString(16).split('.')[0] + '';
+  // Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+  let postConditionAmount = new BN(amount);
+
   console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
 
@@ -214,7 +221,8 @@ const claimStx = async (swapInfo, swapResponse) => {
   let paddedtimelock = timeLock.toString(16).padStart(32, '0');
   console.log(
     'amount, timelock ',
-    smallamount,
+    // smallamount,
+    amount,
     swapamount,
     paddedamount,
     paddedtimelock
@@ -250,7 +258,8 @@ const claimStx = async (swapInfo, swapResponse) => {
     postConditions,
     // anchorMode: AnchorMode.Any,
     onFinish: data => {
-      console.log('Stacks claim onFinish:', JSON.stringify(data));
+      console.log('Stacks claim onFinish: ', data);
+      // JSON.stringify(data)
       // reverseSwapResponse(true, swapResponse);
       // ??? enable this? so swap is marked completed?
       // nextStage();
