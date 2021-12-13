@@ -755,6 +755,31 @@ class SwapTabWrapper extends React.Component {
       //   return;
       // }
 
+      if (
+        (this.baseAsset.symbol == 'BTC' && this.quoteAsset.isLightning) ||
+        (this.baseAsset.isLightning && this.quoteAsset.symbol == 'BTC')
+      ) {
+        this.setState({
+          rate: undefined,
+          error: true,
+          errorMessage: 'Not available',
+        });
+        return;
+      }
+
+      // disable atomic swaps between only stacks assets
+      if (
+        (this.baseAsset.symbol === 'STX' && this.quoteAsset.symbol == 'USDA') ||
+        (this.baseAsset.symbol === 'USDA' && this.quoteAsset.symbol == 'STX')
+      ) {
+        this.setState({
+          rate: undefined,
+          error: true,
+          errorMessage: 'Not available',
+        });
+        return;
+      }
+
       // Show an error for reverse swaps if they are disabled
       if (this.reverseSwapsDisabled && this.baseAsset.isLightning) {
         this.setState({

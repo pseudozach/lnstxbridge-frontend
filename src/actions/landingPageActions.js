@@ -24,7 +24,7 @@ const parseCurrencies = pairs => {
   const pushCurrency = currency => {
     if (!currencies.includes(currency)) {
       currencies.push(currency);
-      currencies.push(`${currency} ⚡`);
+      if (currency === 'BTC') currencies.push(`${currency} ⚡`);
     }
   };
 
