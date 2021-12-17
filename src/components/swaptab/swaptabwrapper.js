@@ -102,12 +102,13 @@ class SwapTabWrapper extends React.Component {
       quote: 'BTC ⚡',
       minAmount: new BigNumber('0'),
       maxAmount: new BigNumber('0'),
-      baseAmount: new BigNumber('0.05'),
+      baseAmount: new BigNumber('2'),
       quoteAmount: new BigNumber('0'),
       feeAmount: new BigNumber('0'),
       errorMessage: '',
       web3: null,
       provider: null,
+      atomicSwap: false,
     };
 
     // const handleFaucetCall = useHandleClaimHey();

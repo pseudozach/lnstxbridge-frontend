@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import { FaBolt } from 'react-icons/fa';
+import * as bitcoin from 'bitcoinjs-lib';
 import View from '../../../components/view';
 import InputArea from '../../../components/inputarea';
 import {
@@ -9,6 +10,7 @@ import {
   getCurrencyName,
   getSampleInvoice,
   getSmallestDenomination,
+  getSampleAddress,
 } from '../../../utils';
 
 const InputInvoiceStyles = () => ({
@@ -37,6 +39,21 @@ const InputInvoiceStyles = () => ({
   },
 });
 
+let bitcoinNetwork =
+  process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet'
+    ? bitcoin.networks.regtest
+    : bitcoin.networks.mainnet;
+console.log('bitcoinNetwork ', bitcoinNetwork);
+function validate(input) {
+  try {
+    bitcoin.address.toOutputScript(input, bitcoinNetwork);
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
+
 class StyledInputInvoice extends React.Component {
   state = {
     error: false,
@@ -60,7 +77,8 @@ class StyledInputInvoice extends React.Component {
     if (
       input.slice(0, 2) === 'ln' ||
       input.slice(0, 10) === 'lightning:' ||
-      input.slice(0, 1) === 'S'
+      input.slice(0, 1) === 'S' ||
+      validate(input)
     ) {
       this.setState({ value: input, error: false }, () =>
         this.props.onChange(input, false)
@@ -76,10 +94,13 @@ class StyledInputInvoice extends React.Component {
     const { error } = this.state;
     const { classes, swapInfo } = this.props;
 
-    console.log('ii.74 ', swapInfo.quote);
-
+    console.log('ii.74 ', swapInfo);
+    const isLN = localStorage.getItem('quote').includes('⚡');
+    const placeholder = isLN
+      ? getSampleInvoice(swapInfo.quote)
+      : getSampleAddress(swapInfo.quote);
     const pasteText =
-      swapInfo.quote === 'BTC' ? 'Lightning invoice for ' : 'Address';
+      swapInfo.quote === ('BTC' && isLN) ? 'Lightning invoice for ' : 'Address';
     // <FaBolt size={25} color="#FFFF00" />
 
     return (
@@ -87,7 +108,7 @@ class StyledInputInvoice extends React.Component {
         <p className={classes.title}>
           Paste or scan a <b>{getCurrencyName(swapInfo.quote)}</b> {pasteText}{' '}
           <br />
-          {swapInfo.quote === 'BTC' ? (
+          {swapInfo.quote === 'BTC' && isLN ? (
             <b>
               {toSatoshi(swapInfo.quoteAmount)}{' '}
               {getSmallestDenomination(swapInfo.quote)}
@@ -102,7 +123,7 @@ class StyledInputInvoice extends React.Component {
           showQrScanner={true}
           value={this.state.value}
           onChange={this.onChange}
-          placeholder={`EG: ${getSampleInvoice(swapInfo.quote)}`}
+          placeholder={`EG: ${placeholder}`}
         />
       </View>
     );

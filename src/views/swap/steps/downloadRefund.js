@@ -6,6 +6,7 @@ import View from '../../../components/view';
 import { navigation } from '../../../actions';
 import { createRefundQr } from '../../../utils/refundUtils';
 import lightningPayReq from 'bolt11';
+import * as bitcoin from 'bitcoinjs-lib';
 
 const DownloadRefundStyles = () => ({
   wrapper: {
@@ -36,6 +37,21 @@ const DownloadRefundStyles = () => ({
     fontSize: '24px',
   },
 });
+
+let bitcoinNetwork =
+  process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet'
+    ? bitcoin.networks.regtest
+    : bitcoin.networks.mainnet;
+console.log('bitcoinNetwork ', bitcoinNetwork);
+function validate(input) {
+  try {
+    bitcoin.address.toOutputScript(input, bitcoinNetwork);
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
 
 class StyledDownloadRefund extends React.Component {
   constructor(props) {
@@ -74,7 +90,10 @@ class StyledDownloadRefund extends React.Component {
 
     // console.log("downloadrefund.74 ", swapInfo, swapResponse);
 
-    if (swapInfo.invoice.slice(0, 1) !== 'S') {
+    if (
+      swapInfo.invoice.toUpperCase().slice(0, 1) !== 'S' &&
+      !validate(swapInfo.invoice)
+    ) {
       var decoded = lightningPayReq.decode(swapInfo.invoice);
       // console.log("decoded: ", decoded);
 

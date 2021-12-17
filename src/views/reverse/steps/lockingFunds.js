@@ -7,7 +7,7 @@ import View from '../../../components/view';
 import { getCurrencyName, getExplorer } from '../../../utils';
 import { stacksNetworkType } from '../../../constants';
 
-import { Button as SButton, Box } from '@stacks/ui'
+import { Button as SButton, Box } from '@stacks/ui';
 import { MdFileDownload } from 'react-icons/md';
 
 // import lightningPayReq from 'bolt11';
@@ -40,14 +40,14 @@ let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
 const mainnet = new StacksMainnet();
-let activeNetwork = mocknet
+let activeNetwork = mocknet;
 
-if(stacksNetworkType==="mocknet"){
-  activeNetwork = mocknet
-} else if(stacksNetworkType==="testnet"){
-  activeNetwork = testnet
-} else if(stacksNetworkType==="mainnet"){
-  activeNetwork = mainnet
+if (stacksNetworkType === 'mocknet') {
+  activeNetwork = mocknet;
+} else if (stacksNetworkType === 'testnet') {
+  activeNetwork = testnet;
+} else if (stacksNetworkType === 'mainnet') {
+  activeNetwork = mainnet;
 }
 
 const styles = () => ({
@@ -84,32 +84,34 @@ const styles = () => ({
   },
 });
 
-const claimStx = async (
-  swapInfo,
-  swapResponse) => {
-
-  let contractAddress = swapResponse.lockupAddress.split(".")[0].toUpperCase();
-  let contractName = swapResponse.lockupAddress.split(".")[1]
-  console.log("claimStx ", contractAddress, contractName)
+const claimStx = async (swapInfo, swapResponse) => {
+  let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
+  let contractName = swapResponse.lockupAddress.split('.')[1];
+  console.log('claimStx ', contractAddress, contractName);
 
   let preimage = swapInfo.preimage;
   let amount = swapResponse.onchainAmount;
   let timeLock = swapResponse.timeoutBlockHeight;
 
-    // ${getHexString(preimage)}
-  console.log(`Claiming ${amount} Stx with preimage ${preimage} and timelock ${timeLock}`);
+  // ${getHexString(preimage)}
+  console.log(
+    `Claiming ${amount} Stx with preimage ${preimage} and timelock ${timeLock}`
+  );
 
   // this is wrong
   // let decimalamount = parseInt(amount.toString(),16)
-  console.log("amount: ", amount)
+  console.log('amount: ', amount);
   // let smallamount = decimalamount
   // .div(etherDecimals)
   // let smallamount = amount.toNumber();
-  let smallamount = parseInt(amount / 100) + 1
-  console.log("smallamount: " + smallamount)
+  // + 1 -> never add 1 ffs
+  let smallamount = parseInt(amount / 100);
+  console.log('smallamount: ' + smallamount);
 
-  let swapamount = smallamount.toString(16).split(".")[0] + "";
-  let postConditionAmount = new BN(Math.ceil(parseInt(swapResponse.onchainAmount) / 100));
+  let swapamount = smallamount.toString(16).split('.')[0] + '';
+  let postConditionAmount = new BN(
+    Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+  );
   console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
 
@@ -143,24 +145,34 @@ const claimStx = async (
       contractName,
       postConditionCode,
       postConditionAmount
-    )
+    ),
   ];
 
-  console.log("postConditions: " + contractAddress, contractName, postConditionCode, postConditionAmount)
+  console.log(
+    'postConditions: ' + contractAddress,
+    contractName,
+    postConditionCode,
+    postConditionAmount
+  );
 
-
-  let paddedamount = swapamount.padStart(32, "0");
-  let paddedtimelock = timeLock.toString(16).padStart(32, "0");
-  console.log("amount, timelock ", smallamount, swapamount, paddedamount, paddedtimelock);
+  let paddedamount = swapamount.padStart(32, '0');
+  let paddedtimelock = timeLock.toString(16).padStart(32, '0');
+  console.log(
+    'amount, timelock ',
+    smallamount,
+    swapamount,
+    paddedamount,
+    paddedtimelock
+  );
 
   // (claimStx (preimage (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)))
   const functionArgs = [
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
-    bufferCV(Buffer.from(preimage,'hex')),
-    bufferCV(Buffer.from(paddedamount,'hex')),
-    bufferCV(Buffer.from('01','hex')),
-    bufferCV(Buffer.from('01','hex')),
-    bufferCV(Buffer.from(paddedtimelock,'hex')),
+    bufferCV(Buffer.from(preimage, 'hex')),
+    bufferCV(Buffer.from(paddedamount, 'hex')),
+    bufferCV(Buffer.from('01', 'hex')),
+    bufferCV(Buffer.from('01', 'hex')),
+    bufferCV(Buffer.from(paddedtimelock, 'hex')),
   ];
   // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
 
@@ -183,16 +195,17 @@ const claimStx = async (
     postConditions,
     // anchorMode: AnchorMode.Any,
     onFinish: data => {
-      console.log('Stacks claim onFinish:', JSON.stringify(data));
+      console.log('Stacks claim onFinish:', data);
+      // JSON.stringify(data)
       // reverseSwapResponse(true, swapResponse);
-      // ??? enable this? so swap is marked completed? 
+      // ??? enable this? so swap is marked completed?
       // nextStage();
     },
     onCancel: data => {
-      console.log('Stacks claim onCancel:', JSON.stringify(data));
+      console.log('Stacks claim onCancel:', data);
       // reverseSwapResponse(false, swapResponse);
-      // nextStage();      
-    }
+      // nextStage();
+    },
   };
 
   // this.toObject(txOptions)
@@ -201,8 +214,6 @@ const claimStx = async (
 
   // const transaction = await makeContractCall(txOptions);
   // return broadcastTransaction(transaction, network);
- 
-  
 
   // this is from connect
   // return await openContractCall(txOptions);
@@ -211,35 +222,36 @@ const claimStx = async (
   //   value: amount,
   //   gasPrice: await getGasPrice(this.etherSwap.provider),
   // });
-}
+};
 
-const claimToken = async (
-  swapInfo,
-  swapResponse) => {
-
+const claimToken = async (swapInfo, swapResponse) => {
   console.log('claimToken:: ', swapInfo, swapResponse);
-  let contractAddress = swapResponse.lockupAddress.split(".")[0].toUpperCase();
-  let contractName = swapResponse.lockupAddress.split(".")[1]
-  console.log("claimToken ", contractAddress, contractName)
+  let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
+  let contractName = swapResponse.lockupAddress.split('.')[1];
+  console.log('claimToken ', contractAddress, contractName);
 
   let preimage = swapInfo.preimage;
   let amount = swapResponse.onchainAmount;
   let timeLock = swapResponse.timeoutBlockHeight;
 
-    // ${getHexString(preimage)}
-  console.log(`Claiming ${amount} Sip10 with preimage ${preimage} and timelock ${timeLock}`);
+  // ${getHexString(preimage)}
+  console.log(
+    `Claiming ${amount} Sip10 with preimage ${preimage} and timelock ${timeLock}`
+  );
 
   // this is wrong
   // let decimalamount = parseInt(amount.toString(),16)
-  console.log("amount: ", amount)
+  console.log('amount: ', amount);
   // let smallamount = decimalamount
   // .div(etherDecimals)
   // let smallamount = amount.toNumber();
-  let smallamount = parseInt(amount / 100) + 1
-  console.log("smallamount: " + smallamount)
+  let smallamount = parseInt(amount / 100) + 1;
+  console.log('smallamount: ' + smallamount);
 
-  let swapamount = smallamount.toString(16).split(".")[0] + "";
-  let postConditionAmount = new BN(Math.ceil(parseInt(swapResponse.onchainAmount) / 100));
+  let swapamount = smallamount.toString(16).split('.')[0] + '';
+  let postConditionAmount = new BN(
+    Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+  );
   console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
 
@@ -281,7 +293,9 @@ const claimToken = async (
   // const postConditionCode = FungibleConditionCode.LessEqual;
   // const postConditionAmount = new BN(postconditionamount);
 
-  const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString('utf8');
+  const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
+    'utf8'
+  );
   console.log('tokenAddress: ', tokenAddress);
 
   const assetAddress = tokenAddress.split('.')[0];
@@ -305,12 +319,22 @@ const claimToken = async (
     standardFungiblePostCondition,
   ];
 
-  console.log("postConditions: " + contractAddress, contractName, postConditionCode, postConditionAmount)
+  console.log(
+    'postConditions: ' + contractAddress,
+    contractName,
+    postConditionCode,
+    postConditionAmount
+  );
 
-
-  let paddedamount = swapamount.padStart(32, "0");
-  let paddedtimelock = timeLock.toString(16).padStart(32, "0");
-  console.log("amount, timelock ", smallamount, swapamount, paddedamount, paddedtimelock);
+  let paddedamount = swapamount.padStart(32, '0');
+  let paddedtimelock = timeLock.toString(16).padStart(32, '0');
+  console.log(
+    'amount, timelock ',
+    smallamount,
+    swapamount,
+    paddedamount,
+    paddedtimelock
+  );
 
   // (claimToken (preimage (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)) (tokenPrincipal <ft-trait>))
   const functionArgs = [
@@ -345,17 +369,17 @@ const claimToken = async (
     onFinish: data => {
       console.log('Stacks sip10 claim onFinish:', JSON.stringify(data));
       // reverseSwapResponse(true, swapResponse);
-      // ??? enable this? so swap is marked completed? 
+      // ??? enable this? so swap is marked completed?
       // nextStage();
     },
     onCancel: data => {
       console.log('Stacks claim onCancel:', JSON.stringify(data));
       // reverseSwapResponse(false, swapResponse);
-      // nextStage();      
-    }
+      // nextStage();
+    },
   };
   await openContractCall(txOptions);
-}
+};
 
 function makeContractSTXPostCondition(
   address,
@@ -372,70 +396,73 @@ function makeContractSTXPostCondition(
 
 const createSTXPostCondition = (principal, conditionCode, amount) => {
   if (typeof principal === 'string') {
-      principal = parsePrincipalString(principal);
+    principal = parsePrincipalString(principal);
   }
   return {
-      type: StacksMessageType.PostCondition,
-      conditionType: PostConditionType.STX,
-      principal,
-      conditionCode,
-      amount: intToBN(amount, false),
+    type: StacksMessageType.PostCondition,
+    conditionType: PostConditionType.STX,
+    principal,
+    conditionCode,
+    amount: intToBN(amount, false),
   };
-}
+};
 const intToBytes = (value, signed, byteLength) => {
   return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
-}
+};
 const intToBN = (value, signed) => {
   const bigInt = intToBigInt(value, signed);
   return new BN(bigInt.toString());
-}
+};
 const intToBigInt = (value, signed) => {
   if (typeof value === 'number') {
-      if (!Number.isInteger(value)) {
-          throw new RangeError(`Invalid value. Values of type 'number' must be an integer.`);
-      }
-      // console.log("156")
-      // return 157;
-      return bigInt(value);
+    if (!Number.isInteger(value)) {
+      throw new RangeError(
+        `Invalid value. Values of type 'number' must be an integer.`
+      );
+    }
+    // console.log("156")
+    // return 157;
+    return bigInt(value);
   }
   if (typeof value === 'string') {
-      if (value.toLowerCase().startsWith('0x')) {
-          let hex = value.slice(2);
-          hex = hex.padStart(hex.length + (hex.length % 2), '0');
-          value = Buffer.from(hex, 'hex');
+    if (value.toLowerCase().startsWith('0x')) {
+      let hex = value.slice(2);
+      hex = hex.padStart(hex.length + (hex.length % 2), '0');
+      value = Buffer.from(hex, 'hex');
+    } else {
+      try {
+        // return 168;
+        return bigInt(value);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          throw new RangeError(
+            `Invalid value. String integer '${value}' is not finite.`
+          );
+        }
       }
-      else {
-          try {
-            // return 168;
-              return bigInt(value);
-          }
-          catch (error) {
-              if (error instanceof SyntaxError) {
-                  throw new RangeError(`Invalid value. String integer '${value}' is not finite.`);
-              }
-          }
-      }
+    }
   }
   if (typeof value === 'bigint') {
-      return value;
+    return value;
   }
   if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
-      if (signed) {
-          const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
-          // return 184;
-          return bigInt(bn.toString());
-      }
-      else {
-          // return 188;
-          return bigInt(new BN(value, 'be').toString());
-      }
+    if (signed) {
+      const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
+      // return 184;
+      return bigInt(bn.toString());
+    } else {
+      // return 188;
+      return bigInt(new BN(value, 'be').toString());
+    }
   }
   if (value instanceof BN || BN.isBN(value)) {
-      // return 193;
-      return bigInt(value.toString());
+    // return 193;
+    return bigInt(value.toString());
   }
-  throw new TypeError(`Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`);
-}
+  throw new TypeError(
+    `Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`
+  );
+};
 
 class LockingFunds extends React.Component {
   constructor() {
@@ -450,7 +477,7 @@ class LockingFunds extends React.Component {
     // setAllowZeroConf
     const { classes, swapInfo, swapResponse, swapStatus } = this.props;
 
-    console.log("lockingfunds.255 , ", swapResponse, swapStatus);
+    console.log('lockingfunds.255 , ', swapResponse, swapStatus);
     const link = swapResponse
       ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
       : '#0';
@@ -458,9 +485,9 @@ class LockingFunds extends React.Component {
     return (
       <View className={classes.wrapper}>
         <p className={classes.text}>
-          LNswap.org is locking the <b>{getCurrencyName(swapInfo.quote)}</b> that you
-          are ought to receive, this is important to keep the swap atomic and
-          trustless. It might take up to 10 minutes.
+          LNswap.org is locking the <b>{getCurrencyName(swapInfo.quote)}</b>{' '}
+          that you are ought to receive, this is important to keep the swap
+          atomic and trustless. It might take up to 10 minutes.
           {/* <br /> */}
           <br />
           <Link to={link} text={'Click here'} /> to see the lockup transaction.
@@ -486,40 +513,46 @@ class LockingFunds extends React.Component {
             activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
           /> */}
         </p>
-        {(swapStatus !== 'Could not send onchain coins' && swapStatus !== 'Waiting for confirmation...') ? (<><p className={classes.texnotop}>Lockup is confirmed, you can now trigger 
-          claim contract call to finalize the swap and receive your <b>{getCurrencyName(swapInfo.quote)}</b>.
-          </p>
-          <SButton
-          size="large"
-          pl="base-tight"
-          pr={'base'}
-          py="tight"
-          fontSize={2}
-          mode="primary"
-          position="relative"
-          // disabled={swapStatus != 'transaction.confirmed'}
-          className={classes.sbuttoncl}
-          // ref={ref}
-          onClick={() =>
+        {swapStatus !== 'Could not send onchain coins' &&
+        swapStatus !== 'Waiting for confirmation...' ? (
+          <>
+            <p className={classes.texnotop}>
+              Lockup is confirmed, you can now trigger claim contract call to
+              finalize the swap and receive your{' '}
+              <b>{getCurrencyName(swapInfo.quote)}</b>.
+            </p>
+            <SButton
+              size="large"
+              pl="base-tight"
+              pr={'base'}
+              py="tight"
+              fontSize={2}
+              mode="primary"
+              position="relative"
+              // disabled={swapStatus != 'transaction.confirmed'}
+              className={classes.sbuttoncl}
+              // ref={ref}
+              onClick={() =>
                 swapInfo.quote === 'STX'
                   ? claimStx(swapInfo, swapResponse)
-              : claimToken(swapInfo, swapResponse)
-            }
-          // onClick={refundStx}
-          borderRadius="10px"
-          // {...rest}
-          >
-          <Box
-            as={MdFileDownload}
-            // transform={isSend ? 'unset' : 'scaleY(-1)'}
-            size={'16px'}
-            mr={'2px'}
-          />
-          <Box as="span" ml="2px" fontSize="large">
-            Claim <b>{getCurrencyName(swapInfo.quote)}</b>
-          </Box>
-        </SButton></>) : null}
-
+                  : claimToken(swapInfo, swapResponse)
+              }
+              // onClick={refundStx}
+              borderRadius="10px"
+              // {...rest}
+            >
+              <Box
+                as={MdFileDownload}
+                // transform={isSend ? 'unset' : 'scaleY(-1)'}
+                size={'16px'}
+                mr={'2px'}
+              />
+              <Box as="span" ml="2px" fontSize="large">
+                Claim <b>{getCurrencyName(swapInfo.quote)}</b>
+              </Box>
+            </SButton>
+          </>
+        ) : null}
       </View>
     );
   }

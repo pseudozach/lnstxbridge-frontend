@@ -60,7 +60,7 @@ export const startSwap = (swapInfo, cb) => {
   console.log('atomic swap swapInfo', pair, swapInfo);
 
   let reqobj;
-  if (pair.id == 'BTC/STX') {
+  if (pair.id == 'BTC/STX' && invoice.toLowerCase().slice(0, 4) !== 'lnbc') {
     reqobj = {
       type: 'submarine',
       pairId: pair.id,

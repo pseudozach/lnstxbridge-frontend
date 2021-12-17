@@ -447,7 +447,7 @@ const claimToken = async (swapInfo, swapResponse) => {
 };
 
 async function lockStx(swapInfo, swapResponse) {
-  console.log('lockStx: ', swapInfo, swapResponse);
+  console.log('lockStx: swapInfo, swapResponse', swapInfo, swapResponse);
 
   // swapInfo
   //   base: "STX"
@@ -484,18 +484,24 @@ async function lockStx(swapInfo, swapResponse) {
   let stxcontractaddress = swapResponse.address.split('.')[0];
   let stxcontractname = swapResponse.address.split('.')[1];
 
-  var decoded = lightningPayReq.decode(swapInfo.invoice);
-  // console.log("decoded: ", decoded);
+  let paymenthash;
+  if (swapInfo.invoice.toLowerCase().slice(0,2 === 'ln')) {
+    var decoded = lightningPayReq.decode(swapInfo.invoice);
+    // console.log("decoded: ", decoded);
 
-  var obj = decoded.tags;
-  for (let index = 0; index < obj.length; index++) {
-    const tag = obj[index];
-    // console.log("tag: ", tag);
-    if (tag.tagName === 'payment_hash') {
-      // console.log("yay: ", tag.data);
-      var paymenthash = tag.data;
+    var obj = decoded.tags;
+    for (let index = 0; index < obj.length; index++) {
+      const tag = obj[index];
+      // console.log("tag: ", tag);
+      if (tag.tagName === 'payment_hash') {
+        // console.log("yay: ", tag.data);
+        paymenthash = tag.data;
+      }
     }
+  } else {
+    paymenthash = swapInfo.preimageHash;
   }
+
   console.log('paymenthash: ', paymenthash);
 
   console.log(

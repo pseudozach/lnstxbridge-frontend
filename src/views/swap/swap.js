@@ -71,7 +71,7 @@ class Swap extends Component {
       swapResponse,
       swapStatus,
     } = this.props;
-    console.log('swap.js 74 ', swapStatus);
+    console.log('swap.js 74 ', swapInfo, swapStatus);
     return (
       <BackGround>
         <Prompt />
