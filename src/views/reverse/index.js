@@ -39,7 +39,4 @@ const mapDispatchToProps = dispatch => ({
   goTimelockExpired: () => dispatch(navigation.navReverseExpired()),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ReverseSwap);
+export default connect(mapStateToProps, mapDispatchToProps)(ReverseSwap);

@@ -485,7 +485,7 @@ async function lockStx(swapInfo, swapResponse) {
   let stxcontractname = swapResponse.address.split('.')[1];
 
   let paymenthash;
-  if (swapInfo.invoice.toLowerCase().slice(0,2 === 'ln')) {
+  if (swapInfo.invoice.toLowerCase().slice(0, 2 === 'ln')) {
     var decoded = lightningPayReq.decode(swapInfo.invoice);
     // console.log("decoded: ", decoded);
 
@@ -504,24 +504,36 @@ async function lockStx(swapInfo, swapResponse) {
 
   console.log('paymenthash: ', paymenthash);
 
-  console.log(
-    'calc: ',
-    swapResponse.expectedAmount,
-    parseInt(swapResponse.expectedAmount) / 100
-  );
-  let swapamount =
-    (parseInt(swapResponse.expectedAmount) / 100).toString(16).split('.')[0] +
-    '';
-  let postconditionamount = Math.ceil(
-    parseInt(swapResponse.expectedAmount) / 100
-  );
-  // *1000
-  // 199610455 -> 199 STX
+  let swapamount, postconditionamount;
+  if (swapResponse.expectedAmount === 0) {
+    // atomic swap
+    let amountToLock = swapResponse.baseAmount;
+    swapamount =
+      (parseInt(amountToLock) * 1000000).toString(16).split('.')[0] + '';
+    postconditionamount = Math.ceil(parseInt(amountToLock) * 1000000);
+  } else {
+    swapamount =
+      (parseInt(swapResponse.expectedAmount) / 100).toString(16).split('.')[0] +
+      '';
+    postconditionamount = Math.ceil(
+      parseInt(swapResponse.expectedAmount) / 100
+    );
+    // *1000
+    // 199610455 -> 199 STX
+  }
   console.log(
     'swapamount, postconditionamount: ',
     swapamount,
     postconditionamount
   );
+
+  console.log(
+    'calc: ',
+    swapResponse.expectedAmount,
+    parseInt(swapResponse.expectedAmount) / 100,
+    swapResponse.baseAmount
+  );
+
   let paddedamount = swapamount.padStart(32, '0');
 
   let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
@@ -995,13 +1007,27 @@ class SendTransaction extends React.Component {
 
   render() {
     // setAllowZeroConf
-    const { classes, swapInfo, swapResponse, swapStatus } = this.props;
+    const {
+      classes,
+      swapInfo,
+      swapResponse,
+      swapStatus,
+      claimSwap,
+    } = this.props;
 
-    console.log('sendtransaction.682 , ', swapResponse, swapStatus);
+    console.log('sendtransaction.682 , ', swapInfo, swapResponse, swapStatus);
     // const link = swapResponse
     //   ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
     //   : '#0';
-
+    let amountToLock = toWholeCoins(swapResponse.expectedAmount);
+    if (
+      swapResponse.expectedAmount == 0 ||
+      swapResponse.expectedAmount == '0'
+    ) {
+      console.log('setting amountToLock ', swapResponse.baseAmount);
+      amountToLock = swapResponse.baseAmount;
+    }
+    console.log('amountToLock ', amountToLock);
     return (
       <View className={classes.wrapper}>
         {/* {swapInfo.base !== 'SOV' ? (
@@ -1016,7 +1042,7 @@ class SendTransaction extends React.Component {
               : 'Send'}
             <b>
               {' '}
-              {toWholeCoins(swapResponse.expectedAmount)} {swapInfo.base}{' '}
+              {amountToLock} {swapInfo.base}{' '}
             </b>{' '}
             to this contract:
           </p>
@@ -1136,6 +1162,50 @@ class SendTransaction extends React.Component {
           <a href="." className={classes.hidden} target="_blank">
             View Lock Transaction on Explorer
           </a>
+
+          {swapResponse.redeemScript &&
+          swapStatus &&
+          swapStatus.message === 'Atomic Swap is ready' ? (
+            <SButton
+              size="large"
+              pl="base-tight"
+              pr={'base'}
+              py="tight"
+              fontSize={2}
+              mode="primary"
+              position="relative"
+              className={classes.sbuttoncl}
+              // ref={ref}
+              onClick={() => claimSwap(swapInfo, swapResponse)}
+              borderRadius="10px"
+              // {...rest}
+            >
+              <Box
+                as={MdAccountBalanceWallet}
+                // transform={isSend ? 'unset' : 'scaleY(-1)'}
+                size={'16px'}
+                mr={'2px'}
+              />
+              <Box as="span" ml="2px" fontSize="large">
+                Claim {swapInfo.quote}
+              </Box>
+            </SButton>
+          ) : // <p className={classes.text}>
+          //   Tap here to trigger Lock Contract Call:{' '}
+          //   <button
+          //     onClick={() => lockStx(swapInfo, swapResponse)}
+          //     // target={'_blank'}
+          //     // href="https://litecoin-project.github.io/p2sh-convert/"
+          //   >
+          //     Lock
+          //   </button>
+          // </p>
+
+          // <p>
+          //   {swapResponse.bip21} and{' '}
+          //   {(swapStatus && swapStatus.message) || 'nothing here'}
+          // </p>
+          null}
         </View>
       </View>
     );
@@ -1147,6 +1217,7 @@ SendTransaction.propTypes = {
   swapInfo: PropTypes.object.isRequired,
   swapResponse: PropTypes.object.isRequired,
   swapStatus: PropTypes.object,
+  claimSwap: PropTypes.func,
   // onChange: PropTypes.func.isRequired,
 };
 
