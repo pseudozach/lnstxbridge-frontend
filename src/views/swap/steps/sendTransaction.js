@@ -20,6 +20,8 @@ import { MdAccountBalanceWallet } from 'react-icons/md';
 
 import lightningPayReq from 'bolt11';
 
+// import { claimSwap } from '../../../actions/swapActions';
+
 // import { useHandleClaimHey } from '../../utils/dotx'
 
 import {
@@ -1015,7 +1017,13 @@ class SendTransaction extends React.Component {
       claimSwap,
     } = this.props;
 
-    console.log('sendtransaction.682 , ', swapInfo, swapResponse, swapStatus);
+    console.log(
+      'sendtransaction.682 , ',
+      swapInfo,
+      swapResponse,
+      swapStatus,
+      claimSwap
+    );
     // const link = swapResponse
     //   ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
     //   : '#0';
@@ -1176,7 +1184,7 @@ class SendTransaction extends React.Component {
               position="relative"
               className={classes.sbuttoncl}
               // ref={ref}
-              onClick={() => claimSwap(swapInfo, swapResponse)}
+              onClick={() => claimSwap(swapInfo, swapResponse, swapStatus)}
               borderRadius="10px"
               // {...rest}
             >

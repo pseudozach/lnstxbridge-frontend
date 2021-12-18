@@ -236,7 +236,13 @@ export const startListening = (dispatch, swapId, callback) => {
 };
 
 // atomic swap claim bitcoin utxo
-export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
+export const claimSwap = (
+  dispatch,
+  // nextStage,
+  swapInfo,
+  swapResponse,
+  swapStatus
+) => {
   dispatch(
     getFeeEstimation(feeEstimation => {
       console.log(
@@ -244,7 +250,19 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
         swapInfo.quote,
         ' fee set to 0'
       );
-      console.log('claimswap:: ', swapInfo, swapResponse, feeEstimation);
+      console.log('claimswap dispatch ', dispatch);
+      // console.log('claimswap nextStage ', nextStage);
+      console.log('claimswap swapinfo ', swapInfo);
+      console.log('claimswap swapResponse ', swapResponse);
+      console.log('claimswap feeEstimation ', feeEstimation);
+      console.log('claimswap swapStatus ', swapStatus);
+      // console.log(
+      //   'claimswap:: ',
+      //   swapInfo,
+      //   swapResponse,
+      //   feeEstimation.data,
+      //   swapStatus
+      // );
 
       // this is not launched automatically anymore, user needs to click it from the GUI.
       // claimStx(swapInfo,swapResponse, nextStage)
@@ -255,7 +273,8 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
       const claimTransaction = getClaimTransaction(
         swapInfo,
         swapResponse,
-        feeEstimation
+        feeEstimation,
+        swapStatus
       );
 
       console.log('reverseactions.124 claimtx: ', claimTransaction);
@@ -266,7 +285,7 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
           () => {
             console.log('swapactions.253 dispatch?', swapResponse);
             // dispatch(reverseSwapResponse(true, swapResponse));
-            nextStage();
+            // nextStage();
           }
         )
       );
@@ -274,11 +293,45 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
   );
 };
 
-const getClaimTransaction = (swapInfo, response, feeEstimation) => {
-  console.log('getClaimTransaction:: ', swapInfo, response, feeEstimation);
+// response
+const getClaimTransaction = (
+  swapInfo,
+  swapResponse,
+  feeEstimation,
+  swapStatus
+) => {
+  // console.log(
+  //   'getClaimTransaction:: ',
+  //   swapInfo,
+  //   // response,
+  //   feeEstimation,
+  //   swapStatus
+  // );
 
-  const redeemScript = getHexBuffer(response.redeemScript);
-  const lockupTransaction = Transaction.fromHex(response.transactionHex);
+  console.log('swapInfo.redeemScript ', swapResponse.redeemScript);
+  const redeemScript = getHexBuffer(swapResponse.redeemScript);
+
+  // response.transactionHex
+  console.log('swapStatus.transaction.hex ', swapStatus.transaction.hex);
+  const lockupTransaction = Transaction.fromHex(swapStatus.transaction.hex);
+  console.log('lockupTransaction ', lockupTransaction);
+  
+  console.log(
+    'swapInfo.preimage ',
+    swapInfo.preimage,
+    swapInfo.keys.privateKey,
+    swapResponse.timeoutBlockHeight,
+    feeEstimation[swapInfo.quote],
+    lockupTransaction.getHash(),
+    ECPair.fromPrivateKey(getHexBuffer(swapInfo.keys.privateKey)),
+    getNetwork(swapInfo.quote)
+  );
+
+  console.log(
+    'constructClaimTransaction inputs',
+    detectSwap(redeemScript, lockupTransaction), // -> undefined!!!
+    redeemScript
+  );
 
   return constructClaimTransaction(
     [
@@ -290,10 +343,12 @@ const getClaimTransaction = (swapInfo, response, feeEstimation) => {
         keys: ECPair.fromPrivateKey(getHexBuffer(swapInfo.keys.privateKey)),
       },
     ],
-    address.toOutputScript(swapInfo.address, getNetwork(swapInfo.quote)),
-    // feeEstimation[swapInfo.quote],
-    0,
-    false
+    // swapInfo.address
+    address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)),
+    feeEstimation[swapInfo.quote]
+    // false
+    // swapResponse.timeoutBlockHeight // -> only for refund tx
+    // 0
   );
 };
 

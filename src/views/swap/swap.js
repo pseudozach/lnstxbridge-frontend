@@ -62,6 +62,10 @@ class Swap extends Component {
     window.location.reload();
   };
 
+  claimSwap = () => {
+    this.props.claimSwap();
+  };
+
   render() {
     const {
       classes,
@@ -70,6 +74,7 @@ class Swap extends Component {
       swapInfo,
       swapResponse,
       swapStatus,
+      claimSwap,
     } = this.props;
     console.log('swap.js 74 ', swapInfo, swapStatus);
     return (
@@ -114,6 +119,7 @@ class Swap extends Component {
                     swapInfo={swapInfo}
                     swapResponse={swapResponse}
                     swapStatus={swapStatus}
+                    claimSwap={claimSwap}
                   />
                 )}
               />
@@ -172,6 +178,7 @@ class Swap extends Component {
                     loadingRender={() => <Loading />}
                     onPress={props.nextStage}
                     swapStatus={swapStatus}
+                    claimSwap={claimSwap}
                   />
                 )}
               />
@@ -207,6 +214,7 @@ Swap.propTypes = {
   startSwap: PropTypes.func.isRequired,
   swapStatus: PropTypes.string.isRequired,
   inSwapMode: PropTypes.bool,
+  claimSwap: PropTypes.func,
 };
 
 export default injectSheet(styles)(Swap);
