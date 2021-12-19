@@ -277,7 +277,7 @@ export const claimSwap = (
         swapStatus
       );
 
-      console.log('reverseactions.124 claimtx: ', claimTransaction);
+      console.log('swapactions.124 claimtx: ', claimTransaction);
       dispatch(
         broadcastClaimTransaction(
           swapInfo.quote,
@@ -315,28 +315,49 @@ const getClaimTransaction = (
   console.log('swapStatus.transaction.hex ', swapStatus.transaction.hex);
   const lockupTransaction = Transaction.fromHex(swapStatus.transaction.hex);
   console.log('lockupTransaction ', lockupTransaction);
-  
+
+  // find the script and value
+  let myoutput;
+  for (let index = 0; index < lockupTransaction.outs.length; index++) {
+    const item = lockupTransaction.outs[index];
+    if (item.value === swapResponse.quoteAmount * 100000000) {
+      myoutput = item;
+      // console.log('found myoutput ', myoutput);
+      myoutput.vout = index;
+    }
+  }
+  // const myoutput = lockupTransaction.outs.find(
+  //   item => item.value === swapResponse.quoteAmount * 100000000
+  // );
+  console.log('found myoutput ', myoutput);
+
   console.log(
     'swapInfo.preimage ',
     swapInfo.preimage,
     swapInfo.keys.privateKey,
     swapResponse.timeoutBlockHeight,
     feeEstimation[swapInfo.quote],
-    lockupTransaction.getHash(),
-    ECPair.fromPrivateKey(getHexBuffer(swapInfo.keys.privateKey)),
-    getNetwork(swapInfo.quote)
+    lockupTransaction.getHash()
+    // ECPair.fromPrivateKey(getHexBuffer(swapInfo.keys.privateKey)),
+    // getNetwork(swapInfo.quote)
   );
 
   console.log(
     'constructClaimTransaction inputs',
     detectSwap(redeemScript, lockupTransaction), // -> undefined!!!
-    redeemScript
+    redeemScript,
+    address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote))
   );
 
   return constructClaimTransaction(
     [
       {
-        ...detectSwap(redeemScript, lockupTransaction),
+        // ...detectSwap(redeemScript, lockupTransaction),
+        vout: myoutput.vout,
+        value: myoutput.value,
+        script: myoutput.script, // need this somehow
+        type: lockupTransaction.version,
+
         redeemScript,
         txHash: lockupTransaction.getHash(),
         preimage: getHexBuffer(swapInfo.preimage),
