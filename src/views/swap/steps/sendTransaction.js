@@ -1172,6 +1172,8 @@ class SendTransaction extends React.Component {
           </a>
 
           {swapResponse.redeemScript &&
+          swapStatus.transaction &&
+          swapStatus.transaction.hex &&
           swapStatus &&
           swapStatus.message === 'Atomic Swap is ready' ? (
             <SButton

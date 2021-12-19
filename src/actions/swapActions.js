@@ -352,11 +352,11 @@ const getClaimTransaction = (
   return constructClaimTransaction(
     [
       {
-        // ...detectSwap(redeemScript, lockupTransaction),
-        vout: myoutput.vout,
-        value: myoutput.value,
-        script: myoutput.script, // need this somehow
-        type: lockupTransaction.version,
+        ...detectSwap(redeemScript, lockupTransaction),
+        // vout: myoutput.vout,
+        // value: myoutput.value,
+        // script: myoutput.script, // need this somehow
+        // type: lockupTransaction.version,
 
         redeemScript,
         txHash: lockupTransaction.getHash(),
