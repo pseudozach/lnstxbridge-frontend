@@ -68,7 +68,10 @@ export const startSwap = (swapInfo, cb) => {
   console.log('atomic swap swapInfo', pair, swapInfo);
 
   let reqobj;
-  if (pair.id == 'BTC/STX' && invoice.toLowerCase().slice(0, 4) !== 'lnbc') {
+  if (
+    (pair.id == 'BTC/STX' || pair.id == 'BTC/USDA') &&
+    invoice.toLowerCase().slice(0, 4) !== 'lnbc'
+  ) {
     reqobj = {
       type: 'submarine',
       pairId: pair.id,
@@ -255,11 +258,11 @@ export const claimSwap = (
 ) => {
   dispatch(
     getFeeEstimation(feeEstimation => {
-      console.log(
-        'getFeeEstimation swapInfo.quote',
-        swapInfo.quote,
-        ' fee set to 0'
-      );
+      // console.log(
+      //   'getFeeEstimation swapInfo.quote',
+      //   swapInfo.quote,
+      //   ' fee set to 0'
+      // );
       console.log('claimswap dispatch ', dispatch);
       // console.log('claimswap nextStage ', nextStage);
       console.log('claimswap swapinfo ', swapInfo);

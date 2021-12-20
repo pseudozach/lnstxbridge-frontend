@@ -137,11 +137,11 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
 export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
   dispatch(
     getFeeEstimation(feeEstimation => {
-      console.log(
-        'getFeeEstimation swapInfo.quote',
-        swapInfo.quote,
-        ' fee set to 0'
-      );
+      // console.log(
+      //   'getFeeEstimation swapInfo.quote',
+      //   swapInfo.quote,
+      //   ' fee set to 0'
+      // );
       console.log('claimswap:: ', swapInfo, swapResponse, feeEstimation);
 
 //       // this is not launched automatically anymore, user needs to click it from the GUI.
@@ -231,10 +231,10 @@ const handleReverseSwapStatus = (
     latestSwapEvent = status;
   }
 
-  console.log('reverseactions status: ', status);
+  // console.log('reverseactions status: ', status);
   switch (status) {
     case SwapUpdateEvent.TransactionMempool:
-      console.log('reverseactions data: ', data);
+      // console.log('reverseactions data: ', data);
       // dispatch(setReverseSwapStatus('Lockup is in mempool'));
       dispatch(
         reverseSwapResponse(true, {

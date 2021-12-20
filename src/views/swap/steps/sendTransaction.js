@@ -290,12 +290,12 @@ const claimStx = async (swapInfo, swapResponse) => {
 };
 
 const claimToken = async (swapInfo, swapResponse) => {
-  console.log('claimToken:: ', swapInfo, swapResponse);
+  // console.log('claimToken:: ', swapInfo, swapResponse);
   let contractAddress = swapResponse.contractAddress
     .split('.')[0]
     .toUpperCase();
   let contractName = swapResponse.contractAddress.split('.')[1];
-  console.log('claimToken ', contractAddress, contractName);
+  // console.log('claimToken ', contractAddress, contractName);
 
   let preimage = swapInfo.preimage;
   let amount = swapResponse.onchainAmount;
@@ -308,18 +308,18 @@ const claimToken = async (swapInfo, swapResponse) => {
 
   // this is wrong
   // let decimalamount = parseInt(amount.toString(),16)
-  console.log('amount: ', amount);
+  // console.log('amount: ', amount);
   // let smallamount = decimalamount
   // .div(etherDecimals)
   // let smallamount = amount.toNumber();
   let smallamount = parseInt(amount / 100) + 1;
-  console.log('smallamount: ' + smallamount);
+  // console.log('smallamount: ' + smallamount);
 
   let swapamount = smallamount.toString(16).split('.')[0] + '';
   let postConditionAmount = new BN(
     Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
   );
-  console.log(`postConditionAmount: ${postConditionAmount}`);
+  // console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
 
   // // Add an optional post condition
@@ -363,7 +363,7 @@ const claimToken = async (swapInfo, swapResponse) => {
   const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
     'utf8'
   );
-  console.log('tokenAddress: ', tokenAddress);
+  // console.log('tokenAddress: ', tokenAddress);
 
   const assetAddress = tokenAddress.split('.')[0];
   const assetContractName = tokenAddress.split('.')[1];
@@ -386,22 +386,22 @@ const claimToken = async (swapInfo, swapResponse) => {
     standardFungiblePostCondition,
   ];
 
-  console.log(
-    'postConditions: ' + contractAddress,
-    contractName,
-    postConditionCode,
-    postConditionAmount
-  );
+  // console.log(
+  //   'postConditions: ' + contractAddress,
+  //   contractName,
+  //   postConditionCode,
+  //   postConditionAmount
+  // );
 
   let paddedamount = swapamount.padStart(32, '0');
   let paddedtimelock = timeLock.toString(16).padStart(32, '0');
-  console.log(
-    'amount, timelock ',
-    smallamount,
-    swapamount,
-    paddedamount,
-    paddedtimelock
-  );
+  // console.log(
+  //   'amount, timelock ',
+  //   smallamount,
+  //   swapamount,
+  //   paddedamount,
+  //   paddedtimelock
+  // );
 
   // (claimToken (preimage (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)) (tokenPrincipal <ft-trait>))
   const functionArgs = [
@@ -434,13 +434,13 @@ const claimToken = async (swapInfo, swapResponse) => {
     postConditions,
     // anchorMode: AnchorMode.Any,
     onFinish: data => {
-      console.log('Stacks sip10 claim onFinish:', JSON.stringify(data));
+      console.log('Stacks sip10 claim onFinish:', data);
       // reverseSwapResponse(true, swapResponse);
       // ??? enable this? so swap is marked completed?
       // nextStage();
     },
     onCancel: data => {
-      console.log('Stacks claim onCancel:', JSON.stringify(data));
+      console.log('Stacks claim onCancel:', data);
       // reverseSwapResponse(false, swapResponse);
       // nextStage();
     },
@@ -696,9 +696,12 @@ async function lockToken(swapInfo, swapResponse) {
   let swapamount =
     (parseInt(swapResponse.expectedAmount) / 100).toString(16).split('.')[0] +
     '';
+  // postcondition amount should be in stx not mstx - WRONG!
   let postconditionamount = Math.ceil(
     parseInt(swapResponse.expectedAmount) / 100
   );
+  // let postconditionamount =
+  //   parseInt(swapResponse.expectedAmount) / (100 * 1000000);
   // *1000
   // 199610455 -> 199 STX
   console.log(

@@ -225,10 +225,10 @@ const claimStx = async (swapInfo, swapResponse) => {
 };
 
 const claimToken = async (swapInfo, swapResponse) => {
-  console.log('claimToken:: ', swapInfo, swapResponse);
+  // console.log('claimToken:: ', swapInfo, swapResponse);
   let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
   let contractName = swapResponse.lockupAddress.split('.')[1];
-  console.log('claimToken ', contractAddress, contractName);
+  // console.log('claimToken ', contractAddress, contractName);
 
   let preimage = swapInfo.preimage;
   let amount = swapResponse.onchainAmount;
@@ -477,7 +477,7 @@ class LockingFunds extends React.Component {
     // setAllowZeroConf
     const { classes, swapInfo, swapResponse, swapStatus } = this.props;
 
-    console.log('lockingfunds.255 , ', swapResponse, swapStatus);
+    // console.log('lockingfunds.255 , ', swapResponse, swapStatus);
     const link = swapResponse
       ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
       : '#0';

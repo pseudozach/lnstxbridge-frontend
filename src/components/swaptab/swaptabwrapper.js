@@ -704,8 +704,8 @@ class SwapTabWrapper extends React.Component {
   componentDidMount = () => {
     const symbol = this.getSymbol();
     const limits = this.props.limits[symbol];
-    console.log('symbol, limits ', symbol, limits);
-    console.log('swaptabwrapper.229 TODO revert ', limits);
+    // console.log('symbol, limits ', symbol, limits);
+    // console.log('swaptabwrapper.229 TODO revert ', limits);
     this.setState(
       {
         minAmount: new BigNumber(limits.minimal),
@@ -801,7 +801,7 @@ class SwapTabWrapper extends React.Component {
       const rate = this.props.rates[symbol];
       const limits = this.props.limits[symbol];
       const feePercentage = this.props.fees.percentages[symbol];
-      console.log('swaptabwrapper.549 minAmount: ', symbol, rate, limits);
+      // console.log('swaptabwrapper.549 minAmount: ', symbol, rate, limits);
       this.setState(
         {
           rate,
