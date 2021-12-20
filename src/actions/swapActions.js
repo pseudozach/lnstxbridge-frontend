@@ -278,6 +278,11 @@ export const claimSwap = (
       );
 
       console.log('swapactions.124 claimtx: ', claimTransaction);
+      console.log('swapactions.124 claimtx getId: ', claimTransaction.getId());
+      console.log(
+        'swapactions.124 claimtx getHash: ',
+        claimTransaction.getHash()
+      );
       dispatch(
         broadcastClaimTransaction(
           swapInfo.quote,

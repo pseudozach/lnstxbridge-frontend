@@ -129,8 +129,10 @@ class Swap extends Component {
                   <Confetti
                     notifie={style => (
                       <span className={style}>
-                        You sent {swapInfo.baseAmount} {swapInfo.base} and
-                        received {swapInfo.quoteAmount} {swapInfo.quote}
+                        You sent{' '}
+                        {swapInfo.baseAmount || swapResponse.baseAmount}{' '}
+                        {swapInfo.base} and received {swapInfo.quoteAmount}{' '}
+                        {swapInfo.quote}
                       </span>
                     )}
                   />
