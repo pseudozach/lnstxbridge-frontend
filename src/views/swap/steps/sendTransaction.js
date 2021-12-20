@@ -487,7 +487,7 @@ async function lockStx(swapInfo, swapResponse) {
   let stxcontractname = swapResponse.address.split('.')[1];
 
   let paymenthash;
-  if (swapInfo.invoice.toLowerCase().slice(0, 2 === 'ln')) {
+  if (swapInfo.invoice.toLowerCase().slice(0, 2) === 'ln') {
     var decoded = lightningPayReq.decode(swapInfo.invoice);
     // console.log("decoded: ", decoded);
 
@@ -509,11 +509,19 @@ async function lockStx(swapInfo, swapResponse) {
   let swapamount, postconditionamount;
   if (swapResponse.expectedAmount === 0) {
     // atomic swap
+    console.log(
+      'expectedAmount is 0, this is an atomic swap ',
+      swapResponse.expectedAmount,
+      swapResponse.baseAmount
+    );
     let amountToLock = swapResponse.baseAmount;
-    swapamount =
-      (parseInt(amountToLock) * 1000000).toString(16).split('.')[0] + '';
-    postconditionamount = Math.ceil(parseInt(amountToLock) * 1000000);
+    swapamount = (amountToLock * 1000000).toString(16).split('.')[0] + '';
+    postconditionamount = Math.ceil(amountToLock * 1000000);
   } else {
+    console.log(
+      'expectedAmount is NOT 0, regular swap ',
+      swapResponse.expectedAmount
+    );
     swapamount =
       (parseInt(swapResponse.expectedAmount) / 100).toString(16).split('.')[0] +
       '';

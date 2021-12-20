@@ -100,7 +100,7 @@ class StyledInputInvoice extends React.Component {
       ? getSampleInvoice(swapInfo.quote)
       : getSampleAddress(swapInfo.quote);
     const pasteText =
-      swapInfo.quote === ('BTC' && isLN) ? 'Lightning invoice for ' : 'Address';
+      swapInfo.quote === 'BTC' && isLN ? 'Lightning invoice for ' : 'Address';
     // <FaBolt size={25} color="#FFFF00" />
 
     return (

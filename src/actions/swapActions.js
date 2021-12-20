@@ -190,6 +190,16 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
       );
       break;
 
+    case SwapUpdateEvent.LockupFailed:
+      dispatch(
+        setSwapStatus({
+          error: true,
+          pending: false,
+          message: 'Lockup failed. Please refund your coins.',
+        })
+      );
+      break;
+
     default:
       console.log(`Unknown swap status: ${JSON.stringify(data)}`);
       break;

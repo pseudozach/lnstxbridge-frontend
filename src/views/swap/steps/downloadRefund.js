@@ -151,7 +151,7 @@ StyledDownloadRefund.propTypes = {
   classes: PropTypes.object.isRequired,
   address: PropTypes.string.isRequired,
   currency: PropTypes.string.isRequired,
-  redeemScript: PropTypes.string.isRequired,
+  redeemScript: PropTypes.string,
   privateKey: PropTypes.string.isRequired,
   timeoutBlockHeight: PropTypes.number.isRequired,
   swapInfo: PropTypes.object.isRequired,
