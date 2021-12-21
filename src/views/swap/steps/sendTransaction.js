@@ -1038,7 +1038,9 @@ class SendTransaction extends React.Component {
     // const link = swapResponse
     //   ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
     //   : '#0';
-    let amountToLock = toWholeCoins(swapResponse.expectedAmount);
+
+    // let amountToLock = toWholeCoins(swapResponse.expectedAmount);
+    let amountToLock = swapResponse.expectedAmount;
     if (
       swapResponse.expectedAmount == 0 ||
       swapResponse.expectedAmount == '0'

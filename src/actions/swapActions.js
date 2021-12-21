@@ -226,7 +226,7 @@ export const startListening = (dispatch, swapId, callback) => {
     const url = `${boltzApi}/swapstatus`;
 
     const interval = setInterval(() => {
-      console.log('interval');
+      // console.log('interval');
       axios
         .post(url, {
           id: swapId,
