@@ -363,8 +363,8 @@ const getClaimTransaction = (
   console.log(
     'constructClaimTransaction inputs',
     detectSwap(redeemScript, lockupTransaction), // -> undefined!!!
-    redeemScript,
-    address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote))
+    redeemScript
+    // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote))
   );
 
   return constructClaimTransaction(

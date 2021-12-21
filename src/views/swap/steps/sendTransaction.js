@@ -327,7 +327,10 @@ const claimToken = async (swapInfo, swapResponse) => {
   // console.log('smallamount: ' + smallamount);
 
   let swapamount = smallamount.toString(16).split('.')[0] + '';
-  let postConditionAmount = new BN(Math.ceil(swapResponse.onchainAmount));
+  // let postConditionAmount = new BN(Math.ceil(swapResponse.onchainAmount));
+
+  let postConditionAmount = new BN(amount);
+
   // parseInt(swapResponse.onchainAmount) / 100)
   // console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
