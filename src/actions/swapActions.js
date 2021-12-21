@@ -263,7 +263,7 @@ export const claimSwap = (
       //   swapInfo.quote,
       //   ' fee set to 0'
       // );
-      console.log('claimswap dispatch ', dispatch);
+      // console.log('claimswap dispatch ', dispatch);
       // console.log('claimswap nextStage ', nextStage);
       console.log('claimswap swapinfo ', swapInfo);
       console.log('claimswap swapResponse ', swapResponse);

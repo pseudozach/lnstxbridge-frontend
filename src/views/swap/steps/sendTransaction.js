@@ -4,7 +4,7 @@ import injectSheet from 'react-jss';
 import View from '../../../components/view';
 // import Link from '../../../components/link';
 import QrCode from '../../../components/qrcode';
-import { toWholeCoins } from '../../../utils';
+// import { toWholeCoins } from '../../../utils';
 import { stacksNetworkType } from '../../../constants';
 // , copyToClipBoard, lockFunds, getExplorerTransactionUrl, setExplorerTransactionUrl
 // import { triggerLockStx } from '../../../utils/dotx'
@@ -298,8 +298,13 @@ const claimToken = async (swapInfo, swapResponse) => {
   // console.log('claimToken ', contractAddress, contractName);
 
   let preimage = swapInfo.preimage;
-  let amount = swapResponse.onchainAmount;
-  let timeLock = swapResponse.timeoutBlockHeight;
+
+  // let amount = swapResponse.onchainAmount;
+  // let timeLock = swapResponse.timeoutBlockHeight;
+
+  // new way
+  let amount = Math.floor(swapInfo.quoteAmount * 1000000);
+  let timeLock = swapResponse.asTimeoutBlockHeight;
 
   // ${getHexString(preimage)}
   console.log(
@@ -312,13 +317,18 @@ const claimToken = async (swapInfo, swapResponse) => {
   // let smallamount = decimalamount
   // .div(etherDecimals)
   // let smallamount = amount.toNumber();
-  let smallamount = parseInt(amount / 100) + 1;
+
+
+
+  let smallamount = parseInt(amount);
+  //  + 1; -> REMOVED!
+  // / 100 -> also removed!
+
   // console.log('smallamount: ' + smallamount);
 
   let swapamount = smallamount.toString(16).split('.')[0] + '';
-  let postConditionAmount = new BN(
-    Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
-  );
+  let postConditionAmount = new BN(Math.ceil(swapResponse.onchainAmount));
+  // parseInt(swapResponse.onchainAmount) / 100)
   // console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
 
@@ -360,9 +370,10 @@ const claimToken = async (swapInfo, swapResponse) => {
   // const postConditionCode = FungibleConditionCode.LessEqual;
   // const postConditionAmount = new BN(postconditionamount);
 
-  const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
-    'utf8'
-  );
+  // const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
+  //   'utf8'
+  // );
+  const tokenAddress = swapResponse.tokenAddress;
   // console.log('tokenAddress: ', tokenAddress);
 
   const assetAddress = tokenAddress.split('.')[0];
@@ -672,34 +683,56 @@ async function lockToken(swapInfo, swapResponse) {
   let stxcontractaddress = swapResponse.address.split('.')[0];
   let stxcontractname = swapResponse.address.split('.')[1];
 
-  var decoded = lightningPayReq.decode(swapInfo.invoice);
-  // console.log("decoded: ", decoded);
+  let paymenthash;
+  if (swapInfo.invoice.toLowerCase().slice(0, 2) === 'ln') {
+    var decoded = lightningPayReq.decode(swapInfo.invoice);
+    // console.log("decoded: ", decoded);
 
-  var obj = decoded.tags;
-  for (let index = 0; index < obj.length; index++) {
-    const tag = obj[index];
-    // console.log("tag: ", tag);
-    if (tag.tagName === 'payment_hash') {
-      // console.log("yay: ", tag.data);
-      var paymenthash = tag.data;
+    var obj = decoded.tags;
+    for (let index = 0; index < obj.length; index++) {
+      const tag = obj[index];
+      // console.log("tag: ", tag);
+      if (tag.tagName === 'payment_hash') {
+        // console.log("yay: ", tag.data);
+        paymenthash = tag.data;
+      }
     }
+  } else {
+    paymenthash = swapInfo.preimageHash;
   }
   console.log('paymenthash: ', paymenthash);
 
-  // need to confirm token decimals!!!
-  // * 1000000
-  console.log(
-    'calc: ',
-    swapResponse.expectedAmount,
-    parseInt(swapResponse.expectedAmount) / 100
-  );
-  let swapamount =
-    (parseInt(swapResponse.expectedAmount) / 100).toString(16).split('.')[0] +
-    '';
-  // postcondition amount should be in stx not mstx - WRONG!
-  let postconditionamount = Math.ceil(
-    parseInt(swapResponse.expectedAmount) / 100
-  );
+  let swapamount, postconditionamount;
+  if (swapResponse.expectedAmount === 0) {
+    // atomic swap
+    console.log(
+      'expectedAmount is 0, this is an atomic swap ',
+      swapResponse.expectedAmount,
+      swapResponse.baseAmount
+    );
+    let amountToLock = swapResponse.baseAmount;
+    swapamount = (amountToLock * 1000000).toString(16).split('.')[0] + '';
+    postconditionamount = Math.ceil(amountToLock * 1000000);
+  } else {
+    console.log(
+      'expectedAmount is NOT 0, regular swap ',
+      swapResponse.expectedAmount
+    );
+    // need to confirm token decimals!!!
+    // * 1000000
+    console.log(
+      'calc: ',
+      swapResponse.expectedAmount,
+      parseInt(swapResponse.expectedAmount) / 100
+    );
+    swapamount =
+      (parseInt(swapResponse.expectedAmount) / 100).toString(16).split('.')[0] +
+      '';
+    // postcondition amount should be in stx not mstx - WRONG!
+    postconditionamount = Math.ceil(
+      parseInt(swapResponse.expectedAmount) / 100
+    );
+  }
   // let postconditionamount =
   //   parseInt(swapResponse.expectedAmount) / (100 * 1000000);
   // *1000
@@ -730,9 +763,10 @@ async function lockToken(swapInfo, swapResponse) {
   const postConditionCode = FungibleConditionCode.LessEqual;
   const postConditionAmount = new BN(postconditionamount);
 
-  const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
-    'utf8'
-  );
+  // const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
+  //   'utf8'
+  // );
+  const tokenAddress = swapResponse.tokenAddress;
   console.log('tokenAddress: ', tokenAddress);
 
   const assetAddress = tokenAddress.split('.')[0];
