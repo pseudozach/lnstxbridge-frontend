@@ -52,7 +52,10 @@ export const setRefundFile = file => {
         payload: "dummyvalue",
       });
 
-      // setTransactionHash("dummyvalue");
+      if(fileJson.currency !== 'BTC') {
+        setTransactionHash("dummyvalue");
+      }
+      
     });
   };
 };
@@ -93,6 +96,9 @@ const createRefundTransaction = (
 ) => {
   const redeemScript = getHexBuffer(refundFile.redeemScript);
   const lockupTransaction = Transaction.fromHex(response.data.transactionHex);
+  
+  const timeoutBlockHeight = refundFile.swapResponse.origBlockHeight;
+  console.log('createRefundTransaction redeemScript lockupTransaction address refundFile.timeoutBlockHeight', redeemScript, lockupTransaction, address.toOutputScript(destinationAddress, getNetwork(currency)), timeoutBlockHeight);
 
   // TODO: make sure the provided lockup transaction hash was correct and show more specific error if not
   return {
@@ -106,7 +112,8 @@ const createRefundTransaction = (
         },
       ],
       address.toOutputScript(destinationAddress, getNetwork(currency)),
-      refundFile.timeoutBlockHeight,
+      // refundFile.timeoutBlockHeight,
+      timeoutBlockHeight,
       feeEstimation[currency]
     ),
     lockupTransactionId: lockupTransaction.getId(),
@@ -183,6 +190,7 @@ export const startRefund = (
 };
 
 const broadcastRefund = (currency, transactionHex, lockupTransactionId, cb) => {
+  console.log('broadcastRefund ', transactionHex, lockupTransactionId)
   const url = `${boltzApi}/broadcasttransaction`;
   return dispatch => {
     dispatch(refundRequest());

@@ -71,6 +71,7 @@ const Refund = ({
                   setRefundFile={setRefundFile}
                   isUploaded={Object.keys(refundFile).length !== 0}
                   setTransactionHash={setTransactionHash}
+                  refundFile={refundFile}
                 />
               )}
             />

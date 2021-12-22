@@ -3,12 +3,17 @@ import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 import { FaCheckCircle } from 'react-icons/fa';
 import View from '../../../components/view';
-// import InputArea from '../../../components/inputarea';
+import InputArea from '../../../components/inputarea';
 import DropZone from '../../../components/dropzone';
 import FileUpload from '../../../components/fileupload';
-// import { lockupTransactionHash } from '../../../constants';
+import { lockupTransactionHash } from '../../../constants';
 
 const UploadRefundFileStyles = theme => ({
+  regular: {
+    display: 'block !important',
+    margin: 'auto',
+    textAlign: 'center',
+  },
   wrapper: {
     flex: '1 0 100%',
     flexDirection: 'column',
@@ -53,6 +58,7 @@ const StyledUploadRefundFile = ({
   setRefundFile,
   setTransactionHash,
   isUploaded,
+  refundFile,
   // refundStx,
 }) => (
   <View className={classes.wrapper}>
@@ -69,7 +75,7 @@ const StyledUploadRefundFile = ({
         />
       </DropZone>
     )}
-    {/* <p className={`${classes.info} ${classes.mobileInfo}`}>
+    {refundFile.currency === 'BTC' ? (<View className={classes.regular}><p className={`${classes.info} ${classes.mobileInfo}`}>
       Paste the hash of the lockup transaction
     </p>
     <InputArea
@@ -77,7 +83,7 @@ const StyledUploadRefundFile = ({
       width={500}
       onChange={setTransactionHash}
       placeholder={`EG: ${lockupTransactionHash}`}
-    /> */}
+    /></View>) : null}
   </View>
 );
 
