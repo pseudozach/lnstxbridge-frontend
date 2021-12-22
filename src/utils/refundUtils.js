@@ -7,7 +7,9 @@ export const createRefundQr = (
   timeoutBlockHeight,
   preimageHash,
   amount,
-  contract
+  contract,
+  swapInfo,
+  swapResponse,
 ) => {
   // console.log("createrefundqr: ", preimageHash, amount)
   const jsonData = JSON.stringify({
@@ -18,7 +20,21 @@ export const createRefundQr = (
     preimageHash,
     amount,
     contract,
+    swapInfo,
+    swapResponse,
   });
+
+  // reqobj = {
+  //   type: 'submarine',
+  //   pairId: pair.id,
+  //   orderSide: pair.orderSide,
+  //   claimAddress: invoice,
+  //   refundPublicKey: keys.publicKey,
+  //   preimageHash,
+  //   requestedAmount: parseInt(quoteAmount * 1000000) + '',
+  //   baseAmount: baseAmount,
+  //   quoteAmount: quoteAmount,
+  // };
 
   const qr = new QRious({
     size: 500,

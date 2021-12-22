@@ -1110,7 +1110,9 @@ class SendTransaction extends React.Component {
           {/* <span className={classes.action} onClick={() => copyToClipBoard()}>
         Copy
       </span> */}
-          {swapResponse.bip21 ? (
+          {swapResponse.bip21 &&
+          (!swapStatus ||
+          swapStatus.message !== 'Atomic Swap is ready') ? (
             <View className={classes.qrcode}>
               <QrCode size={250} link={swapResponse.bip21} />
             </View>
@@ -1137,6 +1139,7 @@ class SendTransaction extends React.Component {
               mode="primary"
               position="relative"
               className={classes.sbuttoncl}
+              disabled={swapStatus.transaction && swapStatus.transaction.hex}
               // ref={ref}
               onClick={() =>
                 swapInfo.base === 'STX'

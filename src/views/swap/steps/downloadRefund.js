@@ -126,7 +126,9 @@ class StyledDownloadRefund extends React.Component {
                 timeoutBlockHeight,
                 paymenthash,
                 parseInt(swapResponse.expectedAmount / 100),
-                contract
+                contract,
+                swapInfo,
+                swapResponse,
               )}
               download={'refund.png'}
             >

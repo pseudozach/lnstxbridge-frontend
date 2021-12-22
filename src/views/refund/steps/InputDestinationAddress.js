@@ -3,8 +3,8 @@ import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 import View from '../../../components/view';
 import { stacksNetworkType } from '../../../constants';
-// import InputArea from '../../../components/inputarea';
-// import { getCurrencyName, getSampleAddress } from '../../../utils';
+import InputArea from '../../../components/inputarea';
+import { getCurrencyName, getSampleAddress } from '../../../utils';
 
 import { Button as SButton, Box } from '@stacks/ui'
 import { MdFileDownload } from 'react-icons/md';
@@ -31,7 +31,7 @@ import {
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
 
-let mocknet = new StacksMocknet();
+let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 // mocknet.coreApiUrl = 'http://localhost:3999';
 const testnet = new StacksTestnet();
 const mainnet = new StacksMainnet();
@@ -84,12 +84,25 @@ async function refundStx (refundFile, setRefundTransactionHash, setDestinationAd
   let stxcontractaddress = refundFile.contract.split(".")[0];
   let stxcontractname = refundFile.contract.split(".")[1];
 
-  let paymenthash = refundFile.preimageHash;
+  let paymenthash;
+  if(refundFile.preimageHash) {
+    paymenthash = refundFile.preimageHash;
+  } else {
+    paymenthash = refundFile.swapInfo.preimageHash;
+  }
 
   // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
-  let swapamount = refundFile.amount.toString(16).split(".")[0] + "";
+  let swapamount, postconditionamount;
+  if(refundFile.amount) {
+    swapamount = refundFile.amount.toString(16).split(".")[0] + "";
+    postconditionamount = Math.ceil(parseInt(refundFile.amount));
+  } else {
+    swapamount = (refundFile.swapResponse.baseAmount*1000000).toString(16).split(".")[0] + "";
+    postconditionamount = Math.ceil(parseInt(refundFile.swapResponse.baseAmount*1000000));
+  }
+  
   // let postconditionamount = refundFile.amount + 100000
-  let postconditionamount = Math.ceil(parseInt(refundFile.amount));
+
   // 199610455 -> 199 STX
   console.log("swapamount, postconditionamount: ", swapamount, postconditionamount);
   let paddedamount = swapamount.padStart(32, "0");
@@ -165,13 +178,30 @@ async function refundToken (refundFile, setRefundTransactionHash, setDestination
   let stxcontractaddress = refundFile.contract.split(".")[0];
   let stxcontractname = refundFile.contract.split(".")[1];
 
-  let paymenthash = refundFile.preimageHash;
+  let paymenthash;
+  if(refundFile.preimageHash) {
+    paymenthash = refundFile.preimageHash;
+  } else {
+    paymenthash = refundFile.swapInfo.preimageHash;
+  }
 
-  // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
-  let swapamount = refundFile.amount.toString(16).split(".")[0] + "";
-  // let postconditionamount = refundFile.amount + 100000
-  let postconditionamount = Math.ceil(parseInt(refundFile.amount));
-  // 199610455 -> 199 STX
+  // old way
+  // // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
+  // let swapamount = refundFile.amount.toString(16).split(".")[0] + "";
+  // // let postconditionamount = refundFile.amount + 100000
+  // let postconditionamount = Math.ceil(parseInt(refundFile.amount));
+  // // 199610455 -> 199 STX
+
+  // new way
+  let swapamount, postconditionamount;
+  if(refundFile.amount) {
+    swapamount = refundFile.amount.toString(16).split(".")[0] + "";
+    postconditionamount = Math.ceil(parseInt(refundFile.amount));
+  } else {
+    swapamount = (refundFile.swapResponse.baseAmount*1000000).toString(16).split(".")[0] + "";
+    postconditionamount = Math.ceil(parseInt(refundFile.swapResponse.baseAmount*1000000));
+  }
+
   console.log("swapamount, postconditionamount: ", swapamount, postconditionamount);
   let paddedamount = swapamount.padStart(32, "0");
 
@@ -185,7 +215,12 @@ async function refundToken (refundFile, setRefundTransactionHash, setDestination
   //   createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
   // ];
 
-  const tokenAddress = Buffer.from(refundFile.redeemScript, 'hex').toString('utf8');
+  let tokenAddress;
+  if(refundFile.redeemScript.includes(".")){
+    tokenAddress = Buffer.from(refundFile.redeemScript, 'hex').toString('utf8');
+  } else {
+    tokenAddress = refundFile.swapResponse.tokenAddress;
+  }
   console.log('refundFile tokenAddress: ', tokenAddress);
 
   const assetAddress = tokenAddress.split('.')[0];
@@ -347,49 +382,59 @@ const StyledInputDestinationAddress = ({
   setRefundTransactionHash,
 }) => (
   <View className={classes.wrapper}>
-    <p className={classes.info}>
-    {/* {getCurrencyName(currency)} */}
-      Click to trigger Refund
-      {/* Use same account you used for locking the STX */}
-    </p>
+    {currency !== 'BTC' ? <View>
+      <p className={classes.info}>
+      {/* {getCurrencyName(currency)} */}
+        Click to trigger Refund
+        {/* Use same account you used for locking the STX */}
+      </p>
 
-    <SButton
-      size="large"
-      pl="base-tight"
-      pr={'base'}
-      py="tight"
-      fontSize={2}
-      mode="primary"
-      position="relative"
-      className={classes.sbuttoncl}
-      // ref={ref}
-      onClick={() => currency === 'STX'
-        ? refundStx(refundFile, setRefundTransactionHash, setDestinationAddress)
-        : refundToken(refundFile, setRefundTransactionHash, setDestinationAddress)
-      }
-      // onClick={refundStx}
-      borderRadius="10px"
-      // {...rest}
-      >
-      <Box
-        as={MdFileDownload}
-        // transform={isSend ? 'unset' : 'scaleY(-1)'}
-        size={'16px'}
-        mr={'2px'}
-      />
-      <Box as="span" ml="2px" fontSize="large">
-        Refund {currency}
-      </Box>
-    </SButton>
+      <SButton
+        size="large"
+        pl="base-tight"
+        pr={'base'}
+        py="tight"
+        fontSize={2}
+        mode="primary"
+        position="relative"
+        className={classes.sbuttoncl}
+        // ref={ref}
+        onClick={() => currency === 'STX'
+          ? refundStx(refundFile, setRefundTransactionHash, setDestinationAddress)
+          : refundToken(refundFile, setRefundTransactionHash, setDestinationAddress)
+        }
+        // onClick={refundStx}
+        borderRadius="10px"
+        // {...rest}
+        >
+        <Box
+          as={MdFileDownload}
+          // transform={isSend ? 'unset' : 'scaleY(-1)'}
+          size={'16px'}
+          mr={'2px'}
+        />
+        <Box as="span" ml="2px" fontSize="large">
+          Refund {currency}
+        </Box>
+      </SButton>
+    </View> : null }
 
-    {/* <InputArea
+    {currency === 'BTC' ? 
+    <View className={classes.wrapper}>
+        <p className={classes.info}>
+        {/* {getCurrencyName(currency)} */}
+          Enter your {currency} Address
+          {/* Use same account you used for locking the STX */}
+        </p>
+    <InputArea
       height={150}
       width={500}
       showQrScanner={true}
       onChange={setDestinationAddress}
       placeholder={`EG: ${getSampleAddress(currency)}`}
       // value={123}
-    /> */}
+    />
+    </View> : null}
   </View>
 );
 
