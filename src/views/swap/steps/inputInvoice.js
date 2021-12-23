@@ -43,7 +43,7 @@ let bitcoinNetwork =
   process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet'
     ? bitcoin.networks.regtest
     : bitcoin.networks.mainnet;
-console.log('bitcoinNetwork ', bitcoinNetwork);
+// console.log('bitcoinNetwork ', bitcoinNetwork);
 function validate(input) {
   try {
     bitcoin.address.toOutputScript(input, bitcoinNetwork);
@@ -94,7 +94,7 @@ class StyledInputInvoice extends React.Component {
     const { error } = this.state;
     const { classes, swapInfo } = this.props;
 
-    console.log('ii.74 ', swapInfo);
+    // console.log('ii.74 ', swapInfo);
     const isLN = localStorage.getItem('quote').includes('⚡');
     const placeholder = isLN
       ? getSampleInvoice(swapInfo.quote)

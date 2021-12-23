@@ -42,7 +42,7 @@ let bitcoinNetwork =
   process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet'
     ? bitcoin.networks.regtest
     : bitcoin.networks.mainnet;
-console.log('bitcoinNetwork ', bitcoinNetwork);
+// console.log('bitcoinNetwork ', bitcoinNetwork);
 function validate(input) {
   try {
     bitcoin.address.toOutputScript(input, bitcoinNetwork);

@@ -1070,7 +1070,7 @@ class SendTransaction extends React.Component {
       swapInfo,
       swapResponse,
       swapStatus,
-      claimSwap
+      // claimSwap
     );
     // const link = swapResponse
     //   ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
@@ -1083,13 +1083,13 @@ class SendTransaction extends React.Component {
       swapResponse.expectedAmount == 0 ||
       swapResponse.expectedAmount == '0'
     ) {
-      console.log('setting amountToLock ', swapResponse.baseAmount);
+      // console.log('setting amountToLock ', swapResponse.baseAmount);
       amountToLock = swapResponse.baseAmount;
     } else if (swapResponse.expectedAmount === swapInfo.baseAmount*10**8) {
       amountToLock = swapInfo.baseAmount;
     }
-    
-    console.log('amountToLock ', amountToLock);
+
+    // console.log('amountToLock ', amountToLock);
     return (
       <View className={classes.wrapper}>
         {/* {swapInfo.base !== 'SOV' ? (

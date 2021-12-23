@@ -65,7 +65,7 @@ export const startSwap = (swapInfo, cb) => {
   if (invoice.slice(0, 10) === 'lightning:') {
     invoice = invoice.slice(10);
   }
-  console.log('atomic swap swapInfo', pair, swapInfo);
+  // console.log('atomic swap swapInfo', pair, swapInfo);
 
   let reqobj;
   if (
@@ -95,15 +95,15 @@ export const startSwap = (swapInfo, cb) => {
 
   return dispatch => {
     dispatch(swapRequest());
-    console.log('submarine swap request: refundPublicKey', keys.publicKey);
+    // console.log('submarine swap request: refundPublicKey', keys.publicKey);
     axios
       .post(url, reqobj)
       .then(response => {
-        console.log('1esponse data ', response.data);
+        // console.log('1esponse data ', response.data);
         dispatch(swapResponse(true, response.data));
-        console.log('2response data ', response.data);
+        // console.log('2response data ', response.data);
         startListening(dispatch, response.data.id, cb);
-        console.log('3response data ', response.data);
+        // console.log('3response data ', response.data);
         cb();
       })
       .catch(error => {
