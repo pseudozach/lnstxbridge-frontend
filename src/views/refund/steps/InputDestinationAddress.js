@@ -382,7 +382,7 @@ const StyledInputDestinationAddress = ({
   setRefundTransactionHash,
 }) => (
   <View className={classes.wrapper}>
-    {currency !== 'BTC' ? <View>
+    {currency !== 'BTC' ? <View className={classes.wrapper}>
       <p className={classes.info}>
       {/* {getCurrencyName(currency)} */}
         Click to trigger Refund

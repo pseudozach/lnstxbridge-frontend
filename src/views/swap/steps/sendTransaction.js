@@ -1079,6 +1079,8 @@ class SendTransaction extends React.Component {
     // let amountToLock = toWholeCoins(swapResponse.expectedAmount);
     let amountToLock = swapResponse.expectedAmount;
     if (
+      swapResponse.expectedAmount === swapResponse.swapInfo*10**8 ||
+      !swapResponse.expectedAmount ||
       swapResponse.expectedAmount == 0 ||
       swapResponse.expectedAmount == '0'
     ) {
