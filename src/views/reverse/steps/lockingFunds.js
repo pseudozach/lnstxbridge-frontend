@@ -112,6 +112,7 @@ const claimStx = async (swapInfo, swapResponse) => {
   let postConditionAmount = new BN(
     Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
   );
+
   console.log(`postConditionAmount: ${postConditionAmount}`);
   // *1000
 
