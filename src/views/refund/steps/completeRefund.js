@@ -41,7 +41,7 @@ const StyledCompleteRefund = ({ classes, currency, refundTransactionHash }) => (
     <span className={classes.title}> Success! </span>
     <p className={classes.transaction}>
       <Link
-        to={`${getExplorer(currency)}/txid/0x${refundTransactionHash}`}
+        to={`${getExplorer(currency)}/tx/${refundTransactionHash}`}
         text={'Click here'}
       />{' '}
       to see the refund transaction

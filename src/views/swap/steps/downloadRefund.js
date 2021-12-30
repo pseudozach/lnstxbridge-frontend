@@ -6,6 +6,7 @@ import View from '../../../components/view';
 import { navigation } from '../../../actions';
 import { createRefundQr } from '../../../utils/refundUtils';
 import lightningPayReq from 'bolt11';
+import * as bitcoin from 'bitcoinjs-lib';
 
 const DownloadRefundStyles = () => ({
   wrapper: {
@@ -36,6 +37,21 @@ const DownloadRefundStyles = () => ({
     fontSize: '24px',
   },
 });
+
+let bitcoinNetwork =
+  process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet'
+    ? bitcoin.networks.regtest
+    : bitcoin.networks.mainnet;
+// console.log('bitcoinNetwork ', bitcoinNetwork);
+function validate(input) {
+  try {
+    bitcoin.address.toOutputScript(input, bitcoinNetwork);
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
 
 class StyledDownloadRefund extends React.Component {
   constructor(props) {
@@ -74,18 +90,24 @@ class StyledDownloadRefund extends React.Component {
 
     // console.log("downloadrefund.74 ", swapInfo, swapResponse);
 
-    var decoded = lightningPayReq.decode(swapInfo.invoice)
-    // console.log("decoded: ", decoded);
-  
-    var obj = decoded.tags;
-    for (let index = 0; index < obj.length; index++) {
+    if (
+      swapInfo.invoice.toUpperCase().slice(0, 1) !== 'S' &&
+      !validate(swapInfo.invoice)
+    ) {
+      var decoded = lightningPayReq.decode(swapInfo.invoice);
+      // console.log("decoded: ", decoded);
+
+      var obj = decoded.tags;
+      for (let index = 0; index < obj.length; index++) {
         const tag = obj[index];
         // console.log("tag: ", tag);
-        if(tag.tagName === "payment_hash"){
-            // console.log("yay: ", tag.data);
-            var paymenthash = tag.data;
+        if (tag.tagName === 'payment_hash') {
+          // console.log("yay: ", tag.data);
+          var paymenthash = tag.data;
         }
+      }
     }
+
     // console.log("paymenthash: ", paymenthash);
     let contract = swapResponse.address;
 
@@ -103,8 +125,10 @@ class StyledDownloadRefund extends React.Component {
                 redeemScript,
                 timeoutBlockHeight,
                 paymenthash,
-                parseInt(swapResponse.expectedAmount/100),
+                parseInt(swapResponse.expectedAmount / 100),
                 contract,
+                swapInfo,
+                swapResponse,
               )}
               download={'refund.png'}
             >
@@ -129,7 +153,7 @@ StyledDownloadRefund.propTypes = {
   classes: PropTypes.object.isRequired,
   address: PropTypes.string.isRequired,
   currency: PropTypes.string.isRequired,
-  redeemScript: PropTypes.string.isRequired,
+  redeemScript: PropTypes.string,
   privateKey: PropTypes.string.isRequired,
   timeoutBlockHeight: PropTypes.number.isRequired,
   swapInfo: PropTypes.object.isRequired,

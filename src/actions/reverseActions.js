@@ -6,12 +6,12 @@ import * as actionTypes from '../constants/actions';
 import { boltzApi, SwapUpdateEvent } from '../constants';
 import {
   toSatoshi,
-  // getNetwork,
-  // getHexBuffer,
+  getNetwork,
+  getHexBuffer,
   getFeeEstimation,
 } from '../utils';
 
-// import { bufferCV, AnchorMode, FungibleConditionCode, PostConditionMode, 
+// import { bufferCV, AnchorMode, FungibleConditionCode, PostConditionMode,
 //   // makeContractCall, broadcastTransaction, TxBroadcastResult, makeContractSTXPostCondition,
 //   parsePrincipalString,
 //   StacksMessageType,
@@ -92,7 +92,7 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
 
   const amount = toSatoshi(Number.parseFloat(baseAmount));
 
-  // for btc/sov 
+  // for btc/sov
   // {
   //   "type": "reversesubmarine",
   //   "pairId": "BTC/SOV",
@@ -101,7 +101,7 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
   //   "invoiceAmount": 50000,
   //   "preimageHash": "0cb2266c98dd21abb3627392c7e4b8cea61622f19a16f81364e7113bbe7d6c83"
   // }
-  
+
   return dispatch => {
     dispatch(reverseSwapRequest());
     axios
@@ -137,38 +137,42 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
 export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
   dispatch(
     getFeeEstimation(feeEstimation => {
-      console.log("getFeeEstimation swapInfo.quote", swapInfo.quote, " fee set to 0");
-      console.log("claimswap:: ", swapInfo, swapResponse, feeEstimation);
-
-      // this is not launched automatically anymore, user needs to click it from the GUI.
-      // claimStx(swapInfo,swapResponse, nextStage)
-      
-      // TODO: prepare a claim tx for the user on Stacks!!!
-      // just launch the wallet so that user can run and claim the stx
-
-      // const claimTransaction = getClaimTransaction(
-      //   swapInfo,
-      //   swapResponse,
-      //   feeEstimation
+      // console.log(
+      //   'getFeeEstimation swapInfo.quote',
+      //   swapInfo.quote,
+      //   ' fee set to 0'
       // );
+      console.log('claimswap:: ', swapInfo, swapResponse, feeEstimation);
 
-      // console.log("reverseactions.124 claimtx: ", claimTransaction);
-      // dispatch(
-      //   broadcastClaimTransaction(
-      //     swapInfo.quote,
-      //     claimTransaction.toHex(),
-      //     () => {
-      //       dispatch(reverseSwapResponse(true, swapResponse));
-      //       nextStage();
-      //     }
-      //   )
-      // );
+//       // this is not launched automatically anymore, user needs to click it from the GUI.
+//       // claimStx(swapInfo,swapResponse, nextStage)
+
+//       // TODO: prepare a claim tx for the user on Stacks!!!
+//       // just launch the wallet so that user can run and claim the stx
+
+//       // const claimTransaction = getClaimTransaction(
+//       //   swapInfo,
+//       //   swapResponse,
+//       //   feeEstimation
+//       // );
+
+//       // console.log("reverseactions.124 claimtx: ", claimTransaction);
+//       // dispatch(
+//       //   broadcastClaimTransaction(
+//       //     swapInfo.quote,
+//       //     claimTransaction.toHex(),
+//       //     () => {
+//       //       dispatch(reverseSwapResponse(true, swapResponse));
+//       //       nextStage();
+//       //     }
+//       //   )
+//       // );
     })
   );
 };
 
 // const getClaimTransaction = (swapInfo, response, feeEstimation) => {
-//   console.log("getClaimTransaction:: ", swapInfo, response, feeEstimation);
+//   console.log('getClaimTransaction:: ', swapInfo, response, feeEstimation);
 
 //   const redeemScript = getHexBuffer(response.redeemScript);
 //   const lockupTransaction = Transaction.fromHex(response.transactionHex);
@@ -227,10 +231,10 @@ const handleReverseSwapStatus = (
     latestSwapEvent = status;
   }
 
-  console.log("reverseactions status: ", status);
+  // console.log('reverseactions status: ', status);
   switch (status) {
     case SwapUpdateEvent.TransactionMempool:
-      console.log("reverseactions data: ", data);
+      // console.log('reverseactions data: ', data);
       // dispatch(setReverseSwapStatus('Lockup is in mempool'));
       dispatch(
         reverseSwapResponse(true, {
@@ -271,7 +275,7 @@ const handleReverseSwapStatus = (
       source.close();
       nextStage();
       break;
-      
+
     default:
       console.log(`Unknown swap status: ${JSON.stringify(data)}`);
       break;
@@ -315,8 +319,8 @@ const startListening = (
             nextStage,
             timelockExpired
           );
-          
-          console.log("handleReverseSwapStatus interval");
+
+          console.log('handleReverseSwapStatus interval');
           handleReverseSwapStatus(
             statusReponse.data,
             source,
@@ -343,7 +347,6 @@ const startListening = (
     );
   };
 };
-
 
 // const claimStx = async (
 //   swapInfo,
@@ -438,7 +441,7 @@ const startListening = (
 //     onCancel: data => {
 //       console.log('Stacks claim onCancel:', JSON.stringify(data));
 //       reverseSwapResponse(false, swapResponse);
-//       nextStage();      
+//       nextStage();
 //     }
 //   };
 
@@ -448,8 +451,6 @@ const startListening = (
 
 //   // const transaction = await makeContractCall(txOptions);
 //   // return broadcastTransaction(transaction, network);
- 
-  
 
 //   // this is from connect
 //   // return await openContractCall(txOptions);

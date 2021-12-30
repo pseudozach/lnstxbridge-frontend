@@ -39,6 +39,10 @@ class StyledInputAddress extends React.Component {
         // eslint-disable-next-line no-empty
       } catch (error) {}
     }
+    if (swapAddress.slice(0, 1) === 'S') {
+      error = false;
+    }
+    // console.log('onchange error ', swapAddress, error);
 
     this.setState({ error });
     onChange(swapAddress, error);

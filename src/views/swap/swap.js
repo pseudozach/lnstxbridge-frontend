@@ -19,7 +19,7 @@ const styles = () => ({
   },
   stackscolor: {
     backgroundColor: 'rgba(85,70,255,1)',
-  }
+  },
 });
 
 class Swap extends Component {
@@ -49,6 +49,7 @@ class Swap extends Component {
   };
 
   startSwap = cb => {
+    // console.log('swap.js startswap ', this.props);
     if (this.props.swapInfo.invoice && this.props.retrySwap) {
       this.props.startSwap(this.props.swapInfo, cb);
     }
@@ -61,6 +62,10 @@ class Swap extends Component {
     window.location.reload();
   };
 
+  claimSwap = () => {
+    this.props.claimSwap();
+  };
+
   render() {
     const {
       classes,
@@ -69,7 +74,9 @@ class Swap extends Component {
       swapInfo,
       swapResponse,
       swapStatus,
+      claimSwap,
     } = this.props;
+    // console.log('swap.js 74 ', swapInfo, swapStatus);
     return (
       <BackGround>
         <Prompt />
@@ -111,6 +118,8 @@ class Swap extends Component {
                   <SendTransaction
                     swapInfo={swapInfo}
                     swapResponse={swapResponse}
+                    swapStatus={swapStatus}
+                    claimSwap={claimSwap}
                   />
                 )}
               />
@@ -120,8 +129,10 @@ class Swap extends Component {
                   <Confetti
                     notifie={style => (
                       <span className={style}>
-                        You sent {swapInfo.baseAmount} {swapInfo.base} and
-                        received {swapInfo.quoteAmount} {swapInfo.quote}
+                        You sent{' '}
+                        {swapInfo.baseAmount || swapResponse.baseAmount}{' '}
+                        {swapInfo.base} and received {swapInfo.quoteAmount}{' '}
+                        {swapInfo.quote}
                       </span>
                     )}
                   />
@@ -168,16 +179,19 @@ class Swap extends Component {
                     errorRender={() => {}}
                     loadingRender={() => <Loading />}
                     onPress={props.nextStage}
+                    swapStatus={swapStatus}
+                    claimSwap={claimSwap}
                   />
                 )}
               />
               <StepsWizard.Control
                 num={4}
                 render={() => (
-                  <Controls 
-                  text={'Swap Again!'} 
-                  className={classes.stackscolor}
-                  onPress={this.completeSwap} />
+                  <Controls
+                    text={'Swap Again!'}
+                    className={classes.stackscolor}
+                    onPress={this.completeSwap}
+                  />
                 )}
               />
             </StepsWizard.Controls>
@@ -202,6 +216,7 @@ Swap.propTypes = {
   startSwap: PropTypes.func.isRequired,
   swapStatus: PropTypes.string.isRequired,
   inSwapMode: PropTypes.bool,
+  claimSwap: PropTypes.func,
 };
 
 export default injectSheet(styles)(Swap);

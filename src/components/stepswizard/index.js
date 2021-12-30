@@ -18,6 +18,7 @@ const styles = theme => ({
       width: '100%',
       height: '100vh',
     },
+    borderRadius: '8px',
   },
   progress: {
     width: '100%',
@@ -25,6 +26,7 @@ const styles = theme => ({
     // theme.colors.aeroBlue
     backgroundColor: p => (p.dark ? theme.colors.white : theme.colors.white),
     alignItems: 'center',
+    borderRadius: '8px',
   },
   content: {
     width: '100%',
@@ -37,6 +39,8 @@ const styles = theme => ({
     '&:hover': {
       cursor: 'pointer',
     },
+    borderBottomRightRadius: '8px',
+    borderBottomLeftRadius: '8px',
   },
   backButton: {
     padding: '10px',

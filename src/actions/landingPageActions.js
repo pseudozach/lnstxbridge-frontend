@@ -20,18 +20,25 @@ export const loadingResourceError = message => ({
 const parseCurrencies = pairs => {
   const currencies = [];
 
+  //orig
   const pushCurrency = currency => {
     if (!currencies.includes(currency)) {
-      // currencies.push(currency);
-      if(currency === "BTC") {
-        if(!currencies.includes('BTC ⚡'))
-          currencies.push(`${currency} ⚡`);
-      } else {
-        currencies.push(currency);
-      }
-      
+      currencies.push(currency);
+      if (currency === 'BTC') currencies.push(`${currency} ⚡`);
     }
   };
+
+  // const pushCurrency = currency => {
+  //   // currencies.push(currency);
+  //   if (!currencies.includes(currency)) {
+  //     if(currency === "BTC") {
+  //       if(!currencies.includes('BTC ⚡'))
+  //         currencies.push(`${currency} ⚡`);
+  //     } else {
+  //       currencies.push(currency);
+  //     }
+  //   }
+  // };
 
   Object.keys(pairs).forEach(id => {
     const { base, quote } = splitPairId(id);

@@ -14,6 +14,9 @@ export const initialState = {
     keys: null,
     pair: null,
     invoice: null,
+    preimage: null,
+    preimageHash: null,
+    requestedAmount: null,
   },
   swapResponse: {},
   swapStatus: {
@@ -57,6 +60,8 @@ const reducer = (state = initialState, action) => {
           quoteAmount: action.payload.quoteAmount,
           keys: action.payload.keys,
           pair: action.payload.pair,
+          preimage: action.payload.preimage,
+          preimageHash: action.payload.preimageHash,
         },
       };
 
@@ -66,6 +71,7 @@ const reducer = (state = initialState, action) => {
         swapInfo: {
           ...state.swapInfo,
           invoice: action.payload.invoice,
+          requestedAmount: action.payload.amount,
         },
         swapStatus: {
           ...state.swapStatus,

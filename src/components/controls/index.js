@@ -11,6 +11,8 @@ const styles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: p => (p.loading ? theme.colors.tundoraGrey : 'none'),
+    borderBottomRightRadius: '8px', 
+    borderBottomLeftRadius: '8px',
   },
   error: {
     flex: 1,
@@ -19,7 +21,7 @@ const styles = theme => ({
     alignItems: 'center',
     backgroundColor: theme.colors.red,
   },
-  controls: { flex: 2, justifyContent: 'center', alignItems: 'center' },
+  controls: { flex: 2, justifyContent: 'center', alignItems: 'center', borderBottomRightRadius: '8px', borderBottomLeftRadius: '8px', },
   text: {
     color: '#fff',
     fontWeight: '300',

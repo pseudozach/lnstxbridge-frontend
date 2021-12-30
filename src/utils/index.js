@@ -218,7 +218,7 @@ export const getCurrencyName = symbol => {
  * Get the name of the smallest denomination of a currency
  */
 export const getSmallestDenomination = symbol => {
-  return symbol === 'BTC' ? 'satoshis' : 'litoshis';
+  return symbol === 'BTC' ? 'satoshis' : 'mstx';
 };
 
 // TODO: refactor how we copy

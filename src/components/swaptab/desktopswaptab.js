@@ -173,6 +173,7 @@ const styles = theme => ({
       width: '100%',
       height: '400px',
     },
+    borderRadius: '8px',
   },
   inputMobile: {
     '@media (max-width: 500px)': {
@@ -206,6 +207,8 @@ const styles = theme => ({
     '&:hover': {
       cursor: 'pointer',
     },
+    borderBottomLeftRadius: '8px',
+    borderBottomRightRadius: '8px',
   },
   sbuttoncl: {
     margin: 'auto',
@@ -220,6 +223,8 @@ const styles = theme => ({
     '&:hover': {
       cursor: 'pointer',
     },
+    borderTopLeftRadius: '8px',
+    borderTopRightRadius: '8px',
   },
   loggedintext: {
     fontSize: 'inherit',
