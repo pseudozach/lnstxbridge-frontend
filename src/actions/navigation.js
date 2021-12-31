@@ -17,6 +17,10 @@ class Navigation {
     this._push(routes.faq);
   };
 
+  navDevelopers = () => {
+    this._push(routes.developers);
+  };
+
   navRefund = () => {
     this._push(routes.refund);
   };

@@ -11,6 +11,7 @@ import history from '../constants/history';
 
 const LandingPage = lazy(() => import('./landingpage'));
 const Faq = lazy(() => import('./faq'));
+const Developers = lazy(() => import('./widget'));
 const Swap = lazy(() => import('./swap'));
 const Refund = lazy(() => import('./refund'));
 const ReverseSwap = lazy(() => import('./reverse'));
@@ -26,6 +27,7 @@ const App = () => {
             <Switch>
               <Route exact path={routes.home} component={LandingPage} />
               <Route exact path={routes.faq} component={Faq} />
+              <Route exact path={routes.developers} component={Developers} />
               <Route exact path={routes.swap} component={Swap} />
               <Route exact path={routes.refund} component={Refund} />
               <Route exact path={routes.reverseSwap} component={ReverseSwap} />
