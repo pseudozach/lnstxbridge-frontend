@@ -60,6 +60,11 @@ class MobileNavigationBar extends React.Component {
               text="FAQ"
               onPress={() => navigation.navFaq()}
             />
+            <Button
+              className={classes.btn}
+              text="Developers"
+              onPress={() => navigation.navDevelopers()}
+            />
             {/* <Button
               className={classes.btn}
               external

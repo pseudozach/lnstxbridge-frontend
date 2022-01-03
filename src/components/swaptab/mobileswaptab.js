@@ -182,7 +182,7 @@ const styles = theme => ({
 MobileSwapTabContent.propTypes = {
   classes: PropTypes.object,
   onPress: PropTypes.func,
-  fees: PropTypes.object.isRequired,
+  fees: PropTypes.object,
   feePercentage: PropTypes.number.isRequired,
   limits: PropTypes.object.isRequired,
   currencies: PropTypes.array.isRequired,
