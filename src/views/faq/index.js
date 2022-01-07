@@ -47,6 +47,8 @@ const styles = theme => ({
 
 const twitterLink = 'https://twitter.com/boltzhq';
 const discordLink = 'https://discord.gg/kyNWQAUwY5';
+const lnSwapDiscordLink = 'https://discord.gg/Gt45nMYPCM';
+const lnSwapTwitterLink = 'https://twitter.com/ln_swap';
 
 class Faq extends React.Component {
   render() {
@@ -73,8 +75,9 @@ class Faq extends React.Component {
                   Please note that this software is currently in alpha stage and
                   is heavily worked on. If you experience any issues or have
                   some feedback feel free to join{' '}
-                  <Link to={discordLink} text={'Stacks Discord'} /> and contact
-                  pseudozach#1633 .
+                  <Link to={discordLink} text={'LNSwap Discord'} /> #support channel or  {' '}
+                  <Link to={lnSwapDiscordLink} text={'Stacks Discord'} /> and contact
+                  pseudozach#1633 or DM on <Link to={lnSwapTwitterLink} text={'@ln_swap'} /> on Twitter.
                 </p>
               )}
             />
