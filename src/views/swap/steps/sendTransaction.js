@@ -1085,7 +1085,7 @@ class SendTransaction extends React.Component {
     ) {
       // console.log('setting amountToLock ', swapResponse.baseAmount);
       amountToLock = swapResponse.baseAmount;
-    } else if ((swapResponse.expectedAmount === swapInfo.baseAmount*10**8) || (swapResponse.expectedAmount - swapInfo.baseAmount*10**8 < 2)) {
+    } else if (swapResponse.expectedAmount === Math.round(swapInfo.baseAmount*10**8)) {
       amountToLock = swapInfo.baseAmount;
     }
 

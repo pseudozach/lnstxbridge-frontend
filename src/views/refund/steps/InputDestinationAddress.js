@@ -28,6 +28,8 @@ import {
   contractPrincipalCV,
 } from '@stacks/transactions';
 
+import axios from 'axios';
+
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
 
@@ -37,12 +39,15 @@ const testnet = new StacksTestnet();
 const mainnet = new StacksMainnet();
 let activeNetwork = mocknet;
 
+let apiUrl = process.env.REACT_APP_STACKS_API;
 if(stacksNetworkType==="mocknet"){
   activeNetwork = mocknet
 } else if(stacksNetworkType==="testnet"){
   activeNetwork = testnet
+  apiUrl = 'https://stacks-node-api.testnet.stacks.co/'
 } else if(stacksNetworkType==="mainnet"){
   activeNetwork = mainnet
+  apiUrl = 'https://stacks-node-api.mainnet.stacks.co/'
 }
 
 
@@ -63,6 +68,13 @@ const InputDestinationAddressStyles = theme => ({
       fontSize: '18px',
     },
   },
+  infosm: {
+    // fontSize: '24px',
+    color: theme.colors.tundoraGrey,
+    '@media (max-width: 425px)': {
+      fontSize: '18px',
+    },
+  },
   sbuttoncl: {
     margin: 'auto',
     width: 'fit-content',
@@ -70,6 +82,21 @@ const InputDestinationAddressStyles = theme => ({
   },
 });
 
+let currentBlockHeight = 0;
+async function getBlockHeight(){
+  try {
+    const response = await axios.get(`${apiUrl}/v2/info`);
+    if (response.data && response.data.stacks_tip_height) {
+      currentBlockHeight = response.data.stacks_tip_height;
+    }
+  } catch(error) {
+    console.log('failed to get current blockheight');
+    return currentBlockHeight;
+  }
+  return currentBlockHeight;
+}
+getBlockHeight();
+// console.log('got currentBlockHeight: ', currentBlockHeight);
 
 async function refundStx (refundFile, setRefundTransactionHash, setDestinationAddress) {
   // console.log("enter refundstx action");
@@ -383,6 +410,13 @@ const StyledInputDestinationAddress = ({
 }) => (
   <View className={classes.wrapper}>
     {currency !== 'BTC' ? <View className={classes.wrapper}>
+        {refundFile.timeoutBlockHeight > currentBlockHeight ? (<p className={classes.infosm}>
+        Warning: You can't refund your coins yet! <br/>
+        Current Stacks blockheight: {currentBlockHeight} <br/>
+        Refund timeout blockheight: {refundFile.timeoutBlockHeight}{'\n'}<br/>
+        * Refund will fail until chain reaches refund timeout blockheight. <br/>
+        Please wait ~{(refundFile.timeoutBlockHeight - currentBlockHeight)*10} more minutes.
+      </p>) : null}
       <p className={classes.info}>
       {/* {getCurrencyName(currency)} */}
         Click to trigger Refund
