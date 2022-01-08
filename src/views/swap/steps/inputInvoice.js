@@ -75,9 +75,9 @@ class StyledInputInvoice extends React.Component {
   onChange = input => {
     // accepting STX address for atomic swaps now
     if (
-      input.slice(0, 2) === 'ln' ||
+      input.slice(0, 2).toLowerCase() === 'ln' ||
       input.slice(0, 10) === 'lightning:' ||
-      input.slice(0, 1) === 'S' ||
+      input.slice(0, 1).toUpperCase() === 'S' ||
       validate(input)
     ) {
       this.setState({ value: input, error: false }, () =>
