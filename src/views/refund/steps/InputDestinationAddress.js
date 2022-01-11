@@ -44,10 +44,10 @@ if(stacksNetworkType==="mocknet"){
   activeNetwork = mocknet
 } else if(stacksNetworkType==="testnet"){
   activeNetwork = testnet
-  apiUrl = 'https://stacks-node-api.testnet.stacks.co/'
+  apiUrl = 'https://stacks-node-api.testnet.stacks.co'
 } else if(stacksNetworkType==="mainnet"){
   activeNetwork = mainnet
-  apiUrl = 'https://stacks-node-api.mainnet.stacks.co/'
+  apiUrl = 'https://stacks-node-api.mainnet.stacks.co'
 }
 
 
@@ -88,6 +88,7 @@ async function getBlockHeight(){
     const response = await axios.get(`${apiUrl}/v2/info`);
     if (response.data && response.data.stacks_tip_height) {
       currentBlockHeight = response.data.stacks_tip_height;
+      // console.log('got currentBlockHeight ', currentBlockHeight);
     }
   } catch(error) {
     console.log('failed to get current blockheight');
@@ -410,7 +411,7 @@ const StyledInputDestinationAddress = ({
 }) => (
   <View className={classes.wrapper}>
     {currency !== 'BTC' ? <View className={classes.wrapper}>
-        {refundFile.timeoutBlockHeight > currentBlockHeight ? (<p className={classes.infosm}>
+        {((currentBlockHeight > 0) && (refundFile.timeoutBlockHeight > currentBlockHeight)) ? (<p className={classes.infosm}>
         Warning: You can't refund your coins yet! <br/>
         Current Stacks blockheight: {currentBlockHeight} <br/>
         Refund timeout blockheight: {refundFile.timeoutBlockHeight}{'\n'}<br/>

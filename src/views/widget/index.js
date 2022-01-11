@@ -69,8 +69,8 @@ class Widget extends React.Component {
                   LNSwap offers an embeddable widget that Stacks App
                   developers can place on their websites to enable users to swap
                   Bitcoin on Lightning Network for STX.
-                  <br /> <br />
-                  If you need a demo or help integrating please reach out to pseudozach#1633 on Discord.
+                  <br /> <br />                  
+                  If you need a demo or help integrating feel free to <Link to={'https://discord.gg/8jGPCKmnnA'} text={'Join our Discord'} />.
                 </p>
               )}
             />
@@ -90,8 +90,11 @@ class Widget extends React.Component {
                   <br /><br />
                   {/* We believe this can be useful for NFT marketplaces or any Stacks app
                   that wants to onboard users.  */}
-                  <img src="./widget.png" style={{display: 'block', margin:'auto', maxWidth: '100%'}}/>
-
+                  <div style={{display: 'flex', justifyContent: 'space-between',}}>
+                    <img src="./widget.png" style={{display: 'block', margin:'4px', maxWidth: '40%'}}/>
+                    <img src="./nftss.png" style={{display: 'block', margin:'4px', maxWidth: '40%'}}/>
+                  </div>
+                  <p>Visit <Link to={'https://docs.lnswap.org'} text={'https://docs.lnswap.org'} /> for documentation and code samples.</p>
                   <p>Visit <Link to={'https://lnswap-widget.vercel.app'} text={'https://lnswap-widget.vercel.app'} /> for live mainnet demo.</p>
                 </p>
                 
