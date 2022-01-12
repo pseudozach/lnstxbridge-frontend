@@ -14,3 +14,6 @@
 
 ## use
 * visit `http://localhost:3001`
+
+## docker
+`docker buildx build --platform linux/amd64 -t pseudozach/lnstxbridge-frontend:latest .`
