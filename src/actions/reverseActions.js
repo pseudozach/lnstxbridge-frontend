@@ -182,6 +182,28 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
   );
 };
 
+export const setSignedTx = (swapInfo, tx) => {
+  console.log('reverseActions setSignedTx ', swapInfo, tx);
+}
+
+const broadcastClaimTransaction = (currency, claimTransaction, cb) => {
+  const url = `${boltzApi}/broadcasttransaction`;
+  return dispatch => {
+    axios
+      .post(url, {
+        currency,
+        transactionHex: claimTransaction,
+      })
+      .then(() => cb())
+      .catch(error => {
+        const message = error.response.data.error;
+
+        window.alert(`Failed to broadcast claim transaction: ${message}`);
+        dispatch(reverseSwapResponse(false, message));
+      });
+  };
+};
+
 // const getClaimTransaction = (swapInfo, response, feeEstimation) => {
 //   console.log('getClaimTransaction:: ', swapInfo, response, feeEstimation);
 

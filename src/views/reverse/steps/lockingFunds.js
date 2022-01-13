@@ -226,7 +226,7 @@ const claimStx = async (swapInfo, swapResponse) => {
 };
 
 
-const signStx = async (swapInfo, swapResponse) => {
+const signStx = async (swapInfo, swapResponse, setSignedTx) => {
   let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
   let contractName = swapResponse.lockupAddress.split('.')[1];
   console.log('signStx ', contractAddress, contractName);
@@ -336,9 +336,12 @@ const signStx = async (swapInfo, swapResponse) => {
     network: activeNetwork,
     postConditionMode: PostConditionMode.Deny,
     postConditions,
+    sponsored: true,
     // anchorMode: AnchorMode.Any,
     onFinish: data => {
       console.log('Stacks sign onFinish:', data);
+
+      console.log('Stacks sign setSignedTx:', setSignedTx);
       // JSON.stringify(data)
       // reverseSwapResponse(true, swapResponse);
       // ??? enable this? so swap is marked completed?
@@ -353,7 +356,10 @@ const signStx = async (swapInfo, swapResponse) => {
 
   // this.toObject(txOptions)
   // console.log("stackscli claim.170 txOptions: " + JSON.stringify(txOptions));
-  await makeContractCallToken(txOptions);
+  
+  const transaction = await makeContractCallToken(txOptions);
+  console.log('signstx makeContractCallToken ', transaction);
+  setSignedTx(swapInfo, transaction);
 };
 
 const claimToken = async (swapInfo, swapResponse) => {
@@ -607,7 +613,7 @@ class LockingFunds extends React.Component {
 
   render() {
     // setAllowZeroConf
-    const { classes, swapInfo, swapResponse, swapStatus } = this.props;
+    const { classes, swapInfo, swapResponse, swapStatus, setSignedTx } = this.props;
 
     // console.log('lockingfunds.255 , ', swapResponse, swapStatus);
     const link = swapResponse
@@ -667,7 +673,7 @@ class LockingFunds extends React.Component {
               // ref={ref}
               onClick={() =>
                 swapInfo.quote === 'STX'
-                  ? (swapInfo.isSponsored ? claimStx(swapInfo, swapResponse) : signStx(swapInfo, swapResponse))
+                  ? (!swapInfo.isSponsored ? claimStx(swapInfo, swapResponse) : signStx(swapInfo, swapResponse, setSignedTx))
                   : claimToken(swapInfo, swapResponse)
               }
               // onClick={refundStx}
@@ -681,7 +687,7 @@ class LockingFunds extends React.Component {
                 mr={'2px'}
               />
               <Box as="span" ml="2px" fontSize="large">
-                Claim <b>{getCurrencyName(swapInfo.quote)}</b>
+                {!swapInfo.isSponsored ? 'Claim' : 'Sign'} <b>{getCurrencyName(swapInfo.quote)}</b>
               </Box>
             </SButton>
           </>

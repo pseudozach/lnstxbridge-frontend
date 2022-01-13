@@ -14,7 +14,6 @@ import { notificationData } from '../../utils';
 import { InputAddress, PayInvoice, LockingFunds } from './steps';
 import ReactNotification from 'react-notifications-component';
 import { navigation } from '../../actions';
-import { setReverseSwapSponsored } from '../../actions/reverseActions';
 
 const styles = () => ({
   wrapper: {
@@ -115,6 +114,7 @@ class ReverseSwap extends React.Component {
       goTimelockExpired,
       setReverseSwapAddress,
       setReverseSwapSponsored,
+      setSignedTx,
     } = this.props;
 
     return (
@@ -161,6 +161,7 @@ class ReverseSwap extends React.Component {
                     swapInfo={swapInfo}
                     swapResponse={swapResponse}
                     swapStatus={swapStatus}
+                    setSignedTx={setSignedTx}
                     setAllowZeroConf={allow => {
                       this.acceptedZeroConf = allow;
 
@@ -283,6 +284,7 @@ ReverseSwap.propTypes = {
   completeSwap: PropTypes.func,
   setReverseSwapAddress: PropTypes.func,
   setReverseSwapSponsored: PropTypes.func,
+  setSignedTx: PropTypes.func,
   onExit: PropTypes.func,
   nextStage: PropTypes.func,
   startReverseSwap: PropTypes.func.isRequired,

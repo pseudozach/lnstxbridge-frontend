@@ -21,6 +21,13 @@ const inputAddressStyles = () => ({
   },
   checkbox: {
     margin: '16px',
+    fontSize: '20px',
+    display: 'flex',
+  },
+  inputcb: {
+    width: '20px',
+    height: '20px',
+    marginRight: '4px',
   }
 });
 
@@ -81,6 +88,7 @@ class StyledInputAddress extends React.Component {
           <input
             name="zeroStx"
             type="checkbox"
+            className={classes.inputcb}
             onChange={this.onCheck}
             checked={this.state.zeroStx} />
             Use sponsored transaction. (Enable this if you have no STX in your wallet.)

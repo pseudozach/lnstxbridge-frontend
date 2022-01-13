@@ -29,6 +29,7 @@ export const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
+  console.log('reverseReducer ', action.type);
   switch (action.type) {
     case actionTypes.REVERSE_SWAP_REQUEST:
       return {
