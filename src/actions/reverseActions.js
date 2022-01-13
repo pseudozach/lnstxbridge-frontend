@@ -196,9 +196,9 @@ const broadcastSponsoredTx = (dispatch, id, tx) => {
         id,
         tx,
       })
-      .then(() => {
+      .then((txId) => {
         // cb()
-        console.log('broadcastSponsoredTx done');
+        console.log('broadcastSponsoredTx done ', txId);
         dispatch(reverseSwapResponse(true, 'Transaction broadcasted'));
       })
       .catch(error => {

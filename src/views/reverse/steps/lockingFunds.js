@@ -341,6 +341,7 @@ const signStx = async (swapInfo, swapResponse, setSignedTx) => {
     onFinish: data => {
       console.log('Stacks sign onFinish:', data);
       const serializedTx = data.stacksTransaction.serialize().toString('hex');
+      // data.txRaw
       setSignedTx(swapResponse.id, serializedTx);
 
       // JSON.stringify(data)
@@ -358,7 +359,7 @@ const signStx = async (swapInfo, swapResponse, setSignedTx) => {
   // this.toObject(txOptions)
   // console.log("stackscli claim.170 txOptions: " + JSON.stringify(txOptions));
   
-  const transaction = await openContractCall(txOptions);
+  await openContractCall(txOptions);
   // console.log('signstx makeContractCallToken ', transaction);
   // setSignedTx(swapResponse.id, transaction);
 };
