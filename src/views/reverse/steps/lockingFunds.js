@@ -340,8 +340,9 @@ const signStx = async (swapInfo, swapResponse, setSignedTx) => {
     // anchorMode: AnchorMode.Any,
     onFinish: data => {
       console.log('Stacks sign onFinish:', data);
+      const serializedTx = data.stacksTransaction.serialize().toString('hex');
+      setSignedTx(swapResponse.id, serializedTx);
 
-      console.log('Stacks sign setSignedTx:', setSignedTx);
       // JSON.stringify(data)
       // reverseSwapResponse(true, swapResponse);
       // ??? enable this? so swap is marked completed?
@@ -357,9 +358,9 @@ const signStx = async (swapInfo, swapResponse, setSignedTx) => {
   // this.toObject(txOptions)
   // console.log("stackscli claim.170 txOptions: " + JSON.stringify(txOptions));
   
-  const transaction = await makeContractCallToken(txOptions);
-  console.log('signstx makeContractCallToken ', transaction);
-  setSignedTx(swapInfo, transaction);
+  const transaction = await openContractCall(txOptions);
+  // console.log('signstx makeContractCallToken ', transaction);
+  // setSignedTx(swapResponse.id, transaction);
 };
 
 const claimToken = async (swapInfo, swapResponse) => {
