@@ -19,6 +19,9 @@ const inputAddressStyles = () => ({
       fontSize: '16px',
     },
   },
+  checkbox: {
+    margin: '16px',
+  }
 });
 
 class StyledInputAddress extends React.Component {
@@ -48,6 +51,12 @@ class StyledInputAddress extends React.Component {
     onChange(swapAddress, error);
   };
 
+  onCheck = input => {
+    const { onCheck } = this.props;
+    // console.log('onCheck input ', input.target.checked);
+    onCheck(input.target.checked, false);
+  };
+
   render() {
     const { error } = this.state;
     const { classes, swapInfo } = this.props;
@@ -67,6 +76,16 @@ class StyledInputAddress extends React.Component {
           onChange={this.onChange}
           placeholder={`EG: ${getSampleAddress(swapInfo.quote)}`}
         />
+        {swapInfo.quote === 'STX' ? (<label
+          className={classes.checkbox}>
+          <input
+            name="zeroStx"
+            type="checkbox"
+            onChange={this.onCheck}
+            checked={this.state.zeroStx} />
+            Use sponsored transaction. (Enable this if you have no STX in your wallet.)
+        </label>) : null}
+
       </View>
     );
   }
@@ -76,6 +95,7 @@ StyledInputAddress.propTypes = {
   classes: PropTypes.object.isRequired,
   swapInfo: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  onCheck: PropTypes.func,
 };
 
 const InputAddress = injectSheet(inputAddressStyles)(StyledInputAddress);

@@ -6,8 +6,12 @@ import View from '../../../components/view';
 import QrCode from '../../../components/qrcode';
 import { copyToClipBoard } from '../../../utils';
 import DetectResize from '../../../components/detectresize';
+import Input from '../../../components/textinput';
 
 const styles = () => ({
+  qrwrapper: {
+    flexDirection: 'column',
+  },
   wrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -84,19 +88,52 @@ class PayInvoice extends React.Component {
         {window.innerWidth < 768 ? (
           <div />
         ) : (
-          <View className={classes.qrcode}>
-            <DetectResize>
-              {width =>
-                width <= 375 ? (
-                  <QrCode size={200} link={swapResponse.invoice} />
-                ) : (
-                  <QrCode size={300} link={swapResponse.invoice} />
-                )
-              }
-            </DetectResize>
+          <View className={classes.qrwrapper}>
+            {swapResponse.minerFeeInvoice ? (<View className={classes.qrcode}>
+              <DetectResize>
+                {width =>
+                  width <= 375 ? (
+                    <QrCode size={200} link={swapResponse.minerFeeInvoice} />
+                  ) : (
+                    <QrCode size={250} link={swapResponse.minerFeeInvoice} />
+                  )
+                }
+              </DetectResize>
+            </View>) : null}
+            <View className={classes.qrcode}>
+              <DetectResize>
+                {width =>
+                  width <= 375 ? (
+                    <QrCode size={200} link={swapResponse.invoice} />
+                  ) : (
+                    <QrCode size={250} link={swapResponse.invoice} />
+                  )
+                }
+              </DetectResize>
+            </View>
           </View>
         )}
-        <View className={classes.info}>
+
+
+        {swapResponse.minerFeeInvoice ? (<View className={classes.info}>
+          <p className={classes.title}>
+            Pay these 2 {swapInfo.base} Lightning invoices:
+          </p>
+          <p className={classes.invoiceInfo}>
+            First invoice is for the funds that will be forwarded to your claim address so you will have enough funds to do a contract call. <br/>
+            <Input value={swapResponse.minerFeeInvoice} disabled={true} id="minerfeeinvoice"/> <br/>
+            Second one is a{' '}
+            <Link
+              text="HOLD invoice"
+              to="https://wiki.ion.radar.tech/tech/research/hodl-invoice"
+            />{' '}
+            and its preimage was generated in your browser. Which means we
+            cannot receive the lightning coins unless your browser claims the
+            onchain funds for you.
+          </p>
+          <Input value={swapResponse.invoice} disabled={true} id="invoice"/>
+        </View>) : 
+        (<View className={classes.info}>
           <p className={classes.title}>
             Pay this {swapInfo.base} Lightning invoice:
           </p>
@@ -116,7 +153,11 @@ class PayInvoice extends React.Component {
           <span className={classes.action} onClick={() => copyToClipBoard()}>
             Copy
           </span>
-        </View>
+        </View>)
+        }
+
+
+
       </View>
     );
   }

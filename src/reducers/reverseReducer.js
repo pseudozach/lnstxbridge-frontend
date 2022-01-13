@@ -15,6 +15,7 @@ export const initialState = {
     address: null,
     preimage: null,
     preimageHash: null,
+    isSponsored: false,
   },
   swapResponse: {
     response: {
@@ -77,6 +78,15 @@ const reducer = (state = initialState, action) => {
           address: action.payload.address,
         },
         invalidAddress: action.payload.error,
+      };
+
+    case actionTypes.SET_REVERSE_SWAP_SPONSORED:
+      return {
+        ...state,
+        swapInfo: {
+          ...state.swapInfo,
+          isSponsored: action.payload.isSponsored,
+        },
       };
 
     case actionTypes.SET_REVERSE_SWAP_STATUS:

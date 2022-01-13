@@ -64,6 +64,14 @@ export const setReverseSwapAddress = (address, error) => ({
   },
 });
 
+export const setReverseSwapSponsored = (isSponsored, error) => ({
+  type: actionTypes.SET_REVERSE_SWAP_SPONSORED,
+  payload: {
+    isSponsored,
+    error,
+  },
+});
+
 export const setReverseSwapStatus = status => ({
   type: actionTypes.SET_REVERSE_SWAP_STATUS,
   payload: status,
@@ -92,6 +100,8 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
 
   const amount = toSatoshi(Number.parseFloat(baseAmount));
 
+  console.log('reverseActions startReverseSwap ', swapInfo.isSponsored)
+
   // for btc/sov
   // {
   //   "type": "reversesubmarine",
@@ -113,6 +123,7 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
         claimPublicKey: keys.publicKey,
         claimAddress: swapInfo.address,
         preimageHash: swapInfo.preimageHash,
+        prepayMinerFee: swapInfo.isSponsored,
       })
       .then(response => {
         dispatch(reverseSwapResponse(true, response.data));
@@ -274,6 +285,11 @@ const handleReverseSwapStatus = (
     case SwapUpdateEvent.InvoiceSettled:
       source.close();
       nextStage();
+      break;
+
+    case SwapUpdateEvent.MinerFeePaid:
+      dispatch(setReverseSwapStatus('Miner fee paid, waiting for hodl invoice'));
+      dispatch(reverseSwapResponse(false, {}));
       break;
 
     default:

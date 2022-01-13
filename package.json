@@ -49,6 +49,7 @@
     "qrious": "^4.0.2",
     "react": "^16.14.0",
     "react-confetti": "^4.0.1",
+    "react-copy-to-clipboard": "^5.0.4",
     "react-device-detect": "^1.17.0",
     "react-dom": "^16.14.0",
     "react-icons": "^3.11.0",
