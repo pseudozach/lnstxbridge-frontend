@@ -288,8 +288,8 @@ const handleReverseSwapStatus = (
       break;
 
     case SwapUpdateEvent.MinerFeePaid:
-      dispatch(setReverseSwapStatus('Miner fee paid, waiting for hodl invoice'));
-      dispatch(reverseSwapResponse(false, {}));
+      // dispatch(setReverseSwapStatus('Miner fee paid, waiting for hodl invoice'));
+      // dispatch(reverseSwapResponse(true, {}));
       break;
 
     default:

@@ -38,7 +38,7 @@ class QrCode extends React.Component {
     const { link } = this.props;
 
     if (link) {
-      this.id = `qr-${link.substring(0, 4)}`;
+      this.id = `qr-${link.substring(0, 8)}`;
 
       return <canvas id={this.id} />;
     } else {
