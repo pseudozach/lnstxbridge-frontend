@@ -64,10 +64,12 @@ class StyledInputInvoice extends React.Component {
 
     if (webln) {
       webln.makeInvoice(toSatoshi(swapInfo.quoteAmount)).then(response => {
-        const invoice = response.paymentRequest;
+        if(response && response.paymentRequest) {
+          const invoice = response.paymentRequest;
 
-        this.setState({ value: invoice });
-        this.onChange(invoice);
+          this.setState({ value: invoice });
+          this.onChange(invoice);
+        }
       });
     }
   }

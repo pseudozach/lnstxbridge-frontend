@@ -22,6 +22,8 @@ export const SwapUpdateEvent = {
   ASTransactionConfirmed: 'astransaction.confirmed',
 
   SwapExpired: 'swap.expired',
+
+  MinerFeePaid: 'minerfee.paid',
 };
 
 export const ServiceWarnings = {

@@ -10,6 +10,8 @@ import {
   startReverseSwap,
   completeReverseSwap,
   setReverseSwapAddress,
+  setReverseSwapSponsored,
+  setSignedTx,
 } from '../../actions/reverseActions';
 
 const mapStateToProps = state => ({
@@ -31,6 +33,10 @@ const mapDispatchToProps = dispatch => ({
   completeSwap: () => dispatch(completeReverseSwap()),
   setReverseSwapAddress: (address, error) =>
     dispatch(setReverseSwapAddress(address, error)),
+  setReverseSwapSponsored: (address, error) =>
+    dispatch(setReverseSwapSponsored(address, error)),
+  setSignedTx: (swapInfo, tx) =>
+    setSignedTx(dispatch, swapInfo, tx),
   startReverseSwap: (info, nextStage, timelockExpired) =>
     dispatch(startReverseSwap(info, nextStage, timelockExpired)),
   dataStorageSetAsset: (asset, amount) =>

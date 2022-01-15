@@ -12,7 +12,7 @@ import { MdFileDownload } from 'react-icons/md';
 
 // import lightningPayReq from 'bolt11';
 import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
-import { openContractCall } from '@stacks/connect';
+import { openContractCall, makeContractCallToken } from '@stacks/connect';
 import {
   bufferCV,
   // makeStandardSTXPostCondition,
@@ -223,6 +223,139 @@ const claimStx = async (swapInfo, swapResponse) => {
   //   value: amount,
   //   gasPrice: await getGasPrice(this.etherSwap.provider),
   // });
+};
+
+
+const signStx = async (swapInfo, swapResponse, setSignedTx) => {
+  let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
+  let contractName = swapResponse.lockupAddress.split('.')[1];
+  console.log('signStx ', contractAddress, contractName);
+
+  let preimage = swapInfo.preimage;
+  let amount = swapResponse.onchainAmount;
+  let timeLock = swapResponse.timeoutBlockHeight;
+
+  // ${getHexString(preimage)}
+  console.log(
+    `signing ${amount} Stx with preimage ${preimage} and timelock ${timeLock}`
+  );
+
+  // this is wrong
+  // let decimalamount = parseInt(amount.toString(),16)
+  console.log('amount: ', amount);
+  // let smallamount = decimalamount
+  // .div(etherDecimals)
+  // let smallamount = amount.toNumber();
+  // + 1 -> never add 1 ffs
+  let smallamount = parseInt(amount / 100);
+  console.log('smallamount: ' + smallamount);
+
+  let swapamount = smallamount.toString(16).split('.')[0] + '';
+  let postConditionAmount = new BN(
+    Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+  );
+
+  console.log(`postConditionAmount: ${postConditionAmount}`);
+  // *1000
+
+  // // Add an optional post condition
+  // // See below for details on constructing post conditions
+  const postConditionAddress = contractAddress;
+  const postConditionCode = FungibleConditionCode.LessEqual;
+  // // new BigNum(1000000);
+  // const postConditionAmount = new BN(100000);
+  // const postConditions = [
+  //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+  // ];
+
+  // With a contract principal
+  // const contractAddress = 'SPBMRFRPPGCDE3F384WCJPK8PQJGZ8K9QKK7F59X';
+  // const contractName = 'test-contract';
+
+  // const postConditions = [
+  //   createSTXPostCondition(
+  //     // contractAddress,
+  //     // contractName,
+  //     swapResponse.lockupAddress,
+  //     postConditionCode,
+  //     postConditionAmount
+  //   )
+  // ];
+
+  const postConditions = [
+    makeContractSTXPostCondition(
+      postConditionAddress,
+      contractName,
+      postConditionCode,
+      postConditionAmount
+    ),
+  ];
+
+  console.log(
+    'postConditions: ' + contractAddress,
+    contractName,
+    postConditionCode,
+    postConditionAmount
+  );
+
+  let paddedamount = swapamount.padStart(32, '0');
+  let paddedtimelock = timeLock.toString(16).padStart(32, '0');
+  console.log(
+    'amount, timelock ',
+    smallamount,
+    swapamount,
+    paddedamount,
+    paddedtimelock
+  );
+
+  // (claimStx (preimage (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)))
+  const functionArgs = [
+    // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+    bufferCV(Buffer.from(preimage, 'hex')),
+    bufferCV(Buffer.from(paddedamount, 'hex')),
+    bufferCV(Buffer.from('01', 'hex')),
+    bufferCV(Buffer.from('01', 'hex')),
+    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+  ];
+  // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
+
+  // const functionArgs = [
+  //   bufferCV(preimageHash),
+  //   bufferCV(Buffer.from('00000000000000000000000000100000','hex')),
+  //   bufferCV(Buffer.from('01','hex')),
+  //   bufferCV(Buffer.from('01','hex')),
+  //   bufferCV(Buffer.from('000000000000000000000000000012b3','hex')),
+  // ];
+
+  const txOptions = {
+    contractAddress: contractAddress,
+    contractName: contractName,
+    functionName: 'claimStx',
+    functionArgs: functionArgs,
+    // validateWithAbi: true,
+    network: activeNetwork,
+    postConditionMode: PostConditionMode.Deny,
+    postConditions,
+    sponsored: true,
+    sponsorSpendingCondition: {},
+    // anchorMode: AnchorMode.Any,
+    onFinish: data => {
+      console.log('Stacks sign onFinish:', data);
+      const serializedTx = data.stacksTransaction.serialize().toString('hex');
+      // data.txRaw
+      setSignedTx(swapResponse.id, serializedTx);
+    },
+    onCancel: data => {
+      console.log('Stacks sign onCancel:', data);
+    },
+  };
+
+  // this.toObject(txOptions)
+  // console.log("stackscli claim.170 txOptions: " + JSON.stringify(txOptions));
+  
+  await openContractCall(txOptions);
+  // console.log('signstx makeContractCallToken ', transaction);
+  // setSignedTx(swapResponse.id, transaction);
 };
 
 const claimToken = async (swapInfo, swapResponse) => {
@@ -476,7 +609,7 @@ class LockingFunds extends React.Component {
 
   render() {
     // setAllowZeroConf
-    const { classes, swapInfo, swapResponse, swapStatus } = this.props;
+    const { classes, swapInfo, swapResponse, swapStatus, setSignedTx } = this.props;
 
     // console.log('lockingfunds.255 , ', swapResponse, swapStatus);
     const link = swapResponse
@@ -515,7 +648,8 @@ class LockingFunds extends React.Component {
           /> */}
         </p>
         {swapStatus !== 'Could not send onchain coins' &&
-        swapStatus !== 'Waiting for confirmation...' ? (
+        swapStatus !== 'Waiting for confirmation...' && 
+        !swapStatus.includes('Miner fee paid') ? (
           <>
             <p className={classes.texnotop}>
               Lockup is confirmed, you can now trigger claim contract call to
@@ -535,7 +669,7 @@ class LockingFunds extends React.Component {
               // ref={ref}
               onClick={() =>
                 swapInfo.quote === 'STX'
-                  ? claimStx(swapInfo, swapResponse)
+                  ? (!swapInfo.isSponsored ? claimStx(swapInfo, swapResponse) : signStx(swapInfo, swapResponse, setSignedTx))
                   : claimToken(swapInfo, swapResponse)
               }
               // onClick={refundStx}
@@ -549,7 +683,7 @@ class LockingFunds extends React.Component {
                 mr={'2px'}
               />
               <Box as="span" ml="2px" fontSize="large">
-                Claim <b>{getCurrencyName(swapInfo.quote)}</b>
+                {!swapInfo.isSponsored ? 'Claim' : 'Sign'} <b>{getCurrencyName(swapInfo.quote)}</b>
               </Box>
             </SButton>
           </>

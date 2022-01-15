@@ -113,6 +113,8 @@ class ReverseSwap extends React.Component {
       swapFailResponse,
       goTimelockExpired,
       setReverseSwapAddress,
+      setReverseSwapSponsored,
+      setSignedTx,
     } = this.props;
 
     return (
@@ -138,6 +140,7 @@ class ReverseSwap extends React.Component {
                   <InputAddress
                     swapInfo={swapInfo}
                     onChange={setReverseSwapAddress}
+                    onCheck={setReverseSwapSponsored}
                   />
                 )}
               />
@@ -158,6 +161,7 @@ class ReverseSwap extends React.Component {
                     swapInfo={swapInfo}
                     swapResponse={swapResponse}
                     swapStatus={swapStatus}
+                    setSignedTx={setSignedTx}
                     setAllowZeroConf={allow => {
                       this.acceptedZeroConf = allow;
 
@@ -279,6 +283,8 @@ ReverseSwap.propTypes = {
   swapFailResponse: PropTypes.bool.isRequired,
   completeSwap: PropTypes.func,
   setReverseSwapAddress: PropTypes.func,
+  setReverseSwapSponsored: PropTypes.func,
+  setSignedTx: PropTypes.func,
   onExit: PropTypes.func,
   nextStage: PropTypes.func,
   startReverseSwap: PropTypes.func.isRequired,

@@ -64,6 +64,14 @@ export const setReverseSwapAddress = (address, error) => ({
   },
 });
 
+export const setReverseSwapSponsored = (isSponsored, error) => ({
+  type: actionTypes.SET_REVERSE_SWAP_SPONSORED,
+  payload: {
+    isSponsored,
+    error,
+  },
+});
+
 export const setReverseSwapStatus = status => ({
   type: actionTypes.SET_REVERSE_SWAP_STATUS,
   payload: status,
@@ -92,6 +100,8 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
 
   const amount = toSatoshi(Number.parseFloat(baseAmount));
 
+  console.log('reverseActions startReverseSwap ', swapInfo.isSponsored)
+
   // for btc/sov
   // {
   //   "type": "reversesubmarine",
@@ -113,6 +123,7 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
         claimPublicKey: keys.publicKey,
         claimAddress: swapInfo.address,
         preimageHash: swapInfo.preimageHash,
+        prepayMinerFee: swapInfo.isSponsored,
       })
       .then(response => {
         dispatch(reverseSwapResponse(true, response.data));
@@ -169,6 +180,33 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
 //       // );
     })
   );
+};
+
+export const setSignedTx = (dispatch, id, tx) => {
+  console.log('reverseActions setSignedTx ', dispatch, id, tx);
+  broadcastSponsoredTx(dispatch, id, tx);
+}
+
+const broadcastSponsoredTx = (dispatch, id, tx) => {
+  console.log('reverseActions broadcastSponsoredTx ', id, tx, dispatch);
+  const url = `${boltzApi}/broadcastsponsoredtx`;
+  // return dispatch => {
+    axios
+      .post(url, {
+        id,
+        tx,
+      })
+      .then((txId) => {
+        // cb()
+        console.log('broadcastSponsoredTx done ', txId);
+        dispatch(reverseSwapResponse(true, 'Transaction broadcasted'));
+      })
+      .catch(error => {
+        const message = error.response.data.error;
+        window.alert(`Failed to broadcast claim transaction: ${message}`);
+        dispatch(reverseSwapResponse(false, message));
+      });
+  // };
 };
 
 // const getClaimTransaction = (swapInfo, response, feeEstimation) => {
@@ -274,6 +312,11 @@ const handleReverseSwapStatus = (
     case SwapUpdateEvent.InvoiceSettled:
       source.close();
       nextStage();
+      break;
+
+    case SwapUpdateEvent.MinerFeePaid:
+      // dispatch(setReverseSwapStatus('Miner fee paid, waiting for hodl invoice'));
+      // dispatch(reverseSwapResponse(true, {}));
       break;
 
     default:
