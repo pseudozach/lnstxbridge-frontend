@@ -120,7 +120,7 @@ class PayInvoice extends React.Component {
             Pay these 2 {swapInfo.base} Lightning invoices:
           </p>
           <p className={classes.invoiceInfo}>
-            First invoice is for the funds that will be forwarded to your claim address so you will have enough funds to do a contract call. <br/>
+            First invoice is for the funds that will be used to sponsor your contract call to claim the funds from swap contract. <br/>
             <Input value={swapResponse.minerFeeInvoice} disabled={true} id="minerfeeinvoice"/> <br/>
             Second one is a{' '}
             <Link

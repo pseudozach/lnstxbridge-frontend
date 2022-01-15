@@ -337,22 +337,16 @@ const signStx = async (swapInfo, swapResponse, setSignedTx) => {
     postConditionMode: PostConditionMode.Deny,
     postConditions,
     sponsored: true,
+    sponsorSpendingCondition: {},
     // anchorMode: AnchorMode.Any,
     onFinish: data => {
       console.log('Stacks sign onFinish:', data);
       const serializedTx = data.stacksTransaction.serialize().toString('hex');
       // data.txRaw
       setSignedTx(swapResponse.id, serializedTx);
-
-      // JSON.stringify(data)
-      // reverseSwapResponse(true, swapResponse);
-      // ??? enable this? so swap is marked completed?
-      // nextStage();
     },
     onCancel: data => {
       console.log('Stacks sign onCancel:', data);
-      // reverseSwapResponse(false, swapResponse);
-      // nextStage();
     },
   };
 
