@@ -301,7 +301,7 @@ export const isMobileBrowser = () => {
  * @param {{message: string, title: string }} info title and message
  * @param {number} alertType type of alert
  */
-export const notificationData = (info, alertType) => {
+export const notificationData = (info, alertType, duration=3500) => {
   let type;
   switch (alertType) {
     case 0:
@@ -323,7 +323,7 @@ export const notificationData = (info, alertType) => {
     container: 'top-left',
     animationIn: ['animated', 'fadeIn'],
     animationOut: ['animated', 'fadeOut'],
-    dismiss: { duration: 3500 },
+    dismiss: { duration: duration },
     dismissable: { click: true },
   };
 };

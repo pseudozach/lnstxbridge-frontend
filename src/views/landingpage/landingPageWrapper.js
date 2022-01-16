@@ -37,6 +37,12 @@ class LandingPageWrapper extends React.Component {
     if (this.props.errorMessage) {
       this.addNotification(this.props.errorMessage, 0);
     }
+    // announcement
+    this.notificationDom.current.addNotification(
+      notificationData({
+        title: 'Status Update', 
+        message:'Bridge is temporarily offline until stuck transactions clear from mempool due to recent congestion.\nSorry for the inconvenience.'}, 
+        1, 0));
   };
 
   addNotification = (info, type) => {

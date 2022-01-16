@@ -45,7 +45,7 @@ const styles = theme => ({
   },
 });
 
-const twitterLink = 'https://twitter.com/citlayik';
+const twitterLink = 'https://twitter.com/ln_swap';
 const discordLink = 'https://discord.gg/kyNWQAUwY5';
 
 class Widget extends React.Component {
