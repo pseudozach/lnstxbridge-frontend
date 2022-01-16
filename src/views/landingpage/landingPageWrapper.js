@@ -11,6 +11,7 @@ class LandingPageWrapper extends React.Component {
     this.state = {
       isOpen: false,
       lastSwap: {amount: '', link: ''},
+      announcementSet: false,
     };
 
     this.notificationDom = React.createRef();
@@ -34,15 +35,19 @@ class LandingPageWrapper extends React.Component {
   };
 
   componentDidUpdate = () => {
-    if (this.props.errorMessage) {
-      this.addNotification(this.props.errorMessage, 0);
+    // if (this.props.errorMessage) {
+    //   this.addNotification(this.props.errorMessage, 0);
+    // }
+    if(!this.state.announcementSet) {
+      // announcement
+      this.notificationDom.current.addNotification(
+        notificationData({
+          title: 'Status Update', 
+          message:'Bridge is temporarily offline until stuck transactions clear from mempool due to recent congestion.\nSorry for the inconvenience.',
+          }, 
+          1, 0));
+      this.setState({announcementSet: true});
     }
-    // announcement
-    this.notificationDom.current.addNotification(
-      notificationData({
-        title: 'Status Update', 
-        message:'Bridge is temporarily offline until stuck transactions clear from mempool due to recent congestion.\nSorry for the inconvenience.'}, 
-        1, 0));
   };
 
   addNotification = (info, type) => {
