@@ -12,6 +12,7 @@ class LandingPageWrapper extends React.Component {
       isOpen: false,
       lastSwap: {amount: '', link: ''},
       announcementSet: false,
+      showAnnouncement: false,
     };
 
     this.notificationDom = React.createRef();
@@ -38,7 +39,7 @@ class LandingPageWrapper extends React.Component {
     // if (this.props.errorMessage) {
     //   this.addNotification(this.props.errorMessage, 0);
     // }
-    if(!this.state.announcementSet) {
+    if(this.state.showAnnouncement && !this.state.announcementSet) {
       // announcement
       this.notificationDom.current.addNotification(
         notificationData({
