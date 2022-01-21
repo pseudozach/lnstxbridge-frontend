@@ -6,6 +6,21 @@ import View from '../../../components/view';
 import InputArea from '../../../components/inputarea';
 import { getCurrencyName, getSampleAddress, getNetwork } from '../../../utils';
 
+import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
+import { AppConfig, UserSession } from '@stacks/connect';
+import { stacksNetworkType } from '../../../constants';
+let activeNetwork;
+if (stacksNetworkType === 'mocknet') {
+  activeNetwork = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
+} else if (stacksNetworkType === 'testnet') {
+  activeNetwork = new StacksTestnet();
+} else if (stacksNetworkType === 'mainnet') {
+  activeNetwork = new StacksMainnet();;
+}
+
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
+
 const inputAddressStyles = () => ({
   wrapper: {
     flex: 1,
@@ -64,10 +79,32 @@ class StyledInputAddress extends React.Component {
     onCheck(input.target.checked, false);
   };
 
+  getUserStacksAddress = () => {
+    if(userSession.isUserSignedIn()) {
+      let userData = userSession.loadUserData();
+      let userStacksAddress = '';
+      if(stacksNetworkType==="mainnet"){
+        userStacksAddress = userData.profile.stxAddress.mainnet;
+      } else {
+        userStacksAddress = userData.profile.stxAddress.testnet;
+      }
+      return userStacksAddress;
+    }
+  }
+
+  componentDidMount = () => {
+    const userStacksAddress = this.getUserStacksAddress();
+    this.onChange(userStacksAddress)
+    let element = document.getElementById('textareaid');
+    element.value = userStacksAddress;
+    var event = new Event('change');
+    element.dispatchEvent(event);
+  };
+
   render() {
     const { error } = this.state;
     const { classes, swapInfo } = this.props;
-
+    
     return (
       <View className={classes.wrapper}>
         <p className={classes.title}>

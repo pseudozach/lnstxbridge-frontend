@@ -138,6 +138,7 @@ class InputArea extends React.Component {
           className={classes.textBox}
           rows={height}
           cols={width}
+          id={'textareaid'}
           onChange={event => {
             const newValue = event.target.value;
 
