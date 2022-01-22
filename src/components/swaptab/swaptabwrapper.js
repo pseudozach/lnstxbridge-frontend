@@ -324,7 +324,7 @@ class SwapTabWrapper extends React.Component {
         icon: window.location.origin + '/favicon.ico',
       },
       redirectTo: '/',
-      finished: () => {
+      onFinish: () => {
         window.location.reload();
       },
       userSession: userSession,
