@@ -24,6 +24,8 @@ export const SwapUpdateEvent = {
   SwapExpired: 'swap.expired',
 
   MinerFeePaid: 'minerfee.paid',
+  
+  ChannelCreated: 'channel.created',
 };
 
 export const ServiceWarnings = {

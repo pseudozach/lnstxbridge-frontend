@@ -90,6 +90,7 @@ export const startSwap = (swapInfo, cb) => {
       orderSide: pair.orderSide,
       invoice: invoice,
       refundPublicKey: keys.publicKey,
+      channel: {auto: true, private: false, inboundLiquidity: 50}
     };
   }
 
@@ -199,6 +200,15 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
           error: true,
           pending: false,
           message: 'Lockup failed. Please refund your coins.',
+        })
+      );
+      break;
+
+    case SwapUpdateEvent.ChannelCreated:
+      dispatch(
+        setSwapStatus({
+          pending: true,
+          message: 'Channel is being created...',
         })
       );
       break;
