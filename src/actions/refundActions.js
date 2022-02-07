@@ -2,7 +2,7 @@ import axios from 'axios';
 import qrcodeParser from 'qrcode-parser';
 import { ECPair, address, Transaction } from 'bitcoinjs-lib';
 import { constructRefundTransaction, detectSwap } from 'boltz-core';
-import { boltzApi } from '../constants';
+import { boltzApi, stacksNetworkType } from '../constants';
 import * as actionTypes from '../constants/actions';
 import {
   getHexBuffer,
@@ -10,6 +10,13 @@ import {
   getFeeEstimation,
   getExplorer,
 } from '../utils';
+
+let apiUrl = process.env.REACT_APP_STACKS_API;
+if(stacksNetworkType==="testnet"){
+  apiUrl = 'https://stacks-node-api.testnet.stacks.co'
+} else if(stacksNetworkType==="mainnet"){
+  apiUrl = 'https://stacks-node-api.mainnet.stacks.co'
+}
 
 const verifyRefundFile = (fileJSON, keys) => {
   const verify = keys.every(key =>
@@ -57,6 +64,64 @@ export const setRefundFile = file => {
       }
       
     });
+  };
+};
+
+export const setRefundFromTx = txId => {
+  return dispatch => {
+    // check txData from stacks API
+    axios.get(`${apiUrl}/extended/v1/tx/${txId}`).then(tx => {
+      if(tx.data && tx.data.contract_call && tx.data.tx_status === 'success' && tx.data.contract_call.function_name === 'lockStx') {
+        let refundFile = {};
+        refundFile.currency = 'STX';
+        refundFile.preimageHash = tx.data.contract_call.function_args[0].repr.slice(2);
+        refundFile.amount = parseInt(tx.data.contract_call.function_args[1].repr,16);
+        refundFile.timeoutBlockHeight = parseInt(tx.data.contract_call.function_args[4].repr,16);
+        refundFile.contract = tx.data.contract_call.contract_id;
+  
+        const verifyFile = verifyRefundFile(refundFile, [
+          'currency',
+          // 'preimageHash',
+          'amount',
+          // 'redeemScript',
+          // 'privateKey',
+          'timeoutBlockHeight',
+          'contract',
+        ]);
+  
+        console.log("setRefundFile, verifyFile: ", refundFile, verifyFile);
+
+        dispatch({
+          type: actionTypes.SET_REFUND_FILE,
+          payload: verifyFile ? refundFile : {},
+        });
+  
+        // console.log("setTransactionHash");
+        dispatch({
+          type: actionTypes.SET_REFUND_TXHASH,
+          payload: "dummyvalue",
+        });
+  
+        if(refundFile.currency !== 'BTC') {
+          setTransactionHash("dummyvalue");
+        }
+  
+      } else {
+        console.log('setRefundFromTx failed ', tx.data);
+        dispatch({
+          type: actionTypes.SET_REFUND_FILE,
+          payload: {},
+        });
+      }
+    })
+    .catch(error => {
+      console.log('setRefundFromTx failed with error ', error.message);
+      dispatch({
+        type: actionTypes.SET_REFUND_FILE,
+        payload: {},
+      });
+    })
+
   };
 };
 

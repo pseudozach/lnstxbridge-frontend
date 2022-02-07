@@ -46,6 +46,7 @@ const Refund = ({
   refundTransactionHash,
   isFetching,
   setRefundTransactionHash,
+  setRefundFromTx,
 }) => {
   return (
     <Background>
@@ -72,6 +73,7 @@ const Refund = ({
                   isUploaded={Object.keys(refundFile).length !== 0}
                   setTransactionHash={setTransactionHash}
                   refundFile={refundFile}
+                  setRefundFromTx={setRefundFromTx}
                 />
               )}
             />
@@ -167,6 +169,7 @@ Refund.propTypes = {
   completeRefund: PropTypes.func.isRequired,
   refundTransactionHash: PropTypes.string,
   setRefundTransactionHash: PropTypes.func.isRequired,
+  setRefundFromTx: PropTypes.func.isRequired,
 };
 
 export default injectSheet(styles)(Refund);

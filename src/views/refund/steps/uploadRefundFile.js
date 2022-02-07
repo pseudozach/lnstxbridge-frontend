@@ -6,7 +6,7 @@ import View from '../../../components/view';
 import InputArea from '../../../components/inputarea';
 import DropZone from '../../../components/dropzone';
 import FileUpload from '../../../components/fileupload';
-import { lockupTransactionHash } from '../../../constants';
+import { lockupTransactionHash, sampleStacksTxId } from '../../../constants';
 
 const UploadRefundFileStyles = theme => ({
   regular: {
@@ -59,12 +59,14 @@ const StyledUploadRefundFile = ({
   setTransactionHash,
   isUploaded,
   refundFile,
+  setRefundFromTx,
   // refundStx,
 }) => (
   <View className={classes.wrapper}>
     {isUploaded ? (
       <FaCheckCircle size={240} className={classes.icon} />
     ) : (
+      <>
       <DropZone className={classes.dropZone} onFileRead={setRefundFile}>
         <p className={classes.info}>Drag the refund.png file here</p>
         <span className={classes.info}>or</span>
@@ -74,6 +76,18 @@ const StyledUploadRefundFile = ({
           acceptMimeType={'image/png'}
         />
       </DropZone>
+      <View className={classes.regular}>
+        <p className={`${classes.mobileInfo}`}>
+          (Optional) If you don't have the refund file, paste Stacks lockStx transaction Id
+        </p>
+        <InputArea
+          height={50}
+          width={500}
+          onChange={setRefundFromTx}
+          placeholder={`EG: ${sampleStacksTxId}`}
+        />
+      </View>
+      </>
     )}
     {refundFile.currency === 'BTC' ? (<View className={classes.regular}><p className={`${classes.info} ${classes.mobileInfo}`}>
       Paste the hash of the lockup transaction
@@ -92,6 +106,7 @@ StyledUploadRefundFile.propTypes = {
   setRefundFile: PropTypes.func.isRequired,
   isUploaded: PropTypes.bool.isRequired,
   setTransactionHash: PropTypes.func.isRequired,
+  setRefundFromTx: PropTypes.func.isRequired,
   // refundStx: PropTypes.func.isRequired,
 };
 

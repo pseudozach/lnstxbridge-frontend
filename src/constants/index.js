@@ -88,3 +88,6 @@ export const rbtcswapaddress = process.env.REACT_APP_RBTCSWAP_ADDRESS;
 export const erc20swapaddress = process.env.REACT_APP_ERC20SWAP_ADDRESS;
 export const erc20tokenaddress = process.env.REACT_APP_ERC20TOKEN_ADDRESS;
 export const boltzAddress = process.env.REACT_APP_BOLTZ_ADDRESS;
+
+export const sampleStacksTxId =
+  "0x8a7e35f55c72d672982e5c0355783c55d7958a4fa3fdf54cc90356269eed9316";
