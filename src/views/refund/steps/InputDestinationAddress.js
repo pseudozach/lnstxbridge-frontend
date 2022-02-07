@@ -83,12 +83,14 @@ const InputDestinationAddressStyles = theme => ({
 });
 
 let currentBlockHeight = 0;
+let bitcoinBlockHeight = 0;
 async function getBlockHeight(){
   try {
     const response = await axios.get(`${apiUrl}/v2/info`);
     if (response.data && response.data.stacks_tip_height) {
       currentBlockHeight = response.data.stacks_tip_height;
-      // console.log('got currentBlockHeight ', currentBlockHeight);
+      bitcoinBlockHeight = response.data.burn_block_height;
+      console.log('got currentBlockHeight, bitcoinBlockHeight ', currentBlockHeight, bitcoinBlockHeight);
     }
   } catch(error) {
     console.log('failed to get current blockheight');
@@ -456,19 +458,26 @@ const StyledInputDestinationAddress = ({
 
     {currency === 'BTC' ? 
     <View className={classes.wrapper}>
-        <p className={classes.info}>
-        {/* {getCurrencyName(currency)} */}
-          Enter your {currency} Address
-          {/* Use same account you used for locking the STX */}
-        </p>
-    <InputArea
-      height={150}
-      width={500}
-      showQrScanner={true}
-      onChange={setDestinationAddress}
-      placeholder={`EG: ${getSampleAddress(currency)}`}
-      // value={123}
-    />
+      {((bitcoinBlockHeight > 0) && (refundFile.swapResponse.origBlockHeight > bitcoinBlockHeight)) ? (<p className={classes.infosm}>
+        Warning: You can't refund your coins yet! <br/>
+        Current Bitcoin blockheight: {bitcoinBlockHeight} <br/>
+        Refund timeout blockheight: {refundFile.swapResponse.origBlockHeight}{'\n'}<br/>
+        * Refund will fail until chain reaches refund timeout blockheight. <br/>
+        Please wait ~{(refundFile.swapResponse.origBlockHeight - bitcoinBlockHeight)*10} more minutes.
+      </p>) : null}
+      <p className={classes.info}>
+      {/* {getCurrencyName(currency)} */}
+        Enter your {currency} Address
+        {/* Use same account you used for locking the STX */}
+      </p>
+      <InputArea
+        height={150}
+        width={500}
+        showQrScanner={true}
+        onChange={setDestinationAddress}
+        placeholder={`EG: ${getSampleAddress(currency)}`}
+        // value={123}
+      />
     </View> : null}
   </View>
 );
