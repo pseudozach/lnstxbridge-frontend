@@ -58,6 +58,7 @@ class ReverseSwapTimelockExpired extends React.Component {
 
   render = () => {
     const { id, asset, amount, classes, dataStorageClear } = this.props;
+    console.log('expired: ', id, asset, amount, classes, dataStorageClear);
 
     return (
       <BackGround>
