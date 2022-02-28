@@ -95,7 +95,7 @@ export const setIsReconnecting = isReconnecting => ({
 });
 
 export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
-  const url = `${boltzApi}/createswap`;
+  const url = `${boltzApi}/zcreateswap`;
   const { pair, keys, baseAmount } = swapInfo;
 
   const amount = toSatoshi(Number.parseFloat(baseAmount));
@@ -272,7 +272,7 @@ const handleReverseSwapStatus = (
   // console.log('reverseactions status: ', status);
   switch (status) {
     case SwapUpdateEvent.TransactionMempool:
-      // console.log('reverseactions data: ', data);
+      console.log('reverseactions data: ', data);
       // dispatch(setReverseSwapStatus('Lockup is in mempool'));
       dispatch(
         reverseSwapResponse(true, {
