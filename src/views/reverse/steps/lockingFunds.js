@@ -619,7 +619,7 @@ class LockingFunds extends React.Component {
     return (
       <View className={classes.wrapper}>
         <p className={classes.text}>
-          LNswap.org is locking the <b>{getCurrencyName(swapInfo.quote)}</b>{' '}
+          Liquidity provider is locking the <b>{getCurrencyName(swapInfo.quote)}</b>{' '}
           that you are ought to receive, this is important to keep the swap
           atomic and trustless. It might take up to 10 minutes.
           {/* <br /> */}
