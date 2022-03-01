@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qrcodeParser from 'qrcode-parser';
-import { ECPair, address, Transaction } from 'bitcoinjs-lib';
+import { ECPair, address, Transaction, networks } from 'bitcoinjs-lib';
 import { constructRefundTransaction, detectSwap } from 'boltz-core';
 import { boltzApi, stacksNetworkType } from '../constants';
 import * as actionTypes from '../constants/actions';
@@ -163,7 +163,12 @@ const createRefundTransaction = (
   const lockupTransaction = Transaction.fromHex(response.data.transactionHex);
   
   const timeoutBlockHeight = refundFile.swapResponse.origBlockHeight;
-  console.log('createRefundTransaction redeemScript lockupTransaction address refundFile.timeoutBlockHeight', redeemScript, lockupTransaction, address.toOutputScript(destinationAddress, getNetwork(currency)), timeoutBlockHeight);
+  console.log('createRefundTransaction redeemScript lockupTransaction address refundFile.timeoutBlockHeight', 
+    redeemScript, 
+    lockupTransaction, 
+    // address.toOutputScript(destinationAddress, getNetwork(currency)), 
+    networks.regtest,
+    timeoutBlockHeight);
 
   // TODO: make sure the provided lockup transaction hash was correct and show more specific error if not
   return {
@@ -176,7 +181,8 @@ const createRefundTransaction = (
           ...detectSwap(redeemScript, lockupTransaction),
         },
       ],
-      address.toOutputScript(destinationAddress, getNetwork(currency)),
+      // address.toOutputScript(destinationAddress, getNetwork(currency)), // mainnet
+      address.toOutputScript(destinationAddress, networks.regtest), // regtest
       // refundFile.timeoutBlockHeight,
       timeoutBlockHeight,
       feeEstimation[currency]

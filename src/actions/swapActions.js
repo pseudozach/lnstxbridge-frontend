@@ -2,7 +2,7 @@ import axios from 'axios';
 import EventSource from 'eventsource';
 import { boltzApi, SwapUpdateEvent } from '../constants';
 import * as actionTypes from '../constants/actions';
-import { Transaction, ECPair, address } from 'bitcoinjs-lib';
+import { Transaction, ECPair, address, networks } from 'bitcoinjs-lib';
 import { detectSwap, constructClaimTransaction } from 'boltz-core';
 import {
   // toSatoshi,
@@ -121,6 +121,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
   const status = data.status;
   console.log('handleSwapStatus ', data);
 
+  let swapStatusObj;
   switch (status) {
     case SwapUpdateEvent.TransactionConfirmed:
       dispatch(
@@ -163,7 +164,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
     case SwapUpdateEvent.TransactionMempool:
       console.log('got mempool');
       // eslint-disable-next-line no-case-declarations
-      let swapStatusObj = {
+      swapStatusObj = {
         pending: true,
         message: 'Transaction is in mempool...',
       };
@@ -175,11 +176,15 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
 
     case SwapUpdateEvent.ASTransactionConfirmed:
       console.log('got asconfirmed');
+      swapStatusObj = {
+        pending: true,
+        message: 'Atomic Swap is ready',
+      };
+      if (data.transaction && data.transaction.hex) {
+        swapStatusObj.transaction = data.transaction;
+      }
       dispatch(
-        setSwapStatus({
-          pending: true,
-          message: 'Atomic Swap is ready',
-        })
+        setSwapStatus(swapStatusObj)
       );
       break;
 
@@ -365,16 +370,24 @@ const getClaimTransaction = (
     swapInfo.keys.privateKey,
     swapResponse.timeoutBlockHeight,
     feeEstimation[swapInfo.quote],
-    lockupTransaction.getHash()
+    lockupTransaction.getHash(),
+    lockupTransaction,
     // ECPair.fromPrivateKey(getHexBuffer(swapInfo.keys.privateKey)),
-    // getNetwork(swapInfo.quote)
+    getNetwork(swapInfo.quote),
+    networks.regtest,
+    address.toOutputScript(swapInfo.invoice, networks.regtest),
   );
 
   console.log(
     'constructClaimTransaction inputs',
+    lockupTransaction,
     detectSwap(redeemScript, lockupTransaction), // -> undefined!!!
-    redeemScript
-    // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote))
+    redeemScript,
+    swapInfo.invoice,
+    swapInfo.quote,
+    getNetwork(swapInfo.quote),
+    // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // replace getNetwork with networks.regtest
+    address.toOutputScript(swapInfo.invoice, networks.regtest),
   );
 
   return constructClaimTransaction(
@@ -393,7 +406,8 @@ const getClaimTransaction = (
       },
     ],
     // swapInfo.address
-    address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)),
+    // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // mainnet
+    address.toOutputScript(swapInfo.invoice, networks.regtest), // on regtest!
     feeEstimation[swapInfo.quote]
     // false
     // swapResponse.timeoutBlockHeight // -> only for refund tx
