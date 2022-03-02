@@ -189,7 +189,7 @@ export const setSignedTx = (dispatch, id, tx) => {
 
 const broadcastSponsoredTx = (dispatch, id, tx) => {
   console.log('reverseActions broadcastSponsoredTx ', id, tx, dispatch);
-  const url = `${boltzApi}/broadcastsponsoredtx`;
+  const url = `${boltzApi}/zbroadcastsponsoredtx`;
   // return dispatch => {
     axios
       .post(url, {
