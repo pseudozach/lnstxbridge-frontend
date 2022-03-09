@@ -386,8 +386,8 @@ const getClaimTransaction = (
     swapInfo.invoice,
     swapInfo.quote,
     getNetwork(swapInfo.quote),
-    // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // replace getNetwork with networks.regtest
-    address.toOutputScript(swapInfo.invoice, networks.regtest),
+    address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // replace getNetwork with networks.regtest
+    // address.toOutputScript(swapInfo.invoice, networks.regtest),
   );
 
   return constructClaimTransaction(
@@ -406,8 +406,8 @@ const getClaimTransaction = (
       },
     ],
     // swapInfo.address
-    // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // mainnet
-    address.toOutputScript(swapInfo.invoice, networks.regtest), // on regtest!
+    address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // mainnet
+    // address.toOutputScript(swapInfo.invoice, networks.regtest), // on regtest!
     feeEstimation[swapInfo.quote]
     // false
     // swapResponse.timeoutBlockHeight // -> only for refund tx

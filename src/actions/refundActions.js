@@ -181,8 +181,8 @@ const createRefundTransaction = (
           ...detectSwap(redeemScript, lockupTransaction),
         },
       ],
-      // address.toOutputScript(destinationAddress, getNetwork(currency)), // mainnet
-      address.toOutputScript(destinationAddress, networks.regtest), // regtest
+      address.toOutputScript(destinationAddress, getNetwork(currency)), // mainnet
+      // address.toOutputScript(destinationAddress, networks.regtest), // regtest
       // refundFile.timeoutBlockHeight,
       timeoutBlockHeight,
       feeEstimation[currency]
