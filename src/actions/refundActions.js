@@ -167,7 +167,7 @@ const createRefundTransaction = (
     redeemScript, 
     lockupTransaction, 
     // address.toOutputScript(destinationAddress, getNetwork(currency)), 
-    networks.regtest,
+    // networks.regtest,
     timeoutBlockHeight);
 
   // TODO: make sure the provided lockup transaction hash was correct and show more specific error if not

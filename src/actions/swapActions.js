@@ -374,8 +374,8 @@ const getClaimTransaction = (
     lockupTransaction,
     // ECPair.fromPrivateKey(getHexBuffer(swapInfo.keys.privateKey)),
     getNetwork(swapInfo.quote),
-    networks.regtest,
-    address.toOutputScript(swapInfo.invoice, networks.regtest),
+    // networks.regtest,
+    // address.toOutputScript(swapInfo.invoice, networks.regtest),
   );
 
   console.log(
