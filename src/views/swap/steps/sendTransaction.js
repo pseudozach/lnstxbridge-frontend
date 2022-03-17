@@ -530,7 +530,7 @@ async function lockStx(swapInfo, swapResponse) {
       swapResponse.expectedAmount,
       swapResponse.baseAmount
     );
-    amountToLock = swapResponse.baseAmount * 1000000;
+    amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
     swapamount = amountToLock.toString(16).split('.')[0] + '';
     postconditionamount = Math.ceil(amountToLock);
   } else {
@@ -538,7 +538,7 @@ async function lockStx(swapInfo, swapResponse) {
       'expectedAmount is NOT 0, regular swap ',
       swapResponse.expectedAmount
     );
-    amountToLock = parseInt(swapResponse.expectedAmount) / 100
+    amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100)
     swapamount =
       (amountToLock).toString(16).split('.')[0] +
       '';
@@ -719,7 +719,7 @@ async function lockToken(swapInfo, swapResponse) {
       swapResponse.expectedAmount,
       swapResponse.baseAmount
     );
-    amountToLock = swapResponse.baseAmount * 1000000;
+    amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
     swapamount = amountToLock.toString(16).split('.')[0] + '';
     postconditionamount = Math.ceil(amountToLock);
   } else {
@@ -734,7 +734,7 @@ async function lockToken(swapInfo, swapResponse) {
       swapResponse.expectedAmount,
       parseInt(swapResponse.expectedAmount) / 100
     );
-    amountToLock = parseInt(swapResponse.expectedAmount) / 100;
+    amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100);
     swapamount =
     amountToLock.toString(16).split('.')[0] +
       '';
