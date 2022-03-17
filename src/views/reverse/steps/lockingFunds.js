@@ -15,6 +15,7 @@ import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 import { openContractCall, makeContractCallToken } from '@stacks/connect';
 import {
   bufferCV,
+  uintCV,
   // makeStandardSTXPostCondition,
   FungibleConditionCode,
   PostConditionMode,
@@ -170,10 +171,11 @@ const claimStx = async (swapInfo, swapResponse) => {
   const functionArgs = [
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     bufferCV(Buffer.from(preimage, 'hex')),
-    bufferCV(Buffer.from(paddedamount, 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+    uintCV(smallamount),
+    // bufferCV(Buffer.from(paddedamount, 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
   ];
   // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
 
@@ -312,10 +314,11 @@ const signStx = async (swapInfo, swapResponse, setSignedTx) => {
   const functionArgs = [
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     bufferCV(Buffer.from(preimage, 'hex')),
-    bufferCV(Buffer.from(paddedamount, 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+    uintCV(smallamount),
+    // bufferCV(Buffer.from(paddedamount, 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
   ];
   // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
 
@@ -474,10 +477,11 @@ const claimToken = async (swapInfo, swapResponse) => {
   const functionArgs = [
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     bufferCV(Buffer.from(preimage, 'hex')),
-    bufferCV(Buffer.from(paddedamount, 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+    uintCV(smallamount),
+    // bufferCV(Buffer.from(paddedamount, 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
     contractPrincipalCV(assetAddress, assetContractName),
   ];
   // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
