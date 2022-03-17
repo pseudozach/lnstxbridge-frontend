@@ -356,132 +356,133 @@ class SwapTabWrapper extends React.Component {
     userSession.signUserOut();
   };
 
-  lockStx = async (swapInfo, swapResponse) => {
-    console.log('lockStx: ', swapInfo, swapResponse);
-    const postConditionAddress = stxcontractaddres;
-    const postConditionCode = FungibleConditionCode.LessEqual;
-    // const amount = uintCV(parseInt(2000000));
-    const postConditionAmount = new BN(2000000);
-    // const postConditionAmount = new BigNumber(2000000)
-    // const postConditionAmount = Buffer.from('00000000000000000000000000100000','hex');
-    // const postConditions = [
-    //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
-    // ];
-    const postConditions = [
-      this.createSTXPostCondition(
-        postConditionAddress,
-        postConditionCode,
-        postConditionAmount
-      ),
-    ];
-    // console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
-    // bufferCV(Buffer.from('00000000000000000000000000100000','hex')), -> 1 STX == 1048576₁₀
+  // lockStx = async (swapInfo, swapResponse) => {
+  //   console.log('swaptabwrapper.360 lockStx: ', swapInfo, swapResponse);
+  //   const postConditionAddress = stxcontractaddres;
+  //   const postConditionCode = FungibleConditionCode.LessEqual;
+  //   // const amount = uintCV(parseInt(2000000));
+  //   const postConditionAmount = new BN(2000000);
+  //   // const postConditionAmount = new BigNumber(2000000)
+  //   // const postConditionAmount = Buffer.from('00000000000000000000000000100000','hex');
+  //   // const postConditions = [
+  //   //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+  //   // ];
+  //   const postConditions = [
+  //     this.createSTXPostCondition(
+  //       postConditionAddress,
+  //       postConditionCode,
+  //       postConditionAmount
+  //     ),
+  //   ];
+  //   // console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
+  //   // bufferCV(Buffer.from('00000000000000000000000000100000','hex')), -> 1 STX == 1048576₁₀
 
-    // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
-    const functionArgs = [
-      bufferCV(
-        Buffer.from(
-          '4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a',
-          'hex'
-        )
-      ),
-      bufferCV(Buffer.from('00000000000000000000000000100000', 'hex')),
-      bufferCV(Buffer.from('01', 'hex')),
-      bufferCV(Buffer.from('01', 'hex')),
-      bufferCV(Buffer.from('000000000000000000000000000012b4', 'hex')),
-      standardPrincipalCV(swapInfo.address),
-      // bufferCV(Buffer.from('hello, world')),
-      // bufferCV(Buffer.from('hello, world')),
-      // stringAsciiCV(thisthing.form.question),
-      // uintCV(parseInt(thisthing.form.paypervote)),
-      // standardPrincipalCV(thisthing.form.oracle.trim()),
-      // uintCV(parseInt(unixtime)),
-      // stringAsciiCV("manual"),
-      // uintCV(1234),
-      // intCV(-234),
-      // bufferCV(Buffer.from('hello, world')),
-      // stringUtf8CV('hey-utf8'),
-      // trueCV(),
-    ];
-    // console.log("functionArgs: ", JSON.stringify(functionArgs));
-    // return false;
-    const options = {
-      network: activeNetwork,
-      contractAddress: stxcontractaddres,
-      contractName: stxcontractname,
-      functionName: 'lockStx',
-      functionArgs,
-      appDetails: {
-        name: 'stxswap',
-        icon: window.location.origin + './favicon.ico',
-      },
-      authOrigin: 'localhost:3888',
-      postConditions,
-      onFinish: data => {
-        console.log('Stacks Transaction:', data.stacksTransaction);
-        console.log('Transaction ID:', data.txId);
-        console.log('Raw transaction:', data.txRaw);
-        // +thisthing.activeNetworkStr
-        const explorerTransactionUrl =
-          'https://explorer.stacks.co/txid/' + data.txId + '?chain=';
-        console.log('View transaction in explorer:', explorerTransactionUrl);
-        // thisthing.isLoading = false;
-        //  	db.ref(thisthing.contractname).push({account: thisthing.userData.profile.stxAddress[thisthing.activeNetworkStr], question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: "https://explorer.stacks.co/txid/"+data.txId+"?chain="+thisthing.activeNetworkStr, resolveTime: thisthing.datetime, unixtime: unixtime, resolveType:"manual", yescount: 0, nocount: 0, balance:0, resolved: false, result: false,  createdAt: firebase.database.ServerValue.TIMESTAMP});
-        // this.$notify({
-        //   title: 'Create Market',
-        //   text: 'Tx broadcasted. Please wait for it to be confirmed: ' + explorerTransactionUrl,
-        //   type: 'success',
-        //   duration: 10000,
-        // });
-        // this.$emit('exit', true);
-      },
-    };
-    console.log('2options: ', options);
-    await openContractCall(options);
+  //   // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
+  //   const functionArgs = [
+  //     bufferCV(
+  //       Buffer.from(
+  //         '4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a',
+  //         'hex'
+  //       )
+  //     ),
+  //     uintCV(amount),
+  //     bufferCV(Buffer.from('00000000000000000000000000100000', 'hex')),
+  //     bufferCV(Buffer.from('01', 'hex')),
+  //     bufferCV(Buffer.from('01', 'hex')),
+  //     bufferCV(Buffer.from('000000000000000000000000000012b4', 'hex')),
+  //     standardPrincipalCV(swapInfo.address),
+  //     // bufferCV(Buffer.from('hello, world')),
+  //     // bufferCV(Buffer.from('hello, world')),
+  //     // stringAsciiCV(thisthing.form.question),
+  //     // uintCV(parseInt(thisthing.form.paypervote)),
+  //     // standardPrincipalCV(thisthing.form.oracle.trim()),
+  //     // uintCV(parseInt(unixtime)),
+  //     // stringAsciiCV("manual"),
+  //     // uintCV(1234),
+  //     // intCV(-234),
+  //     // bufferCV(Buffer.from('hello, world')),
+  //     // stringUtf8CV('hey-utf8'),
+  //     // trueCV(),
+  //   ];
+  //   // console.log("functionArgs: ", JSON.stringify(functionArgs));
+  //   // return false;
+  //   const options = {
+  //     network: activeNetwork,
+  //     contractAddress: stxcontractaddres,
+  //     contractName: stxcontractname,
+  //     functionName: 'lockStx',
+  //     functionArgs,
+  //     appDetails: {
+  //       name: 'stxswap',
+  //       icon: window.location.origin + './favicon.ico',
+  //     },
+  //     authOrigin: 'localhost:3888',
+  //     postConditions,
+  //     onFinish: data => {
+  //       console.log('Stacks Transaction:', data.stacksTransaction);
+  //       console.log('Transaction ID:', data.txId);
+  //       console.log('Raw transaction:', data.txRaw);
+  //       // +thisthing.activeNetworkStr
+  //       const explorerTransactionUrl =
+  //         'https://explorer.stacks.co/txid/' + data.txId + '?chain=';
+  //       console.log('View transaction in explorer:', explorerTransactionUrl);
+  //       // thisthing.isLoading = false;
+  //       //  	db.ref(thisthing.contractname).push({account: thisthing.userData.profile.stxAddress[thisthing.activeNetworkStr], question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: "https://explorer.stacks.co/txid/"+data.txId+"?chain="+thisthing.activeNetworkStr, resolveTime: thisthing.datetime, unixtime: unixtime, resolveType:"manual", yescount: 0, nocount: 0, balance:0, resolved: false, result: false,  createdAt: firebase.database.ServerValue.TIMESTAMP});
+  //       // this.$notify({
+  //       //   title: 'Create Market',
+  //       //   text: 'Tx broadcasted. Please wait for it to be confirmed: ' + explorerTransactionUrl,
+  //       //   type: 'success',
+  //       //   duration: 10000,
+  //       // });
+  //       // this.$emit('exit', true);
+  //     },
+  //   };
+  //   console.log('2options: ', options);
+  //   await openContractCall(options);
 
-    // const onFinish = useCallback((data) => {
-    //   // void setIsLoading(false);
-    //   console.log("onFinish ", data)
-    // }, []);
+  //   // const onFinish = useCallback((data) => {
+  //   //   // void setIsLoading(false);
+  //   //   console.log("onFinish ", data)
+  //   // }, []);
 
-    // const onCancel = useCallback(() => {
-    //   // void setIsLoading(false);
-    //   console.log("onCancel ", data)
-    // }, []);
-    // // setIsLoading
+  //   // const onCancel = useCallback(() => {
+  //   //   // void setIsLoading(false);
+  //   //   console.log("onCancel ", data)
+  //   // }, []);
+  //   // // setIsLoading
 
-    // // const { doContractCall } = useConnect();
-    // console.log("doContractCall");
-    // const handleFaucetCall = useHandleClaimHey(network, stxcontractaddres, functionArgs);
-    // handleFaucetCall()
+  //   // // const { doContractCall } = useConnect();
+  //   // console.log("doContractCall");
+  //   // const handleFaucetCall = useHandleClaimHey(network, stxcontractaddres, functionArgs);
+  //   // handleFaucetCall()
 
-    // void doContractCall({
-    //   stxcontractaddres,
-    //   contractName: 'stxswap_v2',
-    //   functionName: 'lockStx',
-    //   functionArgs: functionArgs,
-    //   onFinish: data => {
-    //     console.log('Stacks Transaction:', data.stacksTransaction);
-    //     console.log('Transaction ID:', data.txId);
-    //     console.log('Raw transaction:', data.txRaw);
-    //     // +thisthing.activeNetworkStr
-    //     const explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=';
-    //     console.log('View transaction in explorer:', explorerTransactionUrl);
-    //   // thisthing.isLoading = false;
-    //  //  	db.ref(thisthing.contractname).push({account: thisthing.userData.profile.stxAddress[thisthing.activeNetworkStr], question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: "https://explorer.stacks.co/txid/"+data.txId+"?chain="+thisthing.activeNetworkStr, resolveTime: thisthing.datetime, unixtime: unixtime, resolveType:"manual", yescount: 0, nocount: 0, balance:0, resolved: false, result: false,  createdAt: firebase.database.ServerValue.TIMESTAMP});
-    //   // this.$notify({
-    //   //   title: 'Create Market',
-    //   //   text: 'Tx broadcasted. Please wait for it to be confirmed: ' + explorerTransactionUrl,
-    //   //   type: 'success',
-    //   //   duration: 10000,
-    //   // });
-    //   // this.$emit('exit', true);
-    //   },
-    //   // onCancel,
-    //   network: mocknet,
-    //   // stxAddress: address,
-    // });
-  };
+  //   // void doContractCall({
+  //   //   stxcontractaddres,
+  //   //   contractName: 'stxswap_v2',
+  //   //   functionName: 'lockStx',
+  //   //   functionArgs: functionArgs,
+  //   //   onFinish: data => {
+  //   //     console.log('Stacks Transaction:', data.stacksTransaction);
+  //   //     console.log('Transaction ID:', data.txId);
+  //   //     console.log('Raw transaction:', data.txRaw);
+  //   //     // +thisthing.activeNetworkStr
+  //   //     const explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=';
+  //   //     console.log('View transaction in explorer:', explorerTransactionUrl);
+  //   //   // thisthing.isLoading = false;
+  //   //  //  	db.ref(thisthing.contractname).push({account: thisthing.userData.profile.stxAddress[thisthing.activeNetworkStr], question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: "https://explorer.stacks.co/txid/"+data.txId+"?chain="+thisthing.activeNetworkStr, resolveTime: thisthing.datetime, unixtime: unixtime, resolveType:"manual", yescount: 0, nocount: 0, balance:0, resolved: false, result: false,  createdAt: firebase.database.ServerValue.TIMESTAMP});
+  //   //   // this.$notify({
+  //   //   //   title: 'Create Market',
+  //   //   //   text: 'Tx broadcasted. Please wait for it to be confirmed: ' + explorerTransactionUrl,
+  //   //   //   type: 'success',
+  //   //   //   duration: 10000,
+  //   //   // });
+  //   //   // this.$emit('exit', true);
+  //   //   },
+  //   //   // onCancel,
+  //   //   network: mocknet,
+  //   //   // stxAddress: address,
+  //   // });
+  // };
 
   createSTXPostCondition(principal, conditionCode, amount) {
     if (typeof principal === 'string') {

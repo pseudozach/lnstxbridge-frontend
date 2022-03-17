@@ -25,7 +25,7 @@ import lightningPayReq from 'bolt11';
 // import { useHandleClaimHey } from '../../utils/dotx'
 
 import {
-  // uintCV,
+  uintCV,
   // intCV,
   bufferCV,
   // stringAsciiCV,
@@ -234,10 +234,11 @@ const claimStx = async (swapInfo, swapResponse) => {
   const functionArgs = [
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     bufferCV(Buffer.from(preimage, 'hex')),
-    bufferCV(Buffer.from(paddedamount, 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+    uintCV(amount),
+    // bufferCV(Buffer.from(paddedamount, 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
   ];
   // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
 
@@ -421,10 +422,11 @@ const claimToken = async (swapInfo, swapResponse) => {
   const functionArgs = [
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     bufferCV(Buffer.from(preimage, 'hex')),
-    bufferCV(Buffer.from(paddedamount, 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+    uintCV(amount),
+    // bufferCV(Buffer.from(paddedamount, 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
     contractPrincipalCV(assetAddress, assetContractName),
   ];
   // console.log("stacks cli claim.154 functionargs: " + JSON.stringify(functionArgs));
@@ -520,7 +522,7 @@ async function lockStx(swapInfo, swapResponse) {
 
   console.log('paymenthash: ', paymenthash);
 
-  let swapamount, postconditionamount;
+  let swapamount, postconditionamount, amountToLock;
   if (swapResponse.expectedAmount === 0) {
     // atomic swap
     console.log(
@@ -528,35 +530,37 @@ async function lockStx(swapInfo, swapResponse) {
       swapResponse.expectedAmount,
       swapResponse.baseAmount
     );
-    let amountToLock = swapResponse.baseAmount;
-    swapamount = (amountToLock * 1000000).toString(16).split('.')[0] + '';
-    postconditionamount = Math.ceil(amountToLock * 1000000);
+    amountToLock = swapResponse.baseAmount * 1000000;
+    swapamount = amountToLock.toString(16).split('.')[0] + '';
+    postconditionamount = Math.ceil(amountToLock);
   } else {
     console.log(
       'expectedAmount is NOT 0, regular swap ',
       swapResponse.expectedAmount
     );
+    amountToLock = parseInt(swapResponse.expectedAmount) / 100
     swapamount =
-      (parseInt(swapResponse.expectedAmount) / 100).toString(16).split('.')[0] +
+      (amountToLock).toString(16).split('.')[0] +
       '';
     postconditionamount = Math.ceil(
-      parseInt(swapResponse.expectedAmount) / 100
+      amountToLock
     );
     // *1000
     // 199610455 -> 199 STX
   }
   console.log(
-    'swapamount, postconditionamount: ',
+    'swapamount, amountToLock, postconditionamount: ',
     swapamount,
+    amountToLock, 
     postconditionamount
   );
 
-  console.log(
-    'calc: ',
-    swapResponse.expectedAmount,
-    parseInt(swapResponse.expectedAmount) / 100,
-    swapResponse.baseAmount
-  );
+  // console.log(
+  //   'calc: ',
+  //   swapResponse.expectedAmount,
+  //   parseInt(swapResponse.expectedAmount) / 100,
+  //   swapResponse.baseAmount
+  // );
 
   let paddedamount = swapamount.padStart(32, '0');
 
@@ -608,10 +612,12 @@ async function lockStx(swapInfo, swapResponse) {
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
     bufferCV(Buffer.from(paymenthash, 'hex')),
-    bufferCV(Buffer.from(paddedamount, 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+    uintCV(amountToLock),
+    uintCV(Number(swapResponse.timeoutBlockHeight)),
+    // bufferCV(Buffer.from(paddedamount, 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
     standardPrincipalCV(swapResponse.claimAddress),
   ];
   // console.log("functionArgs: ", JSON.stringify(functionArgs));
@@ -705,7 +711,7 @@ async function lockToken(swapInfo, swapResponse) {
   }
   console.log('paymenthash: ', paymenthash);
 
-  let swapamount, postconditionamount;
+  let swapamount, postconditionamount, amountToLock;
   if (swapResponse.expectedAmount === 0) {
     // atomic swap
     console.log(
@@ -713,9 +719,9 @@ async function lockToken(swapInfo, swapResponse) {
       swapResponse.expectedAmount,
       swapResponse.baseAmount
     );
-    let amountToLock = swapResponse.baseAmount;
-    swapamount = (amountToLock * 1000000).toString(16).split('.')[0] + '';
-    postconditionamount = Math.ceil(amountToLock * 1000000);
+    amountToLock = swapResponse.baseAmount * 1000000;
+    swapamount = amountToLock.toString(16).split('.')[0] + '';
+    postconditionamount = Math.ceil(amountToLock);
   } else {
     console.log(
       'expectedAmount is NOT 0, regular swap ',
@@ -728,12 +734,13 @@ async function lockToken(swapInfo, swapResponse) {
       swapResponse.expectedAmount,
       parseInt(swapResponse.expectedAmount) / 100
     );
+    amountToLock = parseInt(swapResponse.expectedAmount) / 100;
     swapamount =
-      (parseInt(swapResponse.expectedAmount) / 100).toString(16).split('.')[0] +
+    amountToLock.toString(16).split('.')[0] +
       '';
     // postcondition amount should be in stx not mstx - WRONG!
     postconditionamount = Math.ceil(
-      parseInt(swapResponse.expectedAmount) / 100
+      amountToLock
     );
   }
   // let postconditionamount =
@@ -741,8 +748,9 @@ async function lockToken(swapInfo, swapResponse) {
   // *1000
   // 199610455 -> 199 STX
   console.log(
-    'swapamount, postconditionamount: ',
+    'swapamount, amountToLock,  postconditionamount: ',
     swapamount,
+    amountToLock, 
     postconditionamount
   );
   let paddedamount = swapamount.padStart(32, '0');
@@ -814,10 +822,12 @@ async function lockToken(swapInfo, swapResponse) {
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
     bufferCV(Buffer.from(paymenthash, 'hex')),
-    bufferCV(Buffer.from(paddedamount, 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from('01', 'hex')),
-    bufferCV(Buffer.from(paddedtimelock, 'hex')),
+    uintCV(amountToLock),
+    uintCV(Number(swapResponse.timeoutBlockHeight)),
+    // bufferCV(Buffer.from(paddedamount, 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from('01', 'hex')),
+    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
     standardPrincipalCV(swapResponse.claimAddress),
     contractPrincipalCV(assetAddress, assetContractName), // token address + contractname
   ];
