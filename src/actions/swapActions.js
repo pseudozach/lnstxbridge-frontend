@@ -390,6 +390,19 @@ const getClaimTransaction = (
     // address.toOutputScript(swapInfo.invoice, networks.regtest),
   );
 
+  let destinationScript;
+  if (process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet') {
+    destinationScript = address.toOutputScript(
+      swapInfo.invoice,
+      networks.regtest
+    );
+  } else {
+    destinationScript = address.toOutputScript(
+      swapInfo.invoice,
+      getNetwork(swapInfo.quote)
+    );
+  }
+
   return constructClaimTransaction(
     [
       {
@@ -406,7 +419,8 @@ const getClaimTransaction = (
       },
     ],
     // swapInfo.address
-    address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // mainnet
+    destinationScript,
+    // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // mainnet
     // address.toOutputScript(swapInfo.invoice, networks.regtest), // on regtest!
     feeEstimation[swapInfo.quote]
     // false
