@@ -386,7 +386,7 @@ const getClaimTransaction = (
     swapInfo.invoice,
     swapInfo.quote,
     getNetwork(swapInfo.quote),
-    address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // replace getNetwork with networks.regtest
+    // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // replace getNetwork with networks.regtest
     // address.toOutputScript(swapInfo.invoice, networks.regtest),
   );
 
