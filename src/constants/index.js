@@ -14,6 +14,7 @@ export const SwapUpdateEvent = {
   TransactionClaimed: 'transaction.claimed',
   TransactionRefunded: 'transaction.refunded',
   TransactionConfirmed: 'transaction.confirmed',
+  TransactionLockupFailed: 'transaction.lockupFailed',
 
   ASTransactionFailed: 'astransaction.failed',
   ASTransactionMempool: 'astransaction.mempool',

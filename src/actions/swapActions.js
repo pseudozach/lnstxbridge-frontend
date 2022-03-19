@@ -199,7 +199,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
       );
       break;
 
-    case SwapUpdateEvent.LockupFailed:
+    case SwapUpdateEvent.TransactionLockupFailed:
       dispatch(
         setSwapStatus({
           error: true,
