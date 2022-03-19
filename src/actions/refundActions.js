@@ -53,13 +53,12 @@ export const setRefundFile = file => {
         payload: verifyFile ? fileJson : {},
       });
 
-      // console.log("setTransactionHash");
-      dispatch({
-        type: actionTypes.SET_REFUND_TXHASH,
-        payload: 'dummyvalue',
-      });
-
       if (fileJson.currency !== 'BTC') {
+        console.log('refundactions.57 setTransactionHash');
+        dispatch({
+          type: actionTypes.SET_REFUND_TXHASH,
+          payload: 'dummyvalue',
+        });
         setTransactionHash('dummyvalue');
       }
     });
@@ -110,13 +109,12 @@ export const setRefundFromTx = txId => {
             payload: verifyFile ? refundFile : {},
           });
 
-          // console.log("setTransactionHash");
-          dispatch({
-            type: actionTypes.SET_REFUND_TXHASH,
-            payload: 'dummyvalue',
-          });
-
           if (refundFile.currency !== 'BTC') {
+            console.log('refundactions.113 setTransactionHash');
+            dispatch({
+              type: actionTypes.SET_REFUND_TXHASH,
+              payload: 'dummyvalue',
+            });
             setTransactionHash('dummyvalue');
           }
         } else {
