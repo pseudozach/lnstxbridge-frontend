@@ -58,7 +58,7 @@ export const swapRequest = () => ({
 });
 
 export const startSwap = (swapInfo, cb) => {
-  const url = `${boltzApi}/zcreateswap`;
+  const url = `${boltzApi}/createswap`;
   let { pair, invoice, keys, preimageHash, quoteAmount, baseAmount } = swapInfo;
 
   // Trim the "lightning:" prefix, that some wallets add in front of their invoices, if it exists

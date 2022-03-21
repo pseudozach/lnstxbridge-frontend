@@ -95,12 +95,12 @@ export const setIsReconnecting = isReconnecting => ({
 });
 
 export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
-  const url = `${boltzApi}/zcreateswap`;
+  const url = `${boltzApi}/createswap`;
   const { pair, keys, baseAmount } = swapInfo;
 
   const amount = toSatoshi(Number.parseFloat(baseAmount));
 
-  console.log('reverseActions startReverseSwap ', swapInfo.isSponsored)
+  console.log('reverseActions startReverseSwap ', swapInfo.isSponsored);
 
   // for btc/sov
   // {
@@ -155,29 +155,29 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
       // );
       console.log('claimswap:: ', swapInfo, swapResponse, feeEstimation);
 
-//       // this is not launched automatically anymore, user needs to click it from the GUI.
-//       // claimStx(swapInfo,swapResponse, nextStage)
+      //       // this is not launched automatically anymore, user needs to click it from the GUI.
+      //       // claimStx(swapInfo,swapResponse, nextStage)
 
-//       // TODO: prepare a claim tx for the user on Stacks!!!
-//       // just launch the wallet so that user can run and claim the stx
+      //       // TODO: prepare a claim tx for the user on Stacks!!!
+      //       // just launch the wallet so that user can run and claim the stx
 
-//       // const claimTransaction = getClaimTransaction(
-//       //   swapInfo,
-//       //   swapResponse,
-//       //   feeEstimation
-//       // );
+      //       // const claimTransaction = getClaimTransaction(
+      //       //   swapInfo,
+      //       //   swapResponse,
+      //       //   feeEstimation
+      //       // );
 
-//       // console.log("reverseactions.124 claimtx: ", claimTransaction);
-//       // dispatch(
-//       //   broadcastClaimTransaction(
-//       //     swapInfo.quote,
-//       //     claimTransaction.toHex(),
-//       //     () => {
-//       //       dispatch(reverseSwapResponse(true, swapResponse));
-//       //       nextStage();
-//       //     }
-//       //   )
-//       // );
+      //       // console.log("reverseactions.124 claimtx: ", claimTransaction);
+      //       // dispatch(
+      //       //   broadcastClaimTransaction(
+      //       //     swapInfo.quote,
+      //       //     claimTransaction.toHex(),
+      //       //     () => {
+      //       //       dispatch(reverseSwapResponse(true, swapResponse));
+      //       //       nextStage();
+      //       //     }
+      //       //   )
+      //       // );
     })
   );
 };
@@ -185,27 +185,27 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
 export const setSignedTx = (dispatch, id, tx) => {
   console.log('reverseActions setSignedTx ', dispatch, id, tx);
   broadcastSponsoredTx(dispatch, id, tx);
-}
+};
 
 const broadcastSponsoredTx = (dispatch, id, tx) => {
   console.log('reverseActions broadcastSponsoredTx ', id, tx, dispatch);
-  const url = `${boltzApi}/zbroadcastsponsoredtx`;
+  const url = `${boltzApi}/broadcastsponsoredtx`;
   // return dispatch => {
-    axios
-      .post(url, {
-        id,
-        tx,
-      })
-      .then((txId) => {
-        // cb()
-        console.log('broadcastSponsoredTx done ', txId);
-        dispatch(reverseSwapResponse(true, 'Transaction broadcasted'));
-      })
-      .catch(error => {
-        const message = error.response.data.error;
-        window.alert(`Failed to broadcast claim transaction: ${message}`);
-        dispatch(reverseSwapResponse(false, message));
-      });
+  axios
+    .post(url, {
+      id,
+      tx,
+    })
+    .then(txId => {
+      // cb()
+      console.log('broadcastSponsoredTx done ', txId);
+      dispatch(reverseSwapResponse(true, 'Transaction broadcasted'));
+    })
+    .catch(error => {
+      const message = error.response.data.error;
+      window.alert(`Failed to broadcast claim transaction: ${message}`);
+      dispatch(reverseSwapResponse(false, message));
+    });
   // };
 };
 
