@@ -162,10 +162,10 @@ async function refundStx (refundFile, setRefundTransactionHash, setDestinationAd
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
     bufferCV(Buffer.from(paymenthash, 'hex')),
-    bufferCV(Buffer.from(paddedamount,'hex')),
-    bufferCV(Buffer.from('01','hex')),
-    bufferCV(Buffer.from('01','hex')),
-    bufferCV(Buffer.from(paddedtimelock,'hex')),
+    // bufferCV(Buffer.from(paddedamount,'hex')),
+    // bufferCV(Buffer.from('01','hex')),
+    // bufferCV(Buffer.from('01','hex')),
+    // bufferCV(Buffer.from(paddedtimelock,'hex')),
   ];
   console.log("functionArgs: ", JSON.stringify(functionArgs));
   // return false;
@@ -290,10 +290,10 @@ async function refundToken (refundFile, setRefundTransactionHash, setDestination
     // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
     // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
     bufferCV(Buffer.from(paymenthash, 'hex')),
-    bufferCV(Buffer.from(paddedamount,'hex')),
-    bufferCV(Buffer.from('01','hex')),
-    bufferCV(Buffer.from('01','hex')),
-    bufferCV(Buffer.from(paddedtimelock,'hex')),
+    // bufferCV(Buffer.from(paddedamount,'hex')),
+    // bufferCV(Buffer.from('01','hex')),
+    // bufferCV(Buffer.from('01','hex')),
+    // bufferCV(Buffer.from(paddedtimelock,'hex')),
     contractPrincipalCV(assetAddress, assetContractName),
   ];
   console.log("functionArgs: ", JSON.stringify(functionArgs));

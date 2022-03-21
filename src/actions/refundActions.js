@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qrcodeParser from 'qrcode-parser';
-import { ECPair, address, Transaction } from 'bitcoinjs-lib';
+import { ECPair, address, Transaction, networks } from 'bitcoinjs-lib';
 import { constructRefundTransaction, detectSwap } from 'boltz-core';
 import { boltzApi, stacksNetworkType } from '../constants';
 import * as actionTypes from '../constants/actions';
@@ -12,10 +12,10 @@ import {
 } from '../utils';
 
 let apiUrl = process.env.REACT_APP_STACKS_API;
-if(stacksNetworkType==="testnet"){
-  apiUrl = 'https://stacks-node-api.testnet.stacks.co'
-} else if(stacksNetworkType==="mainnet"){
-  apiUrl = 'https://stacks-node-api.mainnet.stacks.co'
+if (stacksNetworkType === 'testnet') {
+  apiUrl = 'https://stacks-node-api.testnet.stacks.co';
+} else if (stacksNetworkType === 'mainnet') {
+  apiUrl = 'https://stacks-node-api.mainnet.stacks.co';
 }
 
 const verifyRefundFile = (fileJSON, keys) => {
@@ -36,7 +36,7 @@ export const setRefundFile = file => {
   return dispatch => {
     qrcodeParser(file).then(res => {
       const fileJson = JSON.parse(res.data);
-      console.log("setRefundFile: ", fileJson);
+      console.log('setRefundFile: ', fileJson);
 
       const verifyFile = verifyRefundFile(fileJson, [
         'currency',
@@ -53,16 +53,14 @@ export const setRefundFile = file => {
         payload: verifyFile ? fileJson : {},
       });
 
-      // console.log("setTransactionHash");
-      dispatch({
-        type: actionTypes.SET_REFUND_TXHASH,
-        payload: "dummyvalue",
-      });
-
-      if(fileJson.currency !== 'BTC') {
-        setTransactionHash("dummyvalue");
+      if (fileJson.currency !== 'BTC') {
+        console.log('refundactions.57 setTransactionHash');
+        dispatch({
+          type: actionTypes.SET_REFUND_TXHASH,
+          payload: 'dummyvalue',
+        });
+        setTransactionHash('dummyvalue');
       }
-      
     });
   };
 };
@@ -70,58 +68,70 @@ export const setRefundFile = file => {
 export const setRefundFromTx = txId => {
   return dispatch => {
     // check txData from stacks API
-    axios.get(`${apiUrl}/extended/v1/tx/${txId}`).then(tx => {
-      if(tx.data && tx.data.contract_call && tx.data.tx_status === 'success' && tx.data.contract_call.function_name === 'lockStx') {
-        let refundFile = {};
-        refundFile.currency = 'STX';
-        refundFile.preimageHash = tx.data.contract_call.function_args[0].repr.slice(2);
-        refundFile.amount = parseInt(tx.data.contract_call.function_args[1].repr,16);
-        refundFile.timeoutBlockHeight = parseInt(tx.data.contract_call.function_args[4].repr,16);
-        refundFile.contract = tx.data.contract_call.contract_id;
-  
-        const verifyFile = verifyRefundFile(refundFile, [
-          'currency',
-          // 'preimageHash',
-          'amount',
-          // 'redeemScript',
-          // 'privateKey',
-          'timeoutBlockHeight',
-          'contract',
-        ]);
-  
-        console.log("setRefundFile, verifyFile: ", refundFile, verifyFile);
+    axios
+      .get(`${apiUrl}/extended/v1/tx/${txId}`)
+      .then(tx => {
+        if (
+          tx.data &&
+          tx.data.contract_call &&
+          tx.data.tx_status === 'success' &&
+          tx.data.contract_call.function_name === 'lockStx'
+        ) {
+          let refundFile = {};
+          refundFile.currency = 'STX';
+          refundFile.preimageHash = tx.data.contract_call.function_args[0].repr.slice(
+            2
+          );
+          refundFile.amount = parseInt(
+            tx.data.contract_call.function_args[1].repr,
+            16
+          );
+          refundFile.timeoutBlockHeight = parseInt(
+            tx.data.contract_call.function_args[4].repr,
+            16
+          );
+          refundFile.contract = tx.data.contract_call.contract_id;
 
-        dispatch({
-          type: actionTypes.SET_REFUND_FILE,
-          payload: verifyFile ? refundFile : {},
-        });
-  
-        // console.log("setTransactionHash");
-        dispatch({
-          type: actionTypes.SET_REFUND_TXHASH,
-          payload: "dummyvalue",
-        });
-  
-        if(refundFile.currency !== 'BTC') {
-          setTransactionHash("dummyvalue");
+          const verifyFile = verifyRefundFile(refundFile, [
+            'currency',
+            // 'preimageHash',
+            'amount',
+            // 'redeemScript',
+            // 'privateKey',
+            'timeoutBlockHeight',
+            'contract',
+          ]);
+
+          console.log('setRefundFile, verifyFile: ', refundFile, verifyFile);
+
+          dispatch({
+            type: actionTypes.SET_REFUND_FILE,
+            payload: verifyFile ? refundFile : {},
+          });
+
+          if (refundFile.currency !== 'BTC') {
+            console.log('refundactions.113 setTransactionHash');
+            dispatch({
+              type: actionTypes.SET_REFUND_TXHASH,
+              payload: 'dummyvalue',
+            });
+            setTransactionHash('dummyvalue');
+          }
+        } else {
+          console.log('setRefundFromTx failed ', tx.data);
+          dispatch({
+            type: actionTypes.SET_REFUND_FILE,
+            payload: {},
+          });
         }
-  
-      } else {
-        console.log('setRefundFromTx failed ', tx.data);
+      })
+      .catch(error => {
+        console.log('setRefundFromTx failed with error ', error.message);
         dispatch({
           type: actionTypes.SET_REFUND_FILE,
           payload: {},
         });
-      }
-    })
-    .catch(error => {
-      console.log('setRefundFromTx failed with error ', error.message);
-      dispatch({
-        type: actionTypes.SET_REFUND_FILE,
-        payload: {},
       });
-    })
-
   };
 };
 
@@ -161,9 +171,29 @@ const createRefundTransaction = (
 ) => {
   const redeemScript = getHexBuffer(refundFile.redeemScript);
   const lockupTransaction = Transaction.fromHex(response.data.transactionHex);
-  
+
   const timeoutBlockHeight = refundFile.swapResponse.origBlockHeight;
-  console.log('createRefundTransaction redeemScript lockupTransaction address refundFile.timeoutBlockHeight', redeemScript, lockupTransaction, address.toOutputScript(destinationAddress, getNetwork(currency)), timeoutBlockHeight);
+  console.log(
+    'createRefundTransaction redeemScript lockupTransaction address refundFile.timeoutBlockHeight',
+    redeemScript,
+    lockupTransaction,
+    // address.toOutputScript(destinationAddress, getNetwork(currency)),
+    // networks.regtest,
+    timeoutBlockHeight
+  );
+
+  let destinationScript;
+  if (process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet') {
+    destinationScript = address.toOutputScript(
+      destinationAddress,
+      networks.regtest
+    );
+  } else {
+    destinationScript = address.toOutputScript(
+      destinationAddress,
+      getNetwork(currency)
+    );
+  }
 
   // TODO: make sure the provided lockup transaction hash was correct and show more specific error if not
   return {
@@ -176,7 +206,9 @@ const createRefundTransaction = (
           ...detectSwap(redeemScript, lockupTransaction),
         },
       ],
-      address.toOutputScript(destinationAddress, getNetwork(currency)),
+      destinationScript,
+      // address.toOutputScript(destinationAddress, getNetwork(currency)), // mainnet
+      // address.toOutputScript(destinationAddress, networks.regtest), // regtest
       // refundFile.timeoutBlockHeight,
       timeoutBlockHeight,
       feeEstimation[currency]
@@ -191,7 +223,13 @@ export const startRefund = (
   destinationAddress,
   cb
 ) => {
-  console.log('enter startRefund ', refundFile, transactionHash, destinationAddress, cb);
+  console.log(
+    'enter startRefund ',
+    refundFile,
+    transactionHash,
+    destinationAddress,
+    cb
+  );
   const url = `${boltzApi}/gettransaction`;
   const currency = refundFile.currency;
 
@@ -255,7 +293,7 @@ export const startRefund = (
 };
 
 const broadcastRefund = (currency, transactionHex, lockupTransactionId, cb) => {
-  console.log('broadcastRefund ', transactionHex, lockupTransactionId)
+  console.log('broadcastRefund ', transactionHex, lockupTransactionId);
   const url = `${boltzApi}/broadcasttransaction`;
   return dispatch => {
     dispatch(refundRequest());

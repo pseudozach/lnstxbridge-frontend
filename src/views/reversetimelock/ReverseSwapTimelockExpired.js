@@ -58,6 +58,7 @@ class ReverseSwapTimelockExpired extends React.Component {
 
   render = () => {
     const { id, asset, amount, classes, dataStorageClear } = this.props;
+    console.log('expired: ', id, asset, amount, classes, dataStorageClear);
 
     return (
       <BackGround>
@@ -74,7 +75,7 @@ class ReverseSwapTimelockExpired extends React.Component {
                   claimed. Therefore, we refunded the coins back to our platform
                   and aborted the Swap. Your Bitcoin will return to your wallet within 24 hours.
                   Please report your Swap ID <i>{id}</i>{' '}
-                  <a href={'https://discord.gg/kyNWQAUwY5'}>here</a> to{' '}
+                  <a href={'https://discord.gg/r5YXZnARGc'}>here</a> to{' '}
                   pseudozach#1633 if you need more details.
                 </p>
               </View>

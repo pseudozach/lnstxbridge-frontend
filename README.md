@@ -1,6 +1,6 @@
 # lnstxbridge-frontend
-
 * Frontend for [lnstxbridge](https://github.com/pseudozach/lnstxbridge)
+* Running on https://lnswap.org
 
 ## deploy to Vercel with 1-click
 
