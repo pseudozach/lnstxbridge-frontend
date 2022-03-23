@@ -83,22 +83,25 @@ export const setRefundFromTx = txId => {
             2
           );
           refundFile.amount = parseInt(
-            tx.data.contract_call.function_args[1].repr,
-            16
+            tx.data.contract_call.function_args[1].repr.split('u')[1]
           );
-          refundFile.timeoutBlockHeight = parseInt(
-            tx.data.contract_call.function_args[4].repr,
-            16
-          );
+          // refundFile.amount = parseInt(
+          //   tx.data.contract_call.function_args[1].repr,
+          //   16
+          // );
+          // refundFile.timeoutBlockHeight = parseInt(
+          //   tx.data.contract_call.function_args[4].repr,
+          //   16
+          // );
           refundFile.contract = tx.data.contract_call.contract_id;
 
           const verifyFile = verifyRefundFile(refundFile, [
             'currency',
             // 'preimageHash',
-            'amount',
+            // 'amount',
             // 'redeemScript',
             // 'privateKey',
-            'timeoutBlockHeight',
+            // 'timeoutBlockHeight',
             'contract',
           ]);
 

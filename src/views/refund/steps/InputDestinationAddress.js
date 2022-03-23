@@ -121,6 +121,7 @@ async function refundStx (refundFile, setRefundTransactionHash, setDestinationAd
     paymenthash = refundFile.swapInfo.preimageHash;
   }
 
+  // amount no longer needed for refund!
   // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
   let swapamount, postconditionamount;
   if(refundFile.amount) {
