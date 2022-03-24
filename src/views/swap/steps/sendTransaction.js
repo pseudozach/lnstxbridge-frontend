@@ -64,6 +64,14 @@ if (stacksNetworkType === 'mocknet') {
   activeNetwork = mainnet;
 }
 
+// issue happens when hiro web wallet does not have the r1 api
+// console.log(
+//   'sendtx.67 activeNetwork ',
+//   process.env.REACT_APP_STACKS_API,
+//   activeNetwork,
+//   stacksNetworkType
+// );
+
 // const appConfig = new AppConfig(['store_write', 'publish_data']);
 // { appConfig }
 const userSession = new UserSession();
@@ -319,15 +327,13 @@ const claimToken = async (swapInfo, swapResponse) => {
   // .div(etherDecimals)
   // let smallamount = amount.toNumber();
 
-
-
-  let smallamount = parseInt(amount);
+  // let smallamount = parseInt(amount);
   //  + 1; -> REMOVED!
   // / 100 -> also removed!
 
   // console.log('smallamount: ' + smallamount);
 
-  let swapamount = smallamount.toString(16).split('.')[0] + '';
+  // let swapamount = smallamount.toString(16).split('.')[0] + '';
   // let postConditionAmount = new BN(Math.ceil(swapResponse.onchainAmount));
 
   let postConditionAmount = new BN(amount);
@@ -408,8 +414,8 @@ const claimToken = async (swapInfo, swapResponse) => {
   //   postConditionAmount
   // );
 
-  let paddedamount = swapamount.padStart(32, '0');
-  let paddedtimelock = timeLock.toString(16).padStart(32, '0');
+  // let paddedamount = swapamount.padStart(32, '0');
+  // let paddedtimelock = timeLock.toString(16).padStart(32, '0');
   // console.log(
   //   'amount, timelock ',
   //   smallamount,
@@ -465,7 +471,12 @@ const claimToken = async (swapInfo, swapResponse) => {
 };
 
 async function lockStx(swapInfo, swapResponse) {
-  console.log('lockStx: swapInfo, swapResponse', swapInfo, swapResponse);
+  console.log(
+    'lockStx: swapInfo, swapResponse, activeNetwork',
+    swapInfo,
+    swapResponse,
+    activeNetwork
+  );
 
   // swapInfo
   //   base: "STX"
@@ -538,20 +549,16 @@ async function lockStx(swapInfo, swapResponse) {
       'expectedAmount is NOT 0, regular swap ',
       swapResponse.expectedAmount
     );
-    amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100)
-    swapamount =
-      (amountToLock).toString(16).split('.')[0] +
-      '';
-    postconditionamount = Math.ceil(
-      amountToLock
-    );
+    amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100);
+    swapamount = amountToLock.toString(16).split('.')[0] + '';
+    postconditionamount = Math.ceil(amountToLock);
     // *1000
     // 199610455 -> 199 STX
   }
   console.log(
     'swapamount, amountToLock, postconditionamount: ',
     swapamount,
-    amountToLock, 
+    amountToLock,
     postconditionamount
   );
 
@@ -735,13 +742,9 @@ async function lockToken(swapInfo, swapResponse) {
       parseInt(swapResponse.expectedAmount) / 100
     );
     amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100);
-    swapamount =
-    amountToLock.toString(16).split('.')[0] +
-      '';
+    swapamount = amountToLock.toString(16).split('.')[0] + '';
     // postcondition amount should be in stx not mstx - WRONG!
-    postconditionamount = Math.ceil(
-      amountToLock
-    );
+    postconditionamount = Math.ceil(amountToLock);
   }
   // let postconditionamount =
   //   parseInt(swapResponse.expectedAmount) / (100 * 1000000);
@@ -750,7 +753,7 @@ async function lockToken(swapInfo, swapResponse) {
   console.log(
     'swapamount, amountToLock,  postconditionamount: ',
     swapamount,
-    amountToLock, 
+    amountToLock,
     postconditionamount
   );
   let paddedamount = swapamount.padStart(32, '0');
@@ -1079,7 +1082,7 @@ class SendTransaction extends React.Component {
       'sendtransaction.682 , ',
       swapInfo,
       swapResponse,
-      swapStatus,
+      swapStatus
       // claimSwap
     );
     // const link = swapResponse
@@ -1095,7 +1098,9 @@ class SendTransaction extends React.Component {
     ) {
       // console.log('setting amountToLock ', swapResponse.baseAmount);
       amountToLock = swapResponse.baseAmount;
-    } else if (swapResponse.expectedAmount === Math.round(swapInfo.baseAmount*10**8)) {
+    } else if (
+      swapResponse.expectedAmount === Math.round(swapInfo.baseAmount * 10 ** 8)
+    ) {
       amountToLock = swapInfo.baseAmount;
     }
 
@@ -1125,8 +1130,7 @@ class SendTransaction extends React.Component {
         Copy
       </span> */}
           {swapResponse.bip21 &&
-          (!swapStatus ||
-          swapStatus.message !== 'Atomic Swap is ready') ? (
+          (!swapStatus || swapStatus.message !== 'Atomic Swap is ready') ? (
             <View className={classes.qrcode}>
               <QrCode size={250} link={swapResponse.bip21} />
             </View>
