@@ -59,7 +59,15 @@ export const swapRequest = () => ({
 
 export const startSwap = (swapInfo, cb) => {
   const url = `${boltzApi}/createswap`;
-  let { pair, invoice, keys, preimageHash, quoteAmount, baseAmount } = swapInfo;
+  let {
+    pair,
+    invoice,
+    keys,
+    preimageHash,
+    quoteAmount,
+    baseAmount,
+    maxFeePercent,
+  } = swapInfo;
 
   // Trim the "lightning:" prefix, that some wallets add in front of their invoices, if it exists
   if (invoice.slice(0, 10) === 'lightning:') {
@@ -82,7 +90,7 @@ export const startSwap = (swapInfo, cb) => {
       requestedAmount: parseInt(quoteAmount * 1000000) + '',
       baseAmount: baseAmount,
       quoteAmount: quoteAmount,
-      maxFeePercent: '5',
+      maxFeePercent: maxFeePercent || '5',
     };
   } else {
     reqobj = {
@@ -91,8 +99,8 @@ export const startSwap = (swapInfo, cb) => {
       orderSide: pair.orderSide,
       invoice: invoice,
       refundPublicKey: keys.publicKey,
-      channel: {auto: true, private: false, inboundLiquidity: 50},
-      maxFeePercent: '5',
+      channel: { auto: true, private: false, inboundLiquidity: 50 },
+      maxFeePercent: maxFeePercent || '5',
     };
   }
 
