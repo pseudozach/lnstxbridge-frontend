@@ -102,16 +102,6 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
 
   console.log('reverseActions startReverseSwap ', swapInfo.isSponsored);
 
-  // for btc/sov
-  // {
-  //   "type": "reversesubmarine",
-  //   "pairId": "BTC/SOV",
-  //   "orderSide": "sell",
-  //   "claimAddress": "0xcd2a3d9f938e13cd947ec05abc7fe734df8dd826",
-  //   "invoiceAmount": 50000,
-  //   "preimageHash": "0cb2266c98dd21abb3627392c7e4b8cea61622f19a16f81364e7113bbe7d6c83"
-  // }
-
   return dispatch => {
     dispatch(reverseSwapRequest());
     axios

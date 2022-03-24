@@ -82,6 +82,7 @@ export const startSwap = (swapInfo, cb) => {
       requestedAmount: parseInt(quoteAmount * 1000000) + '',
       baseAmount: baseAmount,
       quoteAmount: quoteAmount,
+      maxFeePercent: '5',
     };
   } else {
     reqobj = {
@@ -90,7 +91,8 @@ export const startSwap = (swapInfo, cb) => {
       orderSide: pair.orderSide,
       invoice: invoice,
       refundPublicKey: keys.publicKey,
-      channel: {auto: true, private: false, inboundLiquidity: 50}
+      channel: {auto: true, private: false, inboundLiquidity: 50},
+      maxFeePercent: '5',
     };
   }
 
