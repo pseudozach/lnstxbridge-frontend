@@ -1,18 +1,19 @@
 import React, { lazy } from 'react';
 import { connect } from 'react-redux';
 import { initSwap } from '../../actions/swapActions';
-import PlatformSelector from '../../hoc/platformSelector';
+// import PlatformSelector from '../../hoc/platformSelector';
 import * as actions from '../../actions/landingPageActions';
 import { initReverseSwap } from '../../actions/reverseActions';
 
 const LandingPageDesktop = lazy(() => import('./landingPageDesktop'));
-const LandingPageMobile = lazy(() => import('./landingPageMobile'));
+// const LandingPageMobile = lazy(() => import('./landingPageMobile'));
 
 const LandingPage = props => (
-  <PlatformSelector
-    mobile={<LandingPageMobile {...props} />}
-    desktop={<LandingPageDesktop {...props} />}
-  />
+  <LandingPageDesktop {...props} />
+  // <PlatformSelector
+  //   mobile={<LandingPageMobile {...props} />}
+  //   desktop={<LandingPageDesktop {...props} />}
+  // />
 );
 
 const mapStateToProps = state => ({
