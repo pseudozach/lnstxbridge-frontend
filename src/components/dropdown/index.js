@@ -9,7 +9,7 @@ const styles = theme => ({
     border: 'none',
     borderRadius: '3px',
     textAlign: 'center',
-    fontSize: theme.fontSize.sizeM,
+    fontSize: 18,
     padding: '5px',
     '&:focus': {
       outline: 'none',

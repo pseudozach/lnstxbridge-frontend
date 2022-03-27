@@ -12,7 +12,7 @@ const styles = theme => ({
     height: '600px',
     width: '900px',
     boxShadow: '0px 0px 30px -6px rgba(0,0,0,0.52)',
-    backgroundColor: p => (p.dark ? theme.colors.aeroBlue : theme.colors.white),
+    backgroundColor: p => (p.dark ? theme.colors.aeroBlue : '#fff'),
     flexDirection: 'column',
     '@media (max-width: 425px)': {
       width: '100%',
@@ -24,7 +24,7 @@ const styles = theme => ({
     width: '100%',
     height: '10%',
     // theme.colors.aeroBlue
-    backgroundColor: p => (p.dark ? theme.colors.white : theme.colors.white),
+    backgroundColor: p => (p.dark ? '#fff' : '#fff'),
     alignItems: 'center',
     borderRadius: '8px',
   },

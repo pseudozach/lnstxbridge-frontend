@@ -20,7 +20,7 @@ const styles = theme => ({
     justifyContent: 'center',
   },
   fileUpload: {
-    color: theme.colors.white,
+    color: '#fff',
     fontWeight: '300',
   },
 });

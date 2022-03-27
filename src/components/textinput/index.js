@@ -7,11 +7,11 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 const styles = theme => ({
   wrapper: {
     textAlign: 'center',
-    fontSize: theme.fontSize.sizeM,
+    fontSize: 18,
     border: 'none',
     borderRadius: '2px',
     margin: '5px',
-    backgroundColor: theme.colors.lightGrey,
+    backgroundColor: '#D3D3D3',
     width: '90%',
     height: '50px',
     outline: p => (p.error ? '1px solid red' : 'none'),

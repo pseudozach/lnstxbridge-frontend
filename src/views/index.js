@@ -1,8 +1,10 @@
 import React, { Suspense, lazy } from 'react';
 import { Provider } from 'react-redux';
-import { ThemeProvider, preset, jss } from 'react-jss';
+// import { ThemeProvider, preset, jss } from 'react-jss';
+// import useMediaQuery from '@mui/material/useMediaQuery';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import store from '../state';
-import theme from '../constants/theme';
+import oldtheme from '../constants/theme';
 import 'react-notifications-component/dist/theme.css';
 import { Router, Route, Switch } from 'react-router-dom';
 import * as routes from '../constants/routes';
@@ -17,7 +19,42 @@ const Refund = lazy(() => import('./refund'));
 const ReverseSwap = lazy(() => import('./reverse'));
 const ReverseSwapTimelockExpired = lazy(() => import('./reversetimelock'));
 
-jss.setup(preset);
+// const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+// prefersDarkMode ? 'dark' : 'light',
+const theme = createTheme(
+  {
+    palette: {
+      mode: 'dark',
+      primary: {
+        main: '#304740',
+      },
+      secondary: {
+        main: '#303b47',
+      },
+    },
+    colors: {
+      seaPink: '#EF9391',
+      elephantBlue: '#134357',
+      // matisseBlue: '#1677A0',
+      matisseBlue: 'rgba(85,70,255,1)',
+      // celloBlue: '#1E485B',
+      // celloBlue: 'rgba(75,60,235,1)',
+      celloBlue: 'rgba(85,70,255,1)',
+      aeroBlue: '#C2FFF1',
+      turquoise: '#50E3C2',
+      lightGrey: '#D3D3D3',
+      mischkaGrey: '#DDD9DF',
+      tundoraGrey: '#4A4A4A',
+      hoverGrey: '#9D9D9D',
+      white: '#fff',
+      red: '#FF0000',
+      black: '#000',
+    },
+  },
+  oldtheme
+);
+
+// jss.setup(preset);
 const App = () => {
   return (
     <Provider store={store}>

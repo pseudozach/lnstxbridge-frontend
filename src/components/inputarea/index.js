@@ -21,7 +21,7 @@ const styles = theme => ({
     width: p => `${p.width}px`,
     height: p => `${p.height}px`,
     outline: p => (p.error ? '1px solid red' : 'none'),
-    backgroundColor: theme.colors.lightGrey,
+    backgroundColor: '#D3D3D3',
     '@media (max-width: 425px)': {
       width: () => `${300}px`,
     },

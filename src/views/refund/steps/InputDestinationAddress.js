@@ -59,18 +59,18 @@ const InputDestinationAddressStyles = theme => ({
     alignItems: 'center',
     paddingBottom: '1vh',
     // backgroundColor: theme.colors.aeroBlue,
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#fff',
   },
   info: {
     fontSize: '30px',
-    color: theme.colors.tundoraGrey,
+    color: '#4A4A4A',
     '@media (max-width: 425px)': {
       fontSize: '18px',
     },
   },
   infosm: {
     // fontSize: '24px',
-    color: theme.colors.tundoraGrey,
+    color: '#4A4A4A',
     '@media (max-width: 425px)': {
       fontSize: '18px',
     },

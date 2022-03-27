@@ -28,7 +28,7 @@ const styles = theme => ({
     paddingLeft: '20px',
     paddingRight: '20px',
     fontSize: '18px',
-    color: theme.colors.tundoraGrey,
+    color: '#4A4A4A',
   },
   name: {
     fontSize: '25px',

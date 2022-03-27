@@ -157,16 +157,16 @@ const styles = theme => ({
     justifyContent: 'center',
   },
   title: {
-    fontSize: theme.fontSize.sizeXXL,
-    color: theme.colors.white,
+    fontSize: 32,
+    color: '#fff',
     '@media (min-width: 1500px)': {
-      fontSize: theme.fontSize.sizeXXXL,
+      fontSize: 42,
     },
   },
   description: {
-    fontSize: theme.fontSize.sizeXXL,
+    fontSize: 32,
     '@media (min-width: 1500px)': {
-      fontSize: theme.fontSize.sizeXXXL,
+      fontSize: 42,
     },
   },
   loading: {
@@ -177,7 +177,7 @@ const styles = theme => ({
     alignContent: 'center',
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#fff',
     '@media (min-width: 1500px)': {
       width: '800px',
       height: '600px',

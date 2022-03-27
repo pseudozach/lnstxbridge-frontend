@@ -9,13 +9,13 @@ import Link from '../link';
 const ButtonStyles = theme => ({
   wrapper: {
     padding: '10px',
-    color: theme.colors.white,
-    fontSize: theme.fontSize.sizeXL,
+    color: '#fff',
+    fontSize: 26,
     textDecoration: 'none',
     transition: '0.3s',
     '&:hover': {
       cursor: 'pointer',
-      color: theme.colors.lightGrey,
+      color: '#D3D3D3',
     },
   },
 });

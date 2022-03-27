@@ -124,7 +124,7 @@ const styles = theme => ({
   wrapper: {
     flex: '1 0 content',
     flexDirection: 'column',
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#fff',
   },
   info: {
     flex: '1 1 content',
@@ -172,9 +172,9 @@ const styles = theme => ({
     transform: 'rotate(90deg)',
     transition: 'none 200ms ease-out',
     transitionProperty: 'color',
-    color: theme.colors.tundoraGrey,
+    color: '#4A4A4A',
     '&:hover': {
-      color: theme.colors.hoverGrey,
+      color: '#9D9D9D',
     },
   },
 });

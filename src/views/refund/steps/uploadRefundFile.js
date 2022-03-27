@@ -21,7 +21,7 @@ const UploadRefundFileStyles = theme => ({
     alignItems: 'center',
     paddingBottom: '1vh',
     // backgroundColor: theme.colors.aeroBlue,
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#fff',
   },
   icon: {
     color: theme.colors.turquoise,
@@ -31,7 +31,7 @@ const UploadRefundFileStyles = theme => ({
     zIndex: 2000,
     width: '700px',
     flexDirection: 'column',
-    border: `3px dotted ${theme.colors.lightGrey}`,
+    border: `3px dotted ${'#D3D3D3'}`,
     alignItems: 'center',
     justifyContent: 'space-around',
     '@media (max-width: 425px)': {
@@ -41,7 +41,7 @@ const UploadRefundFileStyles = theme => ({
   },
   info: {
     fontSize: '30px',
-    color: theme.colors.tundoraGrey,
+    color: '#4A4A4A',
     '@media (max-width: 425px)': {
       fontSize: '18px',
     },

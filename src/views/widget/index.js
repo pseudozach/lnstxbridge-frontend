@@ -26,10 +26,10 @@ const styles = theme => ({
   },
   title: {
     fontSize: '42px',
-    color: theme.colors.white,
+    color: '#fff',
   },
   questionTab: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#fff',
     minWidth: '820px',
     maxWidth: '920px',
     flexDirection: 'column',

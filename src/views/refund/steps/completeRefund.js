@@ -13,7 +13,7 @@ const CompleteRefundStyles = theme => ({
     alignItems: 'center',
     flexDirection: 'column',
     // backgroundColor: theme.colors.aeroBlue,
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#fff',
   },
   icon: {
     color: theme.colors.turquoise,

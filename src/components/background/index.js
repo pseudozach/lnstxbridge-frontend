@@ -14,7 +14,7 @@ const styles = theme => ({
   },
   boltz: {
     flex: '0 0 content',
-    color: theme.colors.white,
+    color: '#fff',
     fontSize: '15px',
     margin: '5px',
     fontWeight: 'normal',

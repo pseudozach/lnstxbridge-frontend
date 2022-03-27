@@ -18,7 +18,7 @@ const styles = theme => ({
     height: '400px',
     width: '600px',
     flexDirection: 'column',
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#fff',
     '@media (min-width: 1500px)': {
       width: '800px',
     },
