@@ -11,7 +11,7 @@ import StepsWizard from '../../components/stepswizard';
 import { InputInvoice, SendTransaction, DownloadRefund } from './steps';
 import { navigation } from '../../actions';
 
-const styles = () => ({
+const styles = (theme) => ({
   wrapper: {
     flex: '1 0 100%',
     alignItems: 'center',
@@ -181,7 +181,7 @@ class Swap extends Component {
                     onPress={props.nextStage}
                     swapStatus={swapStatus}
                     claimSwap={claimSwap}
-                    // swapResponse={swapResponse}
+                    swapResponse={swapResponse}
                   />
                 )}
               />
@@ -215,7 +215,7 @@ Swap.propTypes = {
   retrySwap: PropTypes.bool,
   nextStage: PropTypes.func,
   startSwap: PropTypes.func.isRequired,
-  swapStatus: PropTypes.string.isRequired,
+  swapStatus: PropTypes.object.isRequired,
   inSwapMode: PropTypes.bool,
   claimSwap: PropTypes.func,
 };

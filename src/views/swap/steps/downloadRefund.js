@@ -7,12 +7,18 @@ import { navigation } from '../../../actions';
 import { createRefundQr } from '../../../utils/refundUtils';
 import lightningPayReq from 'bolt11';
 import * as bitcoin from 'bitcoinjs-lib';
-import { IconButton } from '@mui/material';
-import { DownloadForOffline } from '@mui/icons-material';
+import { Button, IconButton, Paper, Typography } from '@mui/material';
+import {
+  Download,
+  DownloadForOffline,
+  Info,
+  PriorityHigh,
+} from '@mui/icons-material';
 
 const DownloadRefundStyles = () => ({
   wrapper: {
     flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -50,7 +56,7 @@ function validate(input) {
     bitcoin.address.toOutputScript(input, bitcoinNetwork);
     return true;
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     return false;
   }
 }
@@ -115,7 +121,70 @@ class StyledDownloadRefund extends React.Component {
 
     return (
       <View className={classes.wrapper}>
-        <View className={classes.placer}>
+        {/* {swapInfo ? ( */}
+        <Paper
+          variant="outlined"
+          sx={{
+            // backgroundColor: '#f8f4fc',
+            m: 1,
+            py: 1,
+            mb: 2,
+            display: 'flex',
+          }}
+          fullWidth
+        >
+          {/* fontSize="large" sx={{ fontSize: '5em'}} */}
+          {/* {swapText.includes('This invoice is ') ? ( */}
+          <Info color="info" fontSize="large" sx={{ m: 1, fontSize: 36 }} />
+          {/* ) : null} */}
+          {/* {this.state.showComplete ? (
+                <CheckCircle
+                  color="success"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              ) : null} */}
+          <Typography
+            variant="body1"
+            gutterBottom
+            component="div"
+            sx={{
+              mx: 'auto',
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: 0,
+            }}
+            // color={this.state.statusColor}
+          >
+            This refund file can be used to trustlessly claim your coins back in
+            case of failure of this swap. It is recommended to not delete this
+            file until after the completion of this swap.
+          </Typography>
+        </Paper>
+        {/* ) : null} */}
+
+        <Button
+          variant="contained"
+          endIcon={<Download />}
+          ref={this.ref}
+          href={createRefundQr(
+            currency,
+            privateKey,
+            redeemScript,
+            timeoutBlockHeight,
+            swapInfo,
+            swapResponse
+          )}
+          download={'refund.png'}
+          size="large"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Download Refund Backup File
+        </Button>
+
+        {/* <View className={classes.placer}>
           <p className={classes.info}>
             Download refund file
             <IconButton
@@ -136,8 +205,7 @@ class StyledDownloadRefund extends React.Component {
             >
               <DownloadForOffline fontSize="inherit" />
             </IconButton>
-
-            {/* <a
+            <a
               target="_blank"
               rel="noopener noreferrer"
               ref={this.ref}
@@ -157,15 +225,16 @@ class StyledDownloadRefund extends React.Component {
               Click here
             </a>{' '}
             if the download of &lsquo;refund.png&lsquo; <br /> didn&apos;t start
-            automatically. */}
+            automatically.
           </p>
           <p className={classes.address}>
-            * This refund file can be used to trustlessly <br />
+            <PriorityHigh sx={{ verticalAlign: 'bottom' }} />
+            This refund file can be used to trustlessly <br />
             claim your coins back in case of failure of this <br />
             swap. It is recommended to not delete this <br />
             file until after the completion of this swap.
           </p>
-        </View>
+        </View> */}
       </View>
     );
   }

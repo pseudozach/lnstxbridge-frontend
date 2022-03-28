@@ -22,7 +22,7 @@ class DropDown extends React.Component {
     value: undefined,
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { defaultValue } = nextProps;
 
     if (defaultValue !== this.state.value) {

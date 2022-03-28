@@ -694,7 +694,7 @@ class SwapTabWrapper extends React.Component {
     )}/${this.parseBoltSuffix(this.state.quote, false)}`;
   };
 
-  componentWillMount = () => {
+  UNSAFE_componentWillMount = () => {
     if (localStorage.getItem('quote')) {
       this.setState({
         base: localStorage.getItem('base'),

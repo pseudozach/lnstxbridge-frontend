@@ -17,6 +17,7 @@ import {
   OutlinedInput,
   Tooltip,
   Typography,
+  TextField,
 } from '@mui/material';
 import NavigateNext from '@mui/icons-material/NavigateNext';
 import { ContentCopy } from '@mui/icons-material';
@@ -85,6 +86,9 @@ const Controls = ({
   console.log('loading: ', loadingText, loading, loadingRender);
   console.log('text: ', text, errorText);
   console.log('error, errorRender: ', error, errorRender, errorAction);
+  let swapId = '';
+  if (swapResponse && swapResponse.id) swapId = swapResponse.id;
+  console.log('controls swapId, ', swapId);
   let copied = false;
   let showProgress = false;
   if (
@@ -94,6 +98,7 @@ const Controls = ({
   ) {
     showProgress = true;
   }
+  console.log('showProgress, ', showProgress);
   return (
     <View
       className={error ? classes.error : classes.wrapper}
@@ -102,11 +107,62 @@ const Controls = ({
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'flex-end',
+          justifyContent: 'space-between',
           width: '100%',
           alignItems: 'center',
         }}
       >
+        {swapId ? (
+          <TextField
+            // label="With normal TextField"
+            id="outlined-start-adornment"
+            disabled
+            // , width: '25ch'  m: 2,
+            sx={{ width: '110px', p: 1 }}
+            value={swapId}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">ID</InputAdornment>
+              ),
+            }}
+          />
+        ) : // width: '25ch'
+        // <FormControl sx={{ m: 1 }} variant="outlined">
+        //   <InputLabel htmlFor="outlined-adornment-password">
+        //     Swap ID
+        //   </InputLabel>
+        //   <OutlinedInput
+        //     id="outlined-adornment-password"
+        //     type={'text'}
+        //     value={swapId}
+        //     disabled
+        //     // onChange={handleChange('password')}
+        //     endAdornment={
+        //       <InputAdornment position="end">
+        //         ID
+        //         <Tooltip
+        //           open={copied}
+        //           disableFocusListener={true}
+        //           disableHoverListener={true}
+        //           title="Copied"
+        //         >
+        //           <CopyToClipboard
+        //             text={swapId}
+        //             onCopy={() => {
+        //               copied = true;
+        //             }}
+        //           >
+        //             <span className={classes.copyButtonSpan}>
+        //               <ContentCopy />
+        //             </span>
+        //           </CopyToClipboard>
+        //         </Tooltip>
+        //       </InputAdornment>
+        //     }
+        //     label="Swap ID"
+        //   />
+        // </FormControl>
+        null}
         {/* <Button
           variant="outlined"
           // className={classes.contractButton}
@@ -131,7 +187,7 @@ const Controls = ({
             variant="contained"
             size="large"
             endIcon={<NavigateNext />}
-            sx={{ margin: 2 }}
+            sx={{ margin: 2, marginLeft: 'auto' }}
             // className={classes.greenman}
             disabled={error || errorRender || loading}
             onClick={() => onPress()}
@@ -141,37 +197,10 @@ const Controls = ({
           </Button>
         )}
       </Box>
-      {swapResponse ? (
-        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">Swap ID</InputLabel>
-          <OutlinedInput
-            id="outlined-adornment-password"
-            type={'text'}
-            value={swapResponse.id}
-            disabled
-            // onChange={handleChange('password')}
-            endAdornment={
-              <InputAdornment position="end">
-                <Tooltip
-                  open={copied}
-                  disableFocusListener={true}
-                  disableHoverListener={true}
-                  title="Copied"
-                >
-                  <CopyToClipboard
-                    text={swapResponse.id}
-                    onCopy={() => {
-                      copied = true;
-                    }}
-                  >
-                    <span className={classes.copyButtonSpan}>
-                      {/* <MdContentCopy className={classes.nextIcon} size={30} /> */}
-                      <ContentCopy />
-                    </span>
-                  </CopyToClipboard>
-                </Tooltip>
 
-                {/* <IconButton
+      {/* <MdContentCopy className={classes.nextIcon} size={30} /> */}
+
+      {/* <IconButton
                   aria-label="copy swap id"
                   onClick={handleClickShowPassword}
                   // onMouseDown={handleMouseDownPassword}
@@ -179,12 +208,6 @@ const Controls = ({
                 >
                   {<ContentCopy />}
                 </IconButton> */}
-              </InputAdornment>
-            }
-            label="Password"
-          />
-        </FormControl>
-      ) : null}
 
       {/* <View className={classes.controls}>
         {error ? (

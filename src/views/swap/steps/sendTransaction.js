@@ -49,6 +49,8 @@ import {
 
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
+import { Paper, Typography } from '@mui/material';
+import { Cancel, CheckCircle, Info, Lock } from '@mui/icons-material';
 
 let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 // mocknet.coreApiUrl = 'http://localhost:3999';
@@ -83,7 +85,8 @@ const userSession = new UserSession();
 
 // let stxcontractname = "stxswap_v3"
 
-const SendTransactionStyles = () => ({
+// eslint-disable-next-line no-unused-vars
+const SendTransactionStyles = theme => ({
   wrapper: {
     flex: 1,
     flexDirection: 'column',
@@ -1065,6 +1068,7 @@ class SendTransaction extends React.Component {
 
     this.state = {
       checked: false,
+      // swapText: '',
     };
   }
 
@@ -1104,7 +1108,15 @@ class SendTransaction extends React.Component {
       amountToLock = swapInfo.baseAmount;
     }
 
-    // console.log('amountToLock ', amountToLock);
+    // let swapStatus = '';
+    // if(swapInfo.base === 'STX' || swapInfo.base === 'USDA') {
+    //   swapStatus = 'You need to lock';
+    // } else {
+    //   swapStatus = 'Send';
+    // }
+    let swapText = `Send ${amountToLock} ${swapInfo.base} to ${swapResponse.address}`;
+
+    console.log('swapText ', swapText);
     return (
       <View className={classes.wrapper}>
         {/* {swapInfo.base !== 'SOV' ? (
@@ -1113,7 +1125,67 @@ class SendTransaction extends React.Component {
     </View>
     ): null} */}
         <View className={classes.info}>
-          <p className={classes.text}>
+          {swapInfo ? (
+            <Paper
+              variant="outlined"
+              sx={{
+                backgroundColor: '#f8f4fc',
+                m: 1,
+                py: 1,
+                mb: 2,
+                display: 'flex',
+              }}
+              fullWidth
+            >
+              {/* fontSize="large" sx={{ fontSize: '5em'}} */}
+              {swapText.includes('lock') ? (
+                <Lock
+                  color="secondary"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              ) : null}
+              {swapText.includes('fail') ||
+              swapText.includes('Unable to reach') ? (
+                <Cancel
+                  color="error"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              ) : null}
+              {swapText.includes('This invoice is ') ? (
+                <Info
+                  color="info"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              ) : null}
+              {/* {this.state.showComplete ? (
+                <CheckCircle
+                  color="success"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              ) : null} */}
+              <Typography
+                variant="body1"
+                gutterBottom
+                component="div"
+                sx={{
+                  mx: 'auto',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: 0,
+                }}
+                // color={this.state.statusColor}
+              >
+                {swapText}
+              </Typography>
+            </Paper>
+          ) : null}
+
+          {/* <p className={classes.text}>
             {swapInfo.base === 'STX' || swapInfo.base === 'USDA'
               ? 'You need to lock'
               : 'Send'}
@@ -1125,29 +1197,19 @@ class SendTransaction extends React.Component {
           </p>
           <p className={classes.address} id="copy">
             {swapResponse.address}
-          </p>
+          </p> */}
           {/* <span className={classes.action} onClick={() => copyToClipBoard()}>
         Copy
       </span> */}
-          {swapResponse.bip21 &&
+
+          {/* {swapResponse.bip21 &&
           (!swapStatus || swapStatus.message !== 'Atomic Swap is ready') ? (
             <View className={classes.qrcode}>
               <QrCode size={250} link={swapResponse.bip21} />
             </View>
-          ) : null}
-          {swapInfo.base === 'LTC' ? (
-            <p className={classes.tool}>
-              If the address does not work with your wallet:{' '}
-              <a
-                target={'_blank'}
-                rel="noopener noreferrer"
-                href="https://litecoin-project.github.io/p2sh-convert/"
-              >
-                use this tool
-              </a>
-            </p>
-          ) : null}
-          {swapInfo.base === 'STX' || swapInfo.base === 'USDA' ? (
+          ) : null} */}
+
+          {/* {swapInfo.base === 'STX' || swapInfo.base === 'USDA' ? (
             <SButton
               size="large"
               pl="base-tight"
@@ -1158,39 +1220,21 @@ class SendTransaction extends React.Component {
               position="relative"
               className={classes.sbuttoncl}
               disabled={swapStatus.transaction && swapStatus.transaction.hex}
-              // ref={ref}
               onClick={() =>
                 swapInfo.base === 'STX'
                   ? lockStx(swapInfo, swapResponse)
                   : lockToken(swapInfo, swapResponse)
               }
               borderRadius="10px"
-              // {...rest}
             >
-              <Box
-                as={MdAccountBalanceWallet}
-                // transform={isSend ? 'unset' : 'scaleY(-1)'}
-                size={'16px'}
-                mr={'2px'}
-              />
+              <Box as={MdAccountBalanceWallet} size={'16px'} mr={'2px'} />
               <Box as="span" ml="2px" fontSize="large">
                 Lock {swapInfo.base}
               </Box>
             </SButton>
-          ) : // <p className={classes.text}>
-          //   Tap here to trigger Lock Contract Call:{' '}
-          //   <button
-          //     onClick={() => lockStx(swapInfo, swapResponse)}
-          //     // target={'_blank'}
-          //     // href="https://litecoin-project.github.io/p2sh-convert/"
-          //   >
-          //     Lock
-          //   </button>
-          // </p>
+          ) : null} */}
 
-          null}
-
-          {swapResponse.bip21 &&
+          {/* {swapResponse.bip21 &&
           swapStatus &&
           swapStatus.message === 'Atomic Swap is ready' ? (
             <SButton
@@ -1202,18 +1246,15 @@ class SendTransaction extends React.Component {
               mode="primary"
               position="relative"
               className={classes.sbuttoncl}
-              // ref={ref}
               onClick={() =>
                 swapInfo.quote === 'STX'
                   ? claimStx(swapInfo, swapResponse)
                   : claimToken(swapInfo, swapResponse)
               }
               borderRadius="10px"
-              // {...rest}
             >
               <Box
                 as={MdAccountBalanceWallet}
-                // transform={isSend ? 'unset' : 'scaleY(-1)'}
                 size={'16px'}
                 mr={'2px'}
               />
@@ -1221,28 +1262,14 @@ class SendTransaction extends React.Component {
                 Claim {swapInfo.quote}
               </Box>
             </SButton>
-          ) : // <p className={classes.text}>
-          //   Tap here to trigger Lock Contract Call:{' '}
-          //   <button
-          //     onClick={() => lockStx(swapInfo, swapResponse)}
-          //     // target={'_blank'}
-          //     // href="https://litecoin-project.github.io/p2sh-convert/"
-          //   >
-          //     Lock
-          //   </button>
-          // </p>
-
-          // <p>
-          //   {swapResponse.bip21} and{' '}
-          //   {(swapStatus && swapStatus.message) || 'nothing here'}
-          // </p>
-          null}
+          ) :
+          null} */}
 
           <a href="." className={classes.hidden} target="_blank">
             View Lock Transaction on Explorer
           </a>
 
-          {swapResponse.redeemScript &&
+          {/* {swapResponse.redeemScript &&
           swapStatus.transaction &&
           swapStatus.transaction.hex &&
           swapStatus &&
@@ -1256,14 +1283,11 @@ class SendTransaction extends React.Component {
               mode="primary"
               position="relative"
               className={classes.sbuttoncl}
-              // ref={ref}
               onClick={() => claimSwap(swapInfo, swapResponse, swapStatus)}
               borderRadius="10px"
-              // {...rest}
             >
               <Box
                 as={MdAccountBalanceWallet}
-                // transform={isSend ? 'unset' : 'scaleY(-1)'}
                 size={'16px'}
                 mr={'2px'}
               />
@@ -1271,25 +1295,12 @@ class SendTransaction extends React.Component {
                 Claim {swapInfo.quote}
               </Box>
             </SButton>
-          ) : // <p className={classes.text}>
-          //   Tap here to trigger Lock Contract Call:{' '}
-          //   <button
-          //     onClick={() => lockStx(swapInfo, swapResponse)}
-          //     // target={'_blank'}
-          //     // href="https://litecoin-project.github.io/p2sh-convert/"
-          //   >
-          //     Lock
-          //   </button>
-          // </p>
-
-          // <p>
-          //   {swapResponse.bip21} and{' '}
-          //   {(swapStatus && swapStatus.message) || 'nothing here'}
-          // </p>
-          null}
+          ) :
+          null} */}
         </View>
       </View>
     );
+    // return <></>;
   }
 }
 SendTransaction.propTypes = {

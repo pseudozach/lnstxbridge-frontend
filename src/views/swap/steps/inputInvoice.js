@@ -13,7 +13,7 @@ import {
   getSampleAddress,
 } from '../../../utils';
 
-const InputInvoiceStyles = () => ({
+const InputInvoiceStyles = (theme) => ({
   wrapper: {
     flex: 1,
     flexDirection: 'column',
@@ -49,7 +49,7 @@ function validate(input) {
     bitcoin.address.toOutputScript(input, bitcoinNetwork);
     return true;
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     return false;
   }
 }
@@ -64,7 +64,7 @@ class StyledInputInvoice extends React.Component {
 
     if (webln) {
       webln.makeInvoice(toSatoshi(swapInfo.quoteAmount)).then(response => {
-        if(response && response.paymentRequest) {
+        if (response && response.paymentRequest) {
           const invoice = response.paymentRequest;
 
           this.setState({ value: invoice });
@@ -82,7 +82,7 @@ class StyledInputInvoice extends React.Component {
       input.slice(0, 1).toUpperCase() === 'S' ||
       validate(input)
     ) {
-      console.log('inputinvoice validate ', input);
+      // console.log('inputinvoice validate ', input);
       this.setState({ value: input, error: false }, () =>
         this.props.onChange(input, false)
       );
