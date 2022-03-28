@@ -89,17 +89,19 @@ class PayInvoice extends React.Component {
           <div />
         ) : (
           <View className={classes.qrwrapper}>
-            {swapResponse.minerFeeInvoice ? (<View className={classes.qrcode}>
-              <DetectResize>
-                {width =>
-                  width <= 375 ? (
-                    <QrCode size={200} link={swapResponse.minerFeeInvoice} />
-                  ) : (
-                    <QrCode size={250} link={swapResponse.minerFeeInvoice} />
-                  )
-                }
-              </DetectResize>
-            </View>) : null}
+            {swapResponse.minerFeeInvoice ? (
+              <View className={classes.qrcode}>
+                <DetectResize>
+                  {width =>
+                    width <= 375 ? (
+                      <QrCode size={200} link={swapResponse.minerFeeInvoice} />
+                    ) : (
+                      <QrCode size={250} link={swapResponse.minerFeeInvoice} />
+                    )
+                  }
+                </DetectResize>
+              </View>
+            ) : null}
             <View className={classes.qrcode}>
               <DetectResize>
                 {width =>
@@ -114,50 +116,54 @@ class PayInvoice extends React.Component {
           </View>
         )}
 
-
-        {swapResponse.minerFeeInvoice ? (<View className={classes.info}>
-          <p className={classes.title}>
-            Pay these 2 {swapInfo.base} Lightning invoices:
-          </p>
-          <p className={classes.invoiceInfo}>
-            First invoice is for the funds that will be used to sponsor your contract call to claim the funds from swap contract. <br/>
-            <Input value={swapResponse.minerFeeInvoice} disabled={true} id="minerfeeinvoice"/> <br/>
-            Second one is a{' '}
-            <Link
-              text="HOLD invoice"
-              to="https://wiki.ion.radar.tech/tech/research/hodl-invoice"
-            />{' '}
-            and its preimage was generated in your browser. Which means we
-            cannot receive the lightning coins unless your browser claims the
-            onchain funds for you.
-          </p>
-          <Input value={swapResponse.invoice} disabled={true} id="invoice"/>
-        </View>) : 
-        (<View className={classes.info}>
-          <p className={classes.title}>
-            Pay this {swapInfo.base} Lightning invoice:
-          </p>
-          <p className={classes.invoiceInfo}>
-            This is a{' '}
-            <Link
-              text="HOLD invoice"
-              to="https://wiki.ion.radar.tech/tech/research/hodl-invoice"
-            />{' '}
-            and its preimage was generated in your browser. Which means we
-            cannot receive the lightning coins unless your browser claims the
-            onchain funds for you.
-          </p>
-          <p className={classes.invoice} id="copy">
-            {swapResponse.invoice}
-          </p>
-          <span className={classes.action} onClick={() => copyToClipBoard()}>
-            Copy
-          </span>
-        </View>)
-        }
-
-
-
+        {swapResponse.minerFeeInvoice ? (
+          <View className={classes.info}>
+            <p className={classes.title}>
+              Pay these 2 {swapInfo.base} Lightning invoices:
+            </p>
+            <p className={classes.invoiceInfo}>
+              First invoice is for the funds that will be used to sponsor your
+              contract call to claim the funds from swap contract. <br />
+              <Input
+                value={swapResponse.minerFeeInvoice}
+                disabled={true}
+                id="minerfeeinvoice"
+              />{' '}
+              <br />
+              Second one is a{' '}
+              <Link
+                text="HOLD invoice"
+                to="https://wiki.ion.radar.tech/tech/research/hodl-invoice"
+              />{' '}
+              and its preimage was generated in your browser. Which means we
+              cannot receive the lightning coins unless your browser claims the
+              onchain funds for you.
+            </p>
+            <Input value={swapResponse.invoice} disabled={true} id="invoice" />
+          </View>
+        ) : (
+          <View className={classes.info}>
+            <p className={classes.title}>
+              Pay this {swapInfo.base} Lightning invoice:
+            </p>
+            <p className={classes.invoiceInfo}>
+              This is a{' '}
+              <Link
+                text="HOLD invoice"
+                to="https://wiki.ion.radar.tech/tech/research/hodl-invoice"
+              />{' '}
+              and its preimage was generated in your browser. Which means we
+              cannot receive the lightning coins unless your browser claims the
+              onchain funds for you.
+            </p>
+            <p className={classes.invoice} id="copy">
+              {swapResponse.invoice}
+            </p>
+            <span className={classes.action} onClick={() => copyToClipBoard()}>
+              Copy
+            </span>
+          </View>
+        )}
       </View>
     );
   }

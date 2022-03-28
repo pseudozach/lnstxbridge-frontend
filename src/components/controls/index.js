@@ -70,6 +70,7 @@ const Controls = ({
   // const loadingTextSelect = loadingText ? loadingText : text;
   console.log('loading: ', loadingText, loading, loadingRender);
   console.log('text: ', text, errorText);
+  console.log('error, errorRender: ', error, errorRender, errorAction);
   let showProgress = false;
   if (
     loadingText &&
@@ -117,7 +118,9 @@ const Controls = ({
             endIcon={<NavigateNext />}
             sx={{ margin: 2 }}
             // className={classes.greenman}
-            disabled={error || errorRender || loading}
+            disabled={
+              error || errorRender || loading || loadingText.includes('Invalid')
+            }
             onClick={() => onPress()}
           >
             {/* {loading ? loadingTextSelect : text} */}

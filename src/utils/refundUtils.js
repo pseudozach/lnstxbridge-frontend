@@ -24,6 +24,10 @@ export const createRefundQr = (
     swapResponse,
   });
 
+  console.log('refundutils createqr ', jsonData);
+  let swapId = amount?.id;
+  localStorage.setItem(swapId, jsonData);
+
   // reqobj = {
   //   type: 'submarine',
   //   pairId: pair.id,

@@ -4,6 +4,7 @@ import injectSheet from 'react-jss';
 import QrReader from 'react-qr-reader';
 import ReactNotification from 'react-notifications-component';
 import { notificationData } from '../../utils';
+import { QrCodeScanner } from '@mui/icons-material';
 
 const cameraIcon = require('../../asset/icons/camera_icon.svg');
 
@@ -34,6 +35,7 @@ const styles = theme => ({
     right: '5px',
     bottom: '6px',
     cursor: 'pointer',
+    color: 'black',
   },
   qrScannerWrapper: {
     position: 'fixed',
@@ -163,11 +165,16 @@ class InputArea extends React.Component {
           undefined
         )}
         {showQrScanner ? (
-          <img
+          // <img
+          //   className={classes.cameraIcon}
+          //   src={cameraIcon}
+          //   alt={'Scan QR code'}
+          //   onClick={this.openScanner}
+          // />
+          <QrCodeScanner
             className={classes.cameraIcon}
-            src={cameraIcon}
-            alt={'Scan QR code'}
             onClick={this.openScanner}
+            alt={'Scan QR code'}
           />
         ) : (
           undefined

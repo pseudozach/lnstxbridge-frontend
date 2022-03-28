@@ -2,7 +2,8 @@ import React from 'react';
 import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 import { MdContentCopy } from 'react-icons/md';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Tooltip } from '@mui/material';
 
 const styles = theme => ({
   wrapper: {
@@ -18,7 +19,7 @@ const styles = theme => ({
   },
   copyButtonSpan: {
     verticalAlign: 'middle',
-  }
+  },
 });
 
 // const copyToClipBoard = (id) => {
@@ -38,7 +39,16 @@ class Input extends React.PureComponent {
   // };
 
   render() {
-    const { classes, className, disable, min, max, value, step, id } = this.props;
+    const {
+      classes,
+      className,
+      disable,
+      min,
+      max,
+      value,
+      step,
+      id,
+    } = this.props;
     // console.log('textinput render id ', id);
     const classname = className
       ? `${classes.wrapper} ${className}`
@@ -60,10 +70,21 @@ class Input extends React.PureComponent {
         {/* <span className={classes.action} onClick={() => copyToClipBoard(id)}>
           <MdContentCopy className={classes.nextIcon} size={30}/>
         </span> */}
-        <CopyToClipboard text={value}
-          onCopy={() => this.setState({copied: true})}>
-          <span className={classes.copyButtonSpan}><MdContentCopy className={classes.nextIcon} size={30}/></span>
-        </CopyToClipboard>
+        <Tooltip
+          open={this.state.copied}
+          disableFocusListener={true}
+          disableHoverListener={true}
+          title="Copied"
+        >
+          <CopyToClipboard
+            text={value}
+            onCopy={() => this.setState({ copied: true })}
+          >
+            <span className={classes.copyButtonSpan}>
+              <MdContentCopy className={classes.nextIcon} size={30} />
+            </span>
+          </CopyToClipboard>
+        </Tooltip>
       </div>
     );
   }
