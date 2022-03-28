@@ -82,6 +82,7 @@ class StyledInputInvoice extends React.Component {
       input.slice(0, 1).toUpperCase() === 'S' ||
       validate(input)
     ) {
+      console.log('inputinvoice validate ', input);
       this.setState({ value: input, error: false }, () =>
         this.props.onChange(input, false)
       );

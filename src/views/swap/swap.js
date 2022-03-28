@@ -181,6 +181,7 @@ class Swap extends Component {
                     onPress={props.nextStage}
                     swapStatus={swapStatus}
                     claimSwap={claimSwap}
+                    // swapResponse={swapResponse}
                   />
                 )}
               />

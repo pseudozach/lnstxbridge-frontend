@@ -16,7 +16,7 @@ const CompleteRefundStyles = theme => ({
     backgroundColor: '#fff',
   },
   icon: {
-    color: theme.colors.turquoise,
+    color: '#50E3C2',
   },
   title: {
     margin: '15px',

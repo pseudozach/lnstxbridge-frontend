@@ -1004,7 +1004,7 @@ function intToBigInt(value, signed) {
 //             pl="base-tight"
 //             pr={'base'}
 //             py="tight"
-//             fontSize={2}
+//             fontSize={'24px'}
 //             mode="primary"
 //             position="relative"
 //             className={classes.sbuttoncl}
@@ -1153,7 +1153,7 @@ class SendTransaction extends React.Component {
               pl="base-tight"
               pr={'base'}
               py="tight"
-              fontSize={2}
+              fontSize={'24px'}
               mode="primary"
               position="relative"
               className={classes.sbuttoncl}
@@ -1198,7 +1198,7 @@ class SendTransaction extends React.Component {
               pl="base-tight"
               pr={'base'}
               py="tight"
-              fontSize={2}
+              fontSize={'24px'}
               mode="primary"
               position="relative"
               className={classes.sbuttoncl}
@@ -1252,7 +1252,7 @@ class SendTransaction extends React.Component {
               pl="base-tight"
               pr={'base'}
               py="tight"
-              fontSize={2}
+              fontSize={'24px'}
               mode="primary"
               position="relative"
               className={classes.sbuttoncl}

@@ -3,10 +3,23 @@ import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import { MdArrowForward } from 'react-icons/md';
 import View from '../view';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { Box } from '@mui/system';
-import { Alert, Button, CircularProgress } from '@mui/material';
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import NavigateNext from '@mui/icons-material/NavigateNext';
+import { ContentCopy } from '@mui/icons-material';
 
 const styles = theme => ({
   wrapper: {
@@ -65,12 +78,14 @@ const Controls = ({
   loadingText,
   loadingStyle,
   loadingRender,
+  swapResponse,
 }) => {
   // const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
   // const loadingTextSelect = loadingText ? loadingText : text;
   console.log('loading: ', loadingText, loading, loadingRender);
   console.log('text: ', text, errorText);
   console.log('error, errorRender: ', error, errorRender, errorAction);
+  let copied = false;
   let showProgress = false;
   if (
     loadingText &&
@@ -118,9 +133,7 @@ const Controls = ({
             endIcon={<NavigateNext />}
             sx={{ margin: 2 }}
             // className={classes.greenman}
-            disabled={
-              error || errorRender || loading || loadingText.includes('Invalid')
-            }
+            disabled={error || errorRender || loading}
             onClick={() => onPress()}
           >
             {/* {loading ? loadingTextSelect : text} */}
@@ -128,6 +141,50 @@ const Controls = ({
           </Button>
         )}
       </Box>
+      {swapResponse ? (
+        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+          <InputLabel htmlFor="outlined-adornment-password">Swap ID</InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-password"
+            type={'text'}
+            value={swapResponse.id}
+            disabled
+            // onChange={handleChange('password')}
+            endAdornment={
+              <InputAdornment position="end">
+                <Tooltip
+                  open={copied}
+                  disableFocusListener={true}
+                  disableHoverListener={true}
+                  title="Copied"
+                >
+                  <CopyToClipboard
+                    text={swapResponse.id}
+                    onCopy={() => {
+                      copied = true;
+                    }}
+                  >
+                    <span className={classes.copyButtonSpan}>
+                      {/* <MdContentCopy className={classes.nextIcon} size={30} /> */}
+                      <ContentCopy />
+                    </span>
+                  </CopyToClipboard>
+                </Tooltip>
+
+                {/* <IconButton
+                  aria-label="copy swap id"
+                  onClick={handleClickShowPassword}
+                  // onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {<ContentCopy />}
+                </IconButton> */}
+              </InputAdornment>
+            }
+            label="Password"
+          />
+        </FormControl>
+      ) : null}
 
       {/* <View className={classes.controls}>
         {error ? (
@@ -168,6 +225,7 @@ Controls.propTypes = {
   loadingRender: PropTypes.func,
   errorRender: PropTypes.node,
   mobile: PropTypes.bool,
+  swapResponse: PropTypes.object,
 };
 
 export default injectSheet(styles)(Controls);

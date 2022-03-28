@@ -185,9 +185,9 @@ class StepsWizard extends PureComponent {
             </Stepper>
           </Box>
         </View>
-        {this.props.id ? (
+        {/* {this.props.id ? (
           <View className={classes.id}>ID: {this.props.id}</View>
-        ) : null}
+        ) : null} */}
         {children}
       </Card>
 

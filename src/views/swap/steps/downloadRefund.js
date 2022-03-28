@@ -29,7 +29,7 @@ const DownloadRefundStyles = () => ({
     },
   },
   address: {
-    fontSize: '30px',
+    fontSize: '24px',
     alignSelf: 'flex-start',
     '@media (max-width: 425px)': {
       fontSize: '16px',
@@ -160,7 +160,7 @@ class StyledDownloadRefund extends React.Component {
             automatically. */}
           </p>
           <p className={classes.address}>
-            This refund file can be used to trustlessly <br />
+            * This refund file can be used to trustlessly <br />
             claim your coins back in case of failure of this <br />
             swap. It is recommended to not delete this <br />
             file until after the completion of this swap.
