@@ -69,7 +69,10 @@ const DeskTopNavigationBar = ({ classes }) => {
   };
 
   return (
-    <AppBar position="static" sx={{}}>
+    <AppBar
+      position="static"
+      sx={{ boxShadow: 'none', backgroundImage: 'none' }}
+    >
       <Container maxWidth={false}>
         <Toolbar disableGutters>
           <Typography

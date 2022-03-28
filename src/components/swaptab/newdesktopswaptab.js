@@ -215,19 +215,17 @@ const DeskTopSwapTabContent = ({
         </AccordionSummary>
         <AccordionDetails>
           <Typography className={classes.spaceman}>
-            <span>Min:</span>{' '}
-            <span>{`${formatAmount(minAmount)} ${base}`}</span>
+            <span>Min</span> <span>{`${formatAmount(minAmount)} ${base}`}</span>
           </Typography>
           <Typography className={classes.spaceman}>
-            <span>Max:</span>{' '}
-            <span>{`${formatAmount(maxAmount)} ${base}`}</span>
+            <span>Max</span> <span>{`${formatAmount(maxAmount)} ${base}`}</span>
           </Typography>
           <Typography className={classes.spaceman}>
-            <span>Fee: </span>{' '}
+            <span>Fee </span>{' '}
             <span>{`${feeAmount} ${base} (${feePercentage}%)`}</span>
           </Typography>
           <Typography className={classes.spaceman}>
-            <span>Rate: </span> <span>{`${rate}`}</span>
+            <span>Rate </span> <span>{`${rate}`}</span>
           </Typography>
         </AccordionDetails>
       </Accordion>

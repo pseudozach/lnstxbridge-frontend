@@ -884,6 +884,14 @@ class SwapTabWrapper extends React.Component {
   };
 
   updateBaseAmount = quoteAmount => {
+    if (quoteAmount.c) {
+      quoteAmount = quoteAmount.toString();
+    } else if (!quoteAmount.target || !quoteAmount.target.value) {
+      quoteAmount = '';
+    } else {
+      quoteAmount = quoteAmount.target.value.toString();
+    }
+
     const amount = new BigNumber(quoteAmount);
     const rate = new BigNumber(this.state.rate.rate);
 
@@ -905,6 +913,14 @@ class SwapTabWrapper extends React.Component {
   updateQuoteAmount = baseAmount => {
     if (!this.state.rate) return;
 
+    if (baseAmount.c) {
+      baseAmount = baseAmount.toString();
+    } else if (!baseAmount.target || !baseAmount.target.value) {
+      baseAmount = '';
+    } else {
+      baseAmount = baseAmount.target.value.toString();
+    }
+
     const amount = new BigNumber(baseAmount.toString());
     const rate = new BigNumber(this.state.rate.rate);
 
@@ -917,7 +933,7 @@ class SwapTabWrapper extends React.Component {
 
     let newQuote = new BigNumber(quote);
 
-    if (newQuote.isLessThanOrEqualTo(0)) {
+    if (newQuote === null || newQuote.isLessThanOrEqualTo(0)) {
       newQuote = new BigNumber('0');
     }
 
