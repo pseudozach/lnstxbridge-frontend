@@ -4,15 +4,21 @@ import injectSheet from 'react-jss';
 import { MdArrowForward } from 'react-icons/md';
 import View from '../view';
 
+import { Box } from '@mui/system';
+import { Alert, Button, CircularProgress } from '@mui/material';
+import NavigateNext from '@mui/icons-material/NavigateNext';
+
 const styles = theme => ({
   wrapper: {
     flex: 1,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: p => (p.loading ? '#4A4A4A' : 'none'),
-    borderBottomRightRadius: '8px', 
-    borderBottomLeftRadius: '8px',
+    borderTop: '1px solid #7a40ee',
+    // backgroundColor: p => (p.loading ? '#4A4A4A' : 'none'),
+    // borderBottomRightRadius: '8px',
+    // borderBottomLeftRadius: '8px',
+    cursor: 'initial',
   },
   error: {
     flex: 1,
@@ -21,7 +27,13 @@ const styles = theme => ({
     alignItems: 'center',
     backgroundColor: '#FF0000',
   },
-  controls: { flex: 2, justifyContent: 'center', alignItems: 'center', borderBottomRightRadius: '8px', borderBottomLeftRadius: '8px', },
+  controls: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomRightRadius: '8px',
+    borderBottomLeftRadius: '8px',
+  },
   text: {
     color: '#fff',
     fontWeight: '300',
@@ -54,14 +66,67 @@ const Controls = ({
   loadingStyle,
   loadingRender,
 }) => {
-  const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
-  const loadingTextSelect = loadingText ? loadingText : text;
+  // const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
+  // const loadingTextSelect = loadingText ? loadingText : text;
+  console.log('loading: ', loadingText, loading, loadingRender);
+  console.log('text: ', text, errorText);
+  let showProgress = false;
+  if (
+    loadingText &&
+    (loadingText.includes('Waiting for invoice to be paid...') ||
+      loadingText.includes('Waiting for confirmation...'))
+  ) {
+    showProgress = true;
+  }
   return (
     <View
       className={error ? classes.error : classes.wrapper}
-      onClick={loading || error ? undefined : () => onPress()}
+      // onClick={loading || error ? undefined : () => onPress()}
     >
-      <View className={classes.controls}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        {/* <Button
+          variant="outlined"
+          // className={classes.contractButton}
+          text={'Connect Wallet'}
+          sx={{ margin: 2, }}
+          onClick={async () => {
+            let w3 = await connectWallet();
+            console.log('onpress account ', w3);
+            // this.onChange(w3.account, false);
+            document.getElementById('addressTextfield').value = w3.account;
+          }}
+        >{'Connect Wallet'}
+        </Button> */}
+        {error && errorRender && (
+          <Alert severity="error" sx={{ flex: 1, mx: 1 }}>
+            {errorRender(classes.errorCommand, errorAction)}
+          </Alert>
+        )}
+        {showProgress && <CircularProgress sx={{ m: 2 }} />}
+        {!showProgress && (
+          <Button
+            variant="contained"
+            size="large"
+            endIcon={<NavigateNext />}
+            sx={{ margin: 2 }}
+            // className={classes.greenman}
+            disabled={error || errorRender || loading}
+            onClick={() => onPress()}
+          >
+            {/* {loading ? loadingTextSelect : text} */}
+            Next
+          </Button>
+        )}
+      </Box>
+
+      {/* <View className={classes.controls}>
         {error ? (
           <h1 className={classes.text}> {errorText} </h1>
         ) : (
@@ -82,7 +147,7 @@ const Controls = ({
         loadingRender()
       ) : (
         <MdArrowForward className={classes.nextIcon} />
-      )}
+      )} */}
     </View>
   );
 };

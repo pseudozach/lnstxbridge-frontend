@@ -108,8 +108,8 @@ class StyledInputInvoice extends React.Component {
     return (
       <View className={classes.wrapper}>
         <p className={classes.title}>
-          Paste or scan a <b>{getCurrencyName(swapInfo.quote)}</b> {pasteText}{' '}
-          <br />
+          <b>{getCurrencyName(swapInfo.quote)}</b> {pasteText}{' '}
+          {/* <br /> */}
           {swapInfo.quote === 'BTC' && isLN ? (
             <b>
               {toSatoshi(swapInfo.quoteAmount)}{' '}
