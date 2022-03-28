@@ -255,26 +255,35 @@ const DeskTopSwapTabContent = ({
           text={'Connect Wallet'}
           sx={{ margin: 2, textTransform: 'initial' }}
           onClick={async () => {
-            if (localStorage.getItem('ua')) {
-              localStorage.clear();
-              window.location.reload();
-            } else {
-              let w3 = await connectWallet();
-              console.log('onpress account ', w3);
-              // this.onChange(w3.account, false);
-              // document.getElementById('addressTextfield').value = w3.account;
-              localStorage.setItem('ua', w3.account);
-              window.location.reload();
-            }
+            connectStacksWallet();
+
+            // if (localStorage.getItem('ua')) {
+            //   console.log('localstorage logout');
+            //   // logout / clear localstorage
+            //   localStorage.removeItem('ua');
+            //   window.location.reload();
+            // } else {
+            //   // let w3 = await connectWallet();
+            //   connectStacksWallet();
+            //   // console.log('onpress account ', w3);
+            //   // this.onChange(w3.account, false);
+            //   // document.getElementById('addressTextfield').value = w3.account;
+            //   const ua = stacksUserSession();
+            //   console.log('localstorage login ', ua);
+            //   localStorage.setItem('ua', ua);
+            //   window.location.reload();
+            // }
           }}
           startIcon={!localStorage.getItem('ua') && <AccountBalanceWallet />}
         >
-          {localStorage.getItem('ua')
-            ? localStorage.getItem('ua').slice(0, 4) +
-              '...' +
-              localStorage.getItem('ua').slice(-4)
-            : ''}
-          {localStorage.getItem('ua') ? (
+          {stacksUserSession()
+          //  && localStorage.getItem('ua')
+          //   ? localStorage.getItem('ua').slice(0, 4) +
+          //     '...' +
+          //     localStorage.getItem('ua').slice(-4)
+          //   : ''
+          }
+          {stacksUserSession() ? (
             <Tooltip title="Disconnect Wallet">
               <Logout sx={{ ml: 1 }} />
             </Tooltip>
@@ -444,7 +453,7 @@ const styles = theme => ({
   greenman: {
     backgroundColor: '#45665b !important',
     '&:hover': {
-      backgroundColor: '#649384 !important'
+      backgroundColor: '#649384 !important',
     },
   },
   spaceman: {
@@ -493,7 +502,7 @@ const styles = theme => ({
     justifyContent: 'space-around',
   },
   next: {
-    // backgroundColor: theme.colors.matisseBlue,
+    // backgroundColor: 'rgba(85,70,255,1)',
     backgroundColor: 'rgba(85,70,255,1)',
     flex: '1 0 15%',
     justifyContent: 'center',

@@ -325,6 +325,7 @@ class SwapTabWrapper extends React.Component {
       },
       redirectTo: '/',
       onFinish: () => {
+        this.stacksUserSession();
         window.location.reload();
       },
       userSession: userSession,
@@ -332,11 +333,11 @@ class SwapTabWrapper extends React.Component {
   };
 
   stacksUserSession = () => {
-    // console.log("stacksUserSession: ", userSession);
+    // console.log('stacksUserSession: ', userSession);
     let userstxaddress;
     if (userSession.isUserSignedIn()) {
       let userData = userSession.loadUserData();
-      // console.log("userData, network: ", userData, network);
+      // console.log('userData, network: ', userData, network);
       if (network === 'mainnet') {
         userstxaddress = userData.profile.stxAddress.mainnet;
       } else {
@@ -344,10 +345,11 @@ class SwapTabWrapper extends React.Component {
       }
 
       userstxaddress =
-        'Logged in as ' +
-        userstxaddress.slice(0, 5) +
-        '...' +
-        userstxaddress.slice(-5);
+        // 'Logged in as ' +
+        userstxaddress.slice(0, 5) + '...' + userstxaddress.slice(-5);
+
+      localStorage.setItem('ua', userstxaddress);
+      // console.log('stacksUserSession localStorage.setItem: ', userstxaddress);
     }
     return userstxaddress;
   };
