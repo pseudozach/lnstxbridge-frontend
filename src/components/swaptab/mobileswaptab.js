@@ -162,7 +162,7 @@ const styles = theme => ({
     justifyContent: 'space-around',
   },
   next: {
-    backgroundColor: theme.colors.matisseBlue,
+    backgroundColor: 'rgba(85,70,255,1)',
   },
   arrows: {
     height: '30px',

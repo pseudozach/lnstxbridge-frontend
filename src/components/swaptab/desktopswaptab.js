@@ -199,7 +199,7 @@ const styles = theme => ({
     justifyContent: 'space-around',
   },
   next: {
-    // backgroundColor: theme.colors.matisseBlue,
+    // backgroundColor: 'rgba(85,70,255,1)',
     backgroundColor: 'rgba(85,70,255,1)',
     flex: '1 0 15%',
     justifyContent: 'center',

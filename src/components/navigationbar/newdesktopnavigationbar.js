@@ -22,7 +22,7 @@ import Avatar from '@mui/material/Avatar';
 import { Apps } from '@mui/icons-material';
 
 // boltz_logo
-const boltz_logo = require('../../asset/icons/scuba2.png');
+const boltz_logo = require('../../asset/icons/logonobg.png');
 
 const pages = ['Swap', 'Refund', 'FAQ'];
 // const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -85,17 +85,14 @@ const DeskTopNavigationBar = ({ classes }) => {
           >
             {/* <img
               src={boltz_logo}
-              height={40}
-              width={40}
+              height={129}
+              width={452}
               className={classes.img}
               alt="logo"
             /> */}
-            <Avatar
-              alt="LNSwap Icon"
-              src="./whiteicon.png"
-              sx={{ marginRight: '4px' }}
-            />
-            <span className={classes.logoText}>LNSwap</span>
+            <span className={classes.logoText}>LN</span>
+            <Avatar alt="LNSwap Icon" src="./whiteicon.png" sx={{}} />
+            <span className={classes.logoText}>SWAP</span>
             {/* <span className={classes.subLogoText}>beta</span> */}
             {/* {network}  */}
           </Typography>
@@ -164,7 +161,12 @@ const DeskTopNavigationBar = ({ classes }) => {
               <Button
                 key={page}
                 onClick={handleNav}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{
+                  my: 2,
+                  color: 'white',
+                  display: 'block',
+                  fontSize: '1rem',
+                }}
               >
                 {page}
               </Button>
@@ -303,11 +305,11 @@ const styles = theme => ({
   },
   img: {
     alignSelf: 'center',
-    background: '#fff',
+    // background: '#fff',
   },
   logoText: {
     color: '#fff',
-    fontSize: '38px',
+    fontSize: '32px',
     fontfamily: 'SFProText',
     margin: '2px',
     fontWeight: '400',

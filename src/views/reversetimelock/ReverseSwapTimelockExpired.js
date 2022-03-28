@@ -38,7 +38,7 @@ const styles = theme => ({
     fontSize: '20px',
   },
   retry: {
-    backgroundColor: theme.colors.matisseBlue,
+    backgroundColor: 'rgba(85,70,255,1)',
     height: '20%',
     width: '100%',
     justifyContent: 'center',
