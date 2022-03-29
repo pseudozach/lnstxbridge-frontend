@@ -9,7 +9,7 @@ import SwapTabWrapper from './swaptabwrapper';
 // import Controls from '../controls';
 // // import Button from '../button';
 // import Text, { InfoText } from '../text';
-import { formatAmount } from '../../utils';
+import { formatAmount, rateProvider } from '../../utils';
 
 // import { Button as SButton, Box } from '@stacks/ui'
 // import { MdAccountBalanceWallet } from 'react-icons/md';
@@ -234,13 +234,17 @@ const DeskTopSwapTabContent = ({
         </AccordionSummary>
         <AccordionDetails>
           <Typography className={classes.spaceman}>
-            <span>Min</span> <span>{`${formatAmount(minAmount)} ${base}`}</span>
+            <span>Min</span>{' '}
+            <span>
+              {`${formatAmount(minAmount)} ${base}`}{' '}
+              {/* {`(~${rateProvider(base, quote, minAmount)})`} */}
+            </span>
           </Typography>
           <Typography className={classes.spaceman}>
             <span>Max</span> <span>{`${formatAmount(maxAmount)} ${base}`}</span>
           </Typography>
           <Typography className={classes.spaceman}>
-            <span>Fee </span>{' '}
+            <span>Swap Fee </span>{' '}
             <span>{`${feeAmount} ${base} (${feePercentage}%)`}</span>
           </Typography>
           <Typography className={classes.spaceman}>

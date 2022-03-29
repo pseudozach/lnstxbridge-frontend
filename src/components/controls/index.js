@@ -101,6 +101,7 @@ const Controls = ({
   if (loading) showProgress = true;
   if (loadingText && loadingText.includes('Invalid invoice'))
     showProgress = false;
+  // if (loadingText === 'Transaction confirmed') showProgress = false;
 
   console.log('showProgress, ', showProgress);
 

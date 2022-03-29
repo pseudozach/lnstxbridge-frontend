@@ -1160,7 +1160,7 @@ class SendTransaction extends React.Component {
                   ? `Send ${amountToLock} ${swapInfo.base} to the `
                   : `You sent ${amountToLock} ${swapInfo.base} to the `}
                 <Link
-                  href={this.state.swapContractLink}
+                  href={this.state.explorerLink}
                   underline="none"
                   sx={{ mx: 1 }}
                   target="_blank"
