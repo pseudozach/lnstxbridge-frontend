@@ -88,7 +88,7 @@ const Controls = ({
   console.log('error, errorRender: ', error, errorRender, errorAction);
   let swapId = '';
   if (swapResponse && swapResponse.id) swapId = swapResponse.id;
-  console.log('controls swapId, ', swapId);
+  console.log('controls swapId, ', swapId, swapResponse);
   let copied = false;
   let showProgress = false;
   if (

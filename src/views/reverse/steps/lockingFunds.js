@@ -36,6 +36,8 @@ import {
 
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
+import { AccountBalanceWallet, CheckCircle, Info } from '@mui/icons-material';
+import { Button, Paper, Typography } from '@mui/material';
 
 let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 // mocknet.coreApiUrl = 'http://localhost:3999';
@@ -227,7 +229,6 @@ const claimStx = async (swapInfo, swapResponse) => {
   // });
 };
 
-
 const signStx = async (swapInfo, swapResponse, setSignedTx) => {
   let contractAddress = swapResponse.lockupAddress.split('.')[0].toUpperCase();
   let contractName = swapResponse.lockupAddress.split('.')[1];
@@ -355,7 +356,7 @@ const signStx = async (swapInfo, swapResponse, setSignedTx) => {
 
   // this.toObject(txOptions)
   // console.log("stackscli claim.170 txOptions: " + JSON.stringify(txOptions));
-  
+
   await openContractCall(txOptions);
   // console.log('signstx makeContractCallToken ', transaction);
   // setSignedTx(swapResponse.id, transaction);
@@ -613,25 +614,79 @@ class LockingFunds extends React.Component {
 
   render() {
     // setAllowZeroConf
-    const { classes, swapInfo, swapResponse, swapStatus, setSignedTx } = this.props;
+    const {
+      classes,
+      swapInfo,
+      swapResponse,
+      swapStatus,
+      setSignedTx,
+    } = this.props;
 
     // console.log('lockingfunds.255 , ', swapResponse, swapStatus);
     const link = swapResponse
       ? `${getExplorer(swapInfo.quote)}/txid/0x${swapResponse.transactionId}`
       : '#0';
 
+    let statusText = `Liquidity provider is locking your ${getCurrencyName(
+      swapInfo.quote
+    )}. This may take up to 10 minutes.`;
+    if (
+      swapStatus !== 'Could not send onchain coins' &&
+      swapStatus !== 'Waiting for confirmation...' &&
+      !swapStatus.includes('Miner fee paid')
+    ) {
+      statusText = `Funds are locked and available to claim`;
+    }
+
     return (
       <View className={classes.wrapper}>
-        <p className={classes.text}>
-          Liquidity provider is locking the <b>{getCurrencyName(swapInfo.quote)}</b>{' '}
-          that you are ought to receive, this is important to keep the swap
-          atomic and trustless. It might take up to 10 minutes.
-          {/* <br /> */}
+        <Paper
+          variant="outlined"
+          sx={{
+            m: 1,
+            py: 1,
+            // mb: 2,
+            display: 'flex',
+            width: '100%',
+          }}
+          fullWidth
+        >
+          {statusText.includes('locking') ? (
+            <Info color="info" fontSize="large" sx={{ m: 1, fontSize: 36 }} />
+          ) : (
+            <CheckCircle
+              color="success"
+              fontSize="large"
+              sx={{ m: 1, fontSize: 36 }}
+            />
+          )}
+          <Typography
+            variant="body1"
+            gutterBottom
+            component="div"
+            sx={{
+              mx: 'auto',
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: 0,
+            }}
+          >
+            {statusText}
+          </Typography>
+        </Paper>
+
+        {/* <p className={classes.text}>
+          Liquidity provider is locking the{' '}
+          <b>{getCurrencyName(swapInfo.quote)}</b> that you are ought to
+          receive, this is important to keep the swap atomic and trustless. It
+          might take up to 10 minutes.
+          <br />
           <br />
           <Link to={link} text={'Click here'} /> to see the lockup transaction.
           <br />
           <br />
-          {/* If you are #reckless and impatient you can accept the 0-conf
+          If you are #reckless and impatient you can accept the 0-conf
           transaction:
           <Switch
             className={classes.switch}
@@ -649,18 +704,40 @@ class LockingFunds extends React.Component {
             onHandleColor="#2693e6"
             boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
             activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-          /> */}
-        </p>
+          />
+        </p> */}
+
         {swapStatus !== 'Could not send onchain coins' &&
-        swapStatus !== 'Waiting for confirmation...' && 
+        swapStatus !== 'Waiting for confirmation...' &&
         !swapStatus.includes('Miner fee paid') ? (
           <>
-            <p className={classes.texnotop}>
+            {/* <p className={classes.texnotop}>
               Lockup is confirmed, you can now trigger claim contract call to
               finalize the swap and receive your{' '}
               <b>{getCurrencyName(swapInfo.quote)}</b>.
-            </p>
-            <SButton
+            </p> */}
+            <Button
+              variant="contained"
+              endIcon={<AccountBalanceWallet />}
+              sx={{ margin: 'auto' }}
+              // ref={this.ref}
+              disabled={swapStatus.transaction && swapStatus.transaction.hex}
+              onClick={() =>
+                swapInfo.quote === 'STX'
+                  ? !swapInfo.isSponsored
+                    ? claimStx(swapInfo, swapResponse)
+                    : signStx(swapInfo, swapResponse, setSignedTx)
+                  : claimToken(swapInfo, swapResponse)
+              }
+              size="large"
+            >
+              <Typography>
+                {!swapInfo.isSponsored ? 'Claim' : 'Sign'}{' '}
+                <b>{getCurrencyName(swapInfo.quote)}</b>
+              </Typography>
+            </Button>
+
+            {/* <SButton
               size="large"
               pl="base-tight"
               pr={'base'}
@@ -673,7 +750,9 @@ class LockingFunds extends React.Component {
               // ref={ref}
               onClick={() =>
                 swapInfo.quote === 'STX'
-                  ? (!swapInfo.isSponsored ? claimStx(swapInfo, swapResponse) : signStx(swapInfo, swapResponse, setSignedTx))
+                  ? !swapInfo.isSponsored
+                    ? claimStx(swapInfo, swapResponse)
+                    : signStx(swapInfo, swapResponse, setSignedTx)
                   : claimToken(swapInfo, swapResponse)
               }
               // onClick={refundStx}
@@ -687,9 +766,10 @@ class LockingFunds extends React.Component {
                 mr={'2px'}
               />
               <Box as="span" ml="2px" fontSize="large">
-                {!swapInfo.isSponsored ? 'Claim' : 'Sign'} <b>{getCurrencyName(swapInfo.quote)}</b>
+                {!swapInfo.isSponsored ? 'Claim' : 'Sign'}{' '}
+                <b>{getCurrencyName(swapInfo.quote)}</b>
               </Box>
-            </SButton>
+            </SButton> */}
           </>
         ) : null}
       </View>

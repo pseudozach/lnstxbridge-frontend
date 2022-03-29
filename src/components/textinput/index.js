@@ -70,8 +70,8 @@ class Input extends React.PureComponent {
         {/* <span className={classes.action} onClick={() => copyToClipBoard(id)}>
           <MdContentCopy className={classes.nextIcon} size={30}/>
         </span> */}
-        <Tooltip
-          open={this.state.copied}
+        {/* <Tooltip
+          // open={this.state.copied}
           disableFocusListener={true}
           disableHoverListener={true}
           title="Copied"
@@ -84,7 +84,7 @@ class Input extends React.PureComponent {
               <MdContentCopy className={classes.nextIcon} size={30} />
             </span>
           </CopyToClipboard>
-        </Tooltip>
+        </Tooltip> */}
       </div>
     );
   }

@@ -14,6 +14,8 @@ import { notificationData } from '../../utils';
 import { InputAddress, PayInvoice, LockingFunds } from './steps';
 import ReactNotification from 'react-notifications-component';
 import { navigation } from '../../actions';
+import { Paper, Typography } from '@mui/material';
+import { CheckCircle } from '@mui/icons-material';
 
 const styles = () => ({
   wrapper: {
@@ -177,10 +179,47 @@ class ReverseSwap extends React.Component {
                 render={() => (
                   <Confetti
                     notifie={style => (
-                      <span className={style}>
-                        You sent {swapInfo.baseAmount} {swapInfo.base} and
-                        received {swapInfo.quoteAmount} {swapInfo.quote}
-                      </span>
+                      <Paper
+                        variant="outlined"
+                        sx={{
+                          m: 1,
+                          py: 1,
+                          mb: 2,
+                          display: 'flex',
+                          width: '100%',
+                        }}
+                        fullWidth
+                      >
+                        <CheckCircle
+                          color="success"
+                          fontSize="large"
+                          sx={{ m: 1, fontSize: 36 }}
+                        />
+                        <Typography
+                          variant="body1"
+                          gutterBottom
+                          component="div"
+                          sx={{
+                            mx: 'auto',
+                            textAlign: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginBottom: 0,
+                          }}
+                          // color={this.state.statusColor}
+                        >
+                          {/* Swap successful 🎉 <br /> */}
+                          You sent{' '}
+                          {swapInfo.baseAmount || swapResponse.baseAmount}{' '}
+                          {swapInfo.base} and received {swapInfo.quoteAmount}{' '}
+                          {swapInfo.quote}
+                        </Typography>
+                      </Paper>
+
+                      // <span className={style}>
+                      //   You sent {swapInfo.baseAmount} {swapInfo.base} and
+                      //   received {swapInfo.quoteAmount} {swapInfo.quote}
+                      // </span>
                     )}
                   />
                 )}
@@ -230,6 +269,7 @@ class ReverseSwap extends React.Component {
                     errorRender={() => {}}
                     error={!swapFailResponse === true}
                     errorText={`Reverse swap failed: ${swapStatus}`}
+                    swapResponse={swapResponse}
                   />
                 )}
               />
@@ -246,6 +286,7 @@ class ReverseSwap extends React.Component {
                         claimSwap(props.nextStage, swapInfo, swapResponse);
                       }
                     }}
+                    swapResponse={swapResponse}
                   />
                 )}
               />
