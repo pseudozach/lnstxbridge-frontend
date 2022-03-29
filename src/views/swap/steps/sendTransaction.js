@@ -49,8 +49,15 @@ import {
 
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
-import { Paper, Typography } from '@mui/material';
-import { Cancel, CheckCircle, Info, Lock } from '@mui/icons-material';
+import { Button, Link, Paper, Typography } from '@mui/material';
+import {
+  AccountBalance,
+  AccountBalanceWallet,
+  Cancel,
+  CheckCircle,
+  Info,
+  Lock,
+} from '@mui/icons-material';
 
 let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 // mocknet.coreApiUrl = 'http://localhost:3999';
@@ -112,6 +119,7 @@ const SendTransactionStyles = theme => ({
   info: {
     flexDirection: 'column',
     flex: 1,
+    width: '100%',
   },
   text: {
     fontSize: '20px',
@@ -473,7 +481,7 @@ const claimToken = async (swapInfo, swapResponse) => {
   await openContractCall(txOptions);
 };
 
-async function lockStx(swapInfo, swapResponse) {
+const lockStx = async (swapInfo, swapResponse) => {
   console.log(
     'lockStx: swapInfo, swapResponse, activeNetwork',
     swapInfo,
@@ -649,6 +657,7 @@ async function lockStx(swapInfo, swapResponse) {
       console.log('Stacks Transaction:', data.stacksTransaction);
       console.log('Transaction ID:', data.txId);
       console.log('Raw transaction:', data.txRaw);
+      this.setState({ txId: data.txId });
       let explorerTransactionUrl =
         'https://explorer.stacks.co/txid/' + data.txId;
       if (activeNetwork === testnet) {
@@ -662,7 +671,7 @@ async function lockStx(swapInfo, swapResponse) {
   };
   console.log('options: ', options);
   await openContractCall(options);
-}
+};
 
 async function lockToken(swapInfo, swapResponse) {
   console.log('lockToken: ', swapInfo, swapResponse);
@@ -1068,6 +1077,7 @@ class SendTransaction extends React.Component {
 
     this.state = {
       checked: false,
+      txId: '',
       // swapText: '',
     };
   }
@@ -1114,7 +1124,9 @@ class SendTransaction extends React.Component {
     // } else {
     //   swapStatus = 'Send';
     // }
-    let swapText = `Send ${amountToLock} ${swapInfo.base} to ${swapResponse.address}`;
+    // ${swapResponse.address}
+    let swapText = `Send ${amountToLock} ${swapInfo.base} to the `;
+    let swapContractLink = `https://explorer.stacks.co/txid/${swapResponse.address}?chain=mainnet`;
 
     console.log('swapText ', swapText);
     return (
@@ -1129,7 +1141,7 @@ class SendTransaction extends React.Component {
             <Paper
               variant="outlined"
               sx={{
-                backgroundColor: '#f8f4fc',
+                // backgroundColor: '#f8f4fc',
                 m: 1,
                 py: 1,
                 mb: 2,
@@ -1138,14 +1150,14 @@ class SendTransaction extends React.Component {
               fullWidth
             >
               {/* fontSize="large" sx={{ fontSize: '5em'}} */}
-              {swapText.includes('lock') ? (
+              {swapText.includes('Send') ? (
                 <Lock
-                  color="secondary"
+                  // color="secondary"
                   fontSize="large"
                   sx={{ m: 1, fontSize: 36 }}
                 />
               ) : null}
-              {swapText.includes('fail') ||
+              {/* {swapText.includes('fail') ||
               swapText.includes('Unable to reach') ? (
                 <Cancel
                   color="error"
@@ -1159,7 +1171,7 @@ class SendTransaction extends React.Component {
                   fontSize="large"
                   sx={{ m: 1, fontSize: 36 }}
                 />
-              ) : null}
+              ) : null} */}
               {/* {this.state.showComplete ? (
                 <CheckCircle
                   color="success"
@@ -1180,7 +1192,16 @@ class SendTransaction extends React.Component {
                 }}
                 // color={this.state.statusColor}
               >
-                {swapText}
+                {swapText}{' '}
+                <Link
+                  href={swapContractLink}
+                  underline="none"
+                  sx={{ mx: 1 }}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Swap Contract
+                </Link>
               </Typography>
             </Paper>
           ) : null}
@@ -1202,12 +1223,33 @@ class SendTransaction extends React.Component {
         Copy
       </span> */}
 
-          {/* {swapResponse.bip21 &&
+          {swapResponse.bip21 &&
           (!swapStatus || swapStatus.message !== 'Atomic Swap is ready') ? (
             <View className={classes.qrcode}>
               <QrCode size={250} link={swapResponse.bip21} />
             </View>
-          ) : null} */}
+          ) : null}
+
+          {swapInfo.base === 'STX' || swapInfo.base === 'USDA' ? (
+            <Button
+              variant="contained"
+              endIcon={<AccountBalanceWallet />}
+              sx={{ margin: 'auto' }}
+              ref={this.ref}
+              disabled={
+                (swapStatus.transaction && swapStatus.transaction.hex) ||
+                this.state.txId
+              }
+              onClick={() =>
+                swapInfo.base === 'STX'
+                  ? lockStx(swapInfo, swapResponse)
+                  : lockToken(swapInfo, swapResponse)
+              }
+              size="large"
+            >
+              Lock {swapInfo.base}
+            </Button>
+          ) : null}
 
           {/* {swapInfo.base === 'STX' || swapInfo.base === 'USDA' ? (
             <SButton

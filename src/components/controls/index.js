@@ -98,7 +98,13 @@ const Controls = ({
   ) {
     showProgress = true;
   }
+  if (loading) showProgress = true;
+
   console.log('showProgress, ', showProgress);
+
+  let buttonText = 'Next';
+  if (loadingText === 'Swap Again!') buttonText = 'Swap Again!';
+
   return (
     <View
       className={error ? classes.error : classes.wrapper}
@@ -121,6 +127,10 @@ const Controls = ({
             sx={{ width: '110px', p: 1 }}
             value={swapId}
             InputProps={{
+              style: {
+                paddingTop: 0,
+                paddingBottom: 0,
+              },
               startAdornment: (
                 <InputAdornment position="start">ID</InputAdornment>
               ),
@@ -193,7 +203,7 @@ const Controls = ({
             onClick={() => onPress()}
           >
             {/* {loading ? loadingTextSelect : text} */}
-            Next
+            {buttonText}
           </Button>
         )}
       </Box>

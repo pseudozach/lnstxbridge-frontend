@@ -132,6 +132,10 @@ class StepsWizard extends PureComponent {
       steps = ['Start', 'Upload', 'Connect', 'Refund'];
     }
 
+    if (window.location.href.includes('/swap')) {
+      steps = ['Select', 'Connect', 'Download', 'Transfer'];
+    }
+
     const children = React.Children.map(this.props.children, child => {
       return React.cloneElement(child, {
         stage,
