@@ -12,6 +12,7 @@ import {
   getSmallestDenomination,
   getSampleAddress,
 } from '../../../utils';
+import { TextField } from '@mui/material';
 
 const InputInvoiceStyles = (theme) => ({
   wrapper: {
@@ -128,6 +129,16 @@ class StyledInputInvoice extends React.Component {
           onChange={this.onChange}
           placeholder={`EG: ${placeholder}`}
         />
+        {/* <TextField
+          id="outlined-multiline-static"
+          label="Multiline"
+          multiline
+          rows={4}
+          value={this.state.value}
+          onChange={this.onChange}
+          placeholder={`EG: ${placeholder}`}
+          // defaultValue="Default Value"
+        /> */}
       </View>
     );
   }

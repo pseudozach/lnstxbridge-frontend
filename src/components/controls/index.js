@@ -99,11 +99,13 @@ const Controls = ({
     showProgress = true;
   }
   if (loading) showProgress = true;
+  if (loadingText && loadingText.includes('Invalid invoice'))
+    showProgress = false;
 
   console.log('showProgress, ', showProgress);
 
   let buttonText = 'Next';
-  if (text === 'Swap Again!') buttonText = 'Swap Again!';
+  if (text === 'Swap Again!') buttonText = 'Swap Again';
 
   return (
     <View
@@ -124,7 +126,7 @@ const Controls = ({
             id="outlined-start-adornment"
             disabled
             // , width: '25ch'  m: 2,
-            sx={{ width: '110px', p: 1 }}
+            sx={{ width: '115px', p: 1 }}
             value={swapId}
             InputProps={{
               style: {

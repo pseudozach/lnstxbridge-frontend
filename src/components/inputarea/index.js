@@ -5,6 +5,7 @@ import QrReader from 'react-qr-reader';
 import ReactNotification from 'react-notifications-component';
 import { notificationData } from '../../utils';
 import { QrCodeScanner } from '@mui/icons-material';
+import { TextField } from '@mui/material';
 
 const cameraIcon = require('../../asset/icons/camera_icon.svg');
 
@@ -13,7 +14,7 @@ const styles = theme => ({
     position: 'relative',
   },
   textBox: {
-    border: 'none',
+    // border: 'none',
     resize: 'none',
     fontSize: '18px',
     borderRadius: '3px',
@@ -23,10 +24,17 @@ const styles = theme => ({
     width: '100%',
     height: p => `${p.height}px`,
     outline: p => (p.error ? '1px solid red' : 'none'),
-    backgroundColor: '#D3D3D3',
+    // backgroundColor: '#D3D3D3',
     '@media (max-width: 425px)': {
       width: () => `${300}px`,
     },
+    background: 'transparent',
+    border: '1px solid gray',
+    boxSizing: 'border-box',
+    padding: '16px',
+    fontFamily: 'Roboto',
+    caretColor: 'white',
+    color: 'white',
   },
   cameraIcon: {
     width: '32px',
@@ -151,6 +159,26 @@ class InputArea extends React.Component {
             onChange(newValue);
           }}
         />
+        {/* <TextField
+          // label="Multiline"
+          // error={p.error}
+          multiline
+          autoFocus={autoFocus}
+          value={this.state.value}
+          placeholder={placeholder}
+          className={classes.textBox}
+          rows={5}
+          cols={width}
+          id={'textareaid'}
+          onChange={event => {
+            const newValue = event.target.value;
+
+            this.setState({
+              value: newValue,
+            });
+            onChange(newValue);
+          }}
+        /> */}
         {this.state.openScanner ? (
           <div className={classes.qrScannerWrapper}>
             <QrReader
@@ -175,6 +203,7 @@ class InputArea extends React.Component {
             className={classes.cameraIcon}
             onClick={this.openScanner}
             alt={'Scan QR code'}
+            sx={{ color: 'white', m: 1 }}
           />
         ) : (
           undefined

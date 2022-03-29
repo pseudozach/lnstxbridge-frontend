@@ -113,8 +113,14 @@ const DeskTopSwapTabContent = ({
             onChange={e => updatePair(quote, e.target.value)}
             // displayEmpty
             className={classes.inputMobile}
-            inputProps={{ 'aria-label': 'Without label' }}
-            sx={{ m: 1, minWidth: 120 }}
+            inputProps={{
+              'aria-label': 'Without label',
+              className: classes.midIcon,
+            }}
+            sx={{
+              m: 1,
+              minWidth: 120,
+            }}
             // sx={{ color: 'white', backgroundColor: '#1a211f', display: 'block' }}
           >
             {currencies.map(currency => (
@@ -123,6 +129,11 @@ const DeskTopSwapTabContent = ({
                 key={currency}
                 sx={{ my: 2, display: 'block' }}
               >
+                <img
+                  src={`./${currency.toLowerCase()}.svg`}
+                  height="20"
+                  style={{ marginRight: 4 }}
+                />
                 {currency}
               </MenuItem>
             ))}
@@ -172,7 +183,10 @@ const DeskTopSwapTabContent = ({
             defaultValue={quote}
             onChange={e => updatePair(e.target.value, base)}
             // displayEmpty
-            inputProps={{ 'aria-label': 'Without label' }}
+            inputProps={{
+              'aria-label': 'Without label',
+              className: classes.midIcon,
+            }}
             className={classes.inputMobile}
             sx={{ m: 1, minWidth: 120 }}
             // sx={{ color: 'white', backgroundColor: '#1a211f', display: 'block' }}
@@ -183,6 +197,11 @@ const DeskTopSwapTabContent = ({
                 key={currency}
                 sx={{ my: 2, display: 'block' }}
               >
+                <img
+                  src={`./${currency.toLowerCase()}.svg`}
+                  height="20"
+                  style={{ marginRight: 4 }}
+                />
                 {currency}
               </MenuItem>
             ))}
@@ -420,6 +439,10 @@ const DeskTopSwapTabContent = ({
 );
 
 const styles = theme => ({
+  midIcon: {
+    display: 'flex !important',
+    alignItems: 'center !important',
+  },
   stacksButton: {
     backgroundColor: '#7a40ee',
     backgroundImage: 'linear-gradient(135deg, #5546ff, rgba(122, 64, 238, 0))',

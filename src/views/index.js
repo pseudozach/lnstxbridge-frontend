@@ -11,6 +11,11 @@ import * as routes from '../constants/routes';
 import BackGround from '../components/background';
 import history from '../constants/history';
 
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 const LandingPage = lazy(() => import('./landingpage'));
 const Faq = lazy(() => import('./faq'));
 const Developers = lazy(() => import('./widget'));

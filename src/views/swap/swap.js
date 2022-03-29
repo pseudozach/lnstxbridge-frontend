@@ -10,8 +10,10 @@ import BackGround from '../../components/background';
 import StepsWizard from '../../components/stepswizard';
 import { InputInvoice, SendTransaction, DownloadRefund } from './steps';
 import { navigation } from '../../actions';
+import { Link, Paper, Typography } from '@mui/material';
+import { CheckCircle, Lock } from '@mui/icons-material';
 
-const styles = (theme) => ({
+const styles = theme => ({
   wrapper: {
     flex: '1 0 100%',
     alignItems: 'center',
@@ -127,13 +129,50 @@ class Swap extends Component {
                 num={4}
                 render={() => (
                   <Confetti
-                    notifie={style => (
-                      <span className={style}>
-                        You sent{' '}
-                        {swapInfo.baseAmount || swapResponse.baseAmount}{' '}
-                        {swapInfo.base} and received {swapInfo.quoteAmount}{' '}
-                        {swapInfo.quote}
-                      </span>
+                    notifie={() => (
+                      <Paper
+                        variant="outlined"
+                        sx={{
+                          m: 1,
+                          py: 1,
+                          mb: 2,
+                          display: 'flex',
+                          width: '100%',
+                        }}
+                        fullWidth
+                      >
+                        <CheckCircle
+                          color="success"
+                          fontSize="large"
+                          sx={{ m: 1, fontSize: 36 }}
+                        />
+                        <Typography
+                          variant="body1"
+                          gutterBottom
+                          component="div"
+                          sx={{
+                            mx: 'auto',
+                            textAlign: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginBottom: 0,
+                          }}
+                          // color={this.state.statusColor}
+                        >
+                          {/* Swap successful 🎉 <br /> */}
+                          You sent{' '}
+                          {swapInfo.baseAmount || swapResponse.baseAmount}{' '}
+                          {swapInfo.base} and received {swapInfo.quoteAmount}{' '}
+                          {swapInfo.quote}
+                        </Typography>
+                      </Paper>
+
+                      // <span className={style}>
+                      //   You sent{' '}
+                      //   {swapInfo.baseAmount || swapResponse.baseAmount}{' '}
+                      //   {swapInfo.base} and received {swapInfo.quoteAmount}{' '}
+                      //   {swapInfo.quote}
+                      // </span>
                     )}
                   />
                 )}

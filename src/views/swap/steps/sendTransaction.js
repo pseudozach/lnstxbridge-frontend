@@ -657,7 +657,7 @@ const lockStx = async (swapInfo, swapResponse) => {
       console.log('Stacks Transaction:', data.stacksTransaction);
       console.log('Transaction ID:', data.txId);
       console.log('Raw transaction:', data.txRaw);
-      this.setState({ txId: data.txId });
+      // this.setState({ txId: data.txId });
       let explorerTransactionUrl =
         'https://explorer.stacks.co/txid/' + data.txId;
       if (activeNetwork === testnet) {
