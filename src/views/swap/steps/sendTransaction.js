@@ -57,6 +57,7 @@ import {
   CheckCircle,
   Info,
   Lock,
+  LockOpen,
 } from '@mui/icons-material';
 
 let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
@@ -481,405 +482,6 @@ const claimToken = async (swapInfo, swapResponse) => {
   await openContractCall(txOptions);
 };
 
-const lockStx = async (swapInfo, swapResponse) => {
-  console.log(
-    'lockStx: swapInfo, swapResponse, activeNetwork',
-    swapInfo,
-    swapResponse,
-    activeNetwork
-  );
-
-  // swapInfo
-  //   base: "STX"
-  // baseAmount: 1.99828666
-  // invoice: "lnbcrt57760n1ps3mxa7pp52w8t5tx5n0s0hz5jdu9zc2gzh6ah8r2jlzp73u5d2wjzurtqsstsdqqcqzpgsp52grylkg3pgz8dgpzfj9hfww0lehcdgdudywjp3yvdetnpunaktes9qyyssqcqtrggugladxfrezkr2llzk032wz74p87xumgc7qgu06mu3zagx4axtzcue572zr9rsa7qglzq7mr429xguvnk4hwddvqjt6y2nvtrcpvdnw4q"
-  // keys:
-  // privateKey: "aa5299e729fb680f6353e0686ea2900b5b3c5ae75efcc109db4c2e350b18407b"
-  // publicKey: "025e90268bcf4fc7f6cd16885b186f5a0b2e01e71eaee68888b84fc09d32055640"
-  // __proto__: Object
-  // pair:
-  // id: "BTC/STX"
-  // orderSide: "buy"
-  // __proto__: Object
-  // quote: "BTC"
-  // quoteAmount: "0.00005776"
-  // __proto__: Object
-
-  // {id: "IbXT9g", address: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3", claimAddress: "ST30VXWG00R13WK8RDXBSTHXNWGNKCAQTRYEMA9FK", acceptZeroConf: false, expectedAmount: 199828666, …}
-  // acceptZeroConf: false
-  // address: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3"
-  // claimAddress: "ST30VXWG00R13WK8RDXBSTHXNWGNKCAQTRYEMA9FK"
-  // expectedAmount: 199828666
-  // id: "IbXT9g"
-  // timeoutBlockHeight: 5666
-
-  //   swapresponse
-  //   acceptZeroConf: false
-  // address: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3"
-  // claimAddress: "ST30VXWG00R13WK8RDXBSTHXNWGNKCAQTRYEMA9FK"
-  // expectedAmount: 199506950
-  // id: "nf68IS"
-  // timeoutBlockHeight: 5578
-
-  let stxcontractaddress = swapResponse.address.split('.')[0];
-  let stxcontractname = swapResponse.address.split('.')[1];
-
-  let paymenthash;
-  if (swapInfo.invoice.toLowerCase().slice(0, 2) === 'ln') {
-    var decoded = lightningPayReq.decode(swapInfo.invoice);
-    // console.log("decoded: ", decoded);
-
-    var obj = decoded.tags;
-    for (let index = 0; index < obj.length; index++) {
-      const tag = obj[index];
-      // console.log("tag: ", tag);
-      if (tag.tagName === 'payment_hash') {
-        // console.log("yay: ", tag.data);
-        paymenthash = tag.data;
-      }
-    }
-  } else {
-    paymenthash = swapInfo.preimageHash;
-  }
-
-  console.log('paymenthash: ', paymenthash);
-
-  let swapamount, postconditionamount, amountToLock;
-  if (swapResponse.expectedAmount === 0) {
-    // atomic swap
-    console.log(
-      'expectedAmount is 0, this is an atomic swap ',
-      swapResponse.expectedAmount,
-      swapResponse.baseAmount
-    );
-    amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
-    swapamount = amountToLock.toString(16).split('.')[0] + '';
-    postconditionamount = Math.ceil(amountToLock);
-  } else {
-    console.log(
-      'expectedAmount is NOT 0, regular swap ',
-      swapResponse.expectedAmount
-    );
-    amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100);
-    swapamount = amountToLock.toString(16).split('.')[0] + '';
-    postconditionamount = Math.ceil(amountToLock);
-    // *1000
-    // 199610455 -> 199 STX
-  }
-  console.log(
-    'swapamount, amountToLock, postconditionamount: ',
-    swapamount,
-    amountToLock,
-    postconditionamount
-  );
-
-  // console.log(
-  //   'calc: ',
-  //   swapResponse.expectedAmount,
-  //   parseInt(swapResponse.expectedAmount) / 100,
-  //   swapResponse.baseAmount
-  // );
-
-  let paddedamount = swapamount.padStart(32, '0');
-
-  let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
-    .toString(16)
-    .padStart(32, '0');
-  console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
-
-  let userData = userSession.loadUserData();
-
-  let postConditionAddress = stxcontractaddress;
-  if (activeNetwork === mainnet) {
-    postConditionAddress = userData.profile.stxAddress.mainnet;
-  } else {
-    postConditionAddress = userData.profile.stxAddress.testnet;
-  }
-
-  const postConditionCode = FungibleConditionCode.LessEqual;
-  const postConditionAmount = new BN(postconditionamount);
-  // const postConditionAmount = new BigNumber(2000000)
-  // const postConditionAmount = Buffer.from('00000000000000000000000000100000','hex');
-  // const postConditions = [
-  //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
-  // ];
-
-  // it was working before - not anymore
-  const postConditions = [
-    createSTXPostCondition(
-      postConditionAddress,
-      postConditionCode,
-      postConditionAmount
-    ),
-  ];
-
-  // const postConditions = [
-  //   makeContractSTXPostCondition(
-  //     postConditionAddress,
-  //     stxcontractname,
-  //     postConditionCode,
-  //     postConditionAmount
-  //   )
-  // ];
-
-  // typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike
-  console.log('postConditions: ', postConditionAddress, postConditions);
-
-  // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
-  const functionArgs = [
-    // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
-    // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
-    bufferCV(Buffer.from(paymenthash, 'hex')),
-    uintCV(amountToLock),
-    uintCV(Number(swapResponse.timeoutBlockHeight)),
-    // bufferCV(Buffer.from(paddedamount, 'hex')),
-    // bufferCV(Buffer.from('01', 'hex')),
-    // bufferCV(Buffer.from('01', 'hex')),
-    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
-    standardPrincipalCV(swapResponse.claimAddress),
-  ];
-  // console.log("functionArgs: ", JSON.stringify(functionArgs));
-  // return false;
-  const options = {
-    network: activeNetwork,
-    contractAddress: stxcontractaddress,
-    contractName: stxcontractname,
-    functionName: 'lockStx',
-    functionArgs,
-    appDetails: {
-      name: 'LNSwap',
-      icon: window.location.origin + './favicon.ico',
-    },
-    // authOrigin: "localhost:3888",
-    postConditions,
-    // postConditionMode: PostConditionMode.Allow,
-    onFinish: data => {
-      console.log('Stacks Transaction:', data.stacksTransaction);
-      console.log('Transaction ID:', data.txId);
-      console.log('Raw transaction:', data.txRaw);
-      // this.setState({ txId: data.txId });
-      let explorerTransactionUrl =
-        'https://explorer.stacks.co/txid/' + data.txId;
-      if (activeNetwork === testnet) {
-        explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
-      }
-      console.log('View transaction in explorer:', explorerTransactionUrl);
-      document.querySelector('a').href = explorerTransactionUrl;
-      document.querySelector('a').style.display = 'block';
-      // this.explorerTransactionUrl = explorerTransactionUrl;
-    },
-  };
-  console.log('options: ', options);
-  await openContractCall(options);
-};
-
-async function lockToken(swapInfo, swapResponse) {
-  console.log('lockToken: ', swapInfo, swapResponse);
-
-  // swapInfo
-  //   base: "STX"
-  // baseAmount: 1.99828666
-  // invoice: "lnbcrt57760n1ps3mxa7pp52w8t5tx5n0s0hz5jdu9zc2gzh6ah8r2jlzp73u5d2wjzurtqsstsdqqcqzpgsp52grylkg3pgz8dgpzfj9hfww0lehcdgdudywjp3yvdetnpunaktes9qyyssqcqtrggugladxfrezkr2llzk032wz74p87xumgc7qgu06mu3zagx4axtzcue572zr9rsa7qglzq7mr429xguvnk4hwddvqjt6y2nvtrcpvdnw4q"
-  // keys:
-  // privateKey: "aa5299e729fb680f6353e0686ea2900b5b3c5ae75efcc109db4c2e350b18407b"
-  // publicKey: "025e90268bcf4fc7f6cd16885b186f5a0b2e01e71eaee68888b84fc09d32055640"
-  // __proto__: Object
-  // pair:
-  // id: "BTC/STX"
-  // orderSide: "buy"
-  // __proto__: Object
-  // quote: "BTC"
-  // quoteAmount: "0.00005776"
-  // __proto__: Object
-
-  // {id: "IbXT9g", address: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3", claimAddress: "ST30VXWG00R13WK8RDXBSTHXNWGNKCAQTRYEMA9FK", acceptZeroConf: false, expectedAmount: 199828666, …}
-  // acceptZeroConf: false
-  // address: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3"
-  // claimAddress: "ST30VXWG00R13WK8RDXBSTHXNWGNKCAQTRYEMA9FK"
-  // expectedAmount: 199828666
-  // id: "IbXT9g"
-  // timeoutBlockHeight: 5666
-
-  //   swapresponse
-  //   acceptZeroConf: false
-  // address: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3"
-  // claimAddress: "ST30VXWG00R13WK8RDXBSTHXNWGNKCAQTRYEMA9FK"
-  // expectedAmount: 199506950
-  // id: "nf68IS"
-  // timeoutBlockHeight: 5578
-
-  let stxcontractaddress = swapResponse.address.split('.')[0];
-  let stxcontractname = swapResponse.address.split('.')[1];
-
-  let paymenthash;
-  if (swapInfo.invoice.toLowerCase().slice(0, 2) === 'ln') {
-    var decoded = lightningPayReq.decode(swapInfo.invoice);
-    // console.log("decoded: ", decoded);
-
-    var obj = decoded.tags;
-    for (let index = 0; index < obj.length; index++) {
-      const tag = obj[index];
-      // console.log("tag: ", tag);
-      if (tag.tagName === 'payment_hash') {
-        // console.log("yay: ", tag.data);
-        paymenthash = tag.data;
-      }
-    }
-  } else {
-    paymenthash = swapInfo.preimageHash;
-  }
-  console.log('paymenthash: ', paymenthash);
-
-  let swapamount, postconditionamount, amountToLock;
-  if (swapResponse.expectedAmount === 0) {
-    // atomic swap
-    console.log(
-      'expectedAmount is 0, this is an atomic swap ',
-      swapResponse.expectedAmount,
-      swapResponse.baseAmount
-    );
-    amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
-    swapamount = amountToLock.toString(16).split('.')[0] + '';
-    postconditionamount = Math.ceil(amountToLock);
-  } else {
-    console.log(
-      'expectedAmount is NOT 0, regular swap ',
-      swapResponse.expectedAmount
-    );
-    // need to confirm token decimals!!!
-    // * 1000000
-    console.log(
-      'calc: ',
-      swapResponse.expectedAmount,
-      parseInt(swapResponse.expectedAmount) / 100
-    );
-    amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100);
-    swapamount = amountToLock.toString(16).split('.')[0] + '';
-    // postcondition amount should be in stx not mstx - WRONG!
-    postconditionamount = Math.ceil(amountToLock);
-  }
-  // let postconditionamount =
-  //   parseInt(swapResponse.expectedAmount) / (100 * 1000000);
-  // *1000
-  // 199610455 -> 199 STX
-  console.log(
-    'swapamount, amountToLock,  postconditionamount: ',
-    swapamount,
-    amountToLock,
-    postconditionamount
-  );
-  let paddedamount = swapamount.padStart(32, '0');
-
-  let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
-    .toString(16)
-    .padStart(32, '0');
-  console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
-
-  let userData = userSession.loadUserData();
-
-  let postConditionAddress = stxcontractaddress;
-  if (activeNetwork === mainnet) {
-    postConditionAddress = userData.profile.stxAddress.mainnet;
-  } else {
-    postConditionAddress = userData.profile.stxAddress.testnet;
-  }
-
-  // With a standard principal
-  // const postConditionAddress = postConditionAddress;
-  const postConditionCode = FungibleConditionCode.LessEqual;
-  const postConditionAmount = new BN(postconditionamount);
-
-  // const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
-  //   'utf8'
-  // );
-  const tokenAddress = swapResponse.tokenAddress;
-  console.log('tokenAddress: ', tokenAddress);
-
-  const assetAddress = tokenAddress.split('.')[0];
-  const assetContractName = tokenAddress.split('.')[1];
-  const assetName = assetContractName.split('-')[0];
-  const fungibleAssetInfo = createAssetInfo(
-    assetAddress,
-    assetContractName,
-    assetName
-  );
-
-  const standardFungiblePostCondition = makeStandardFungiblePostCondition(
-    postConditionAddress,
-    postConditionCode,
-    postConditionAmount,
-    fungibleAssetInfo
-  );
-
-  // const postConditionCode = FungibleConditionCode.LessEqual;
-  // const postConditionAmount = new BN(postconditionamount);
-
-  // it was working before - not anymore
-  const postConditions = [
-    // createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
-    standardFungiblePostCondition,
-  ];
-
-  // const postConditions = [
-  //   makeContractSTXPostCondition(
-  //     postConditionAddress,
-  //     stxcontractname,
-  //     postConditionCode,
-  //     postConditionAmount
-  //   )
-  // ];
-
-  // typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike
-  console.log('postConditions: ', postConditionAddress, postConditions);
-
-  // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
-  const functionArgs = [
-    // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
-    // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
-    bufferCV(Buffer.from(paymenthash, 'hex')),
-    uintCV(amountToLock),
-    uintCV(Number(swapResponse.timeoutBlockHeight)),
-    // bufferCV(Buffer.from(paddedamount, 'hex')),
-    // bufferCV(Buffer.from('01', 'hex')),
-    // bufferCV(Buffer.from('01', 'hex')),
-    // bufferCV(Buffer.from(paddedtimelock, 'hex')),
-    standardPrincipalCV(swapResponse.claimAddress),
-    contractPrincipalCV(assetAddress, assetContractName), // token address + contractname
-  ];
-  // console.log("functionArgs: ", JSON.stringify(functionArgs));
-  // return false;
-  const options = {
-    network: activeNetwork,
-    contractAddress: stxcontractaddress,
-    contractName: stxcontractname,
-    functionName: 'lockToken',
-    functionArgs,
-    appDetails: {
-      name: 'LNSwap',
-      icon: window.location.origin + './favicon.ico',
-    },
-    // authOrigin: "localhost:3888",
-    postConditions,
-    // postConditionMode: PostConditionMode.Allow,
-    onFinish: data => {
-      console.log('Stacks Transaction:', data.stacksTransaction);
-      console.log('Transaction ID:', data.txId);
-      console.log('Raw transaction:', data.txRaw);
-      let explorerTransactionUrl =
-        'https://explorer.stacks.co/txid/' + data.txId;
-      if (activeNetwork === testnet) {
-        explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
-      }
-      console.log('View transaction in explorer:', explorerTransactionUrl);
-      document.querySelector('a').href = explorerTransactionUrl;
-      document.querySelector('a').style.display = 'block';
-      // this.explorerTransactionUrl = explorerTransactionUrl;
-    },
-  };
-  console.log('options: ', options);
-  await openContractCall(options);
-}
-
 // function makeContractSTXPostCondition(
 //   address,
 //   contractName,
@@ -1078,9 +680,351 @@ class SendTransaction extends React.Component {
     this.state = {
       checked: false,
       txId: '',
+      swapText: '',
+      explorerLink: '',
       // swapText: '',
     };
   }
+
+  lockStx = async (swapInfo, swapResponse) => {
+    console.log(
+      'lockStx: swapInfo, swapResponse, activeNetwork',
+      swapInfo,
+      swapResponse,
+      activeNetwork
+    );
+    let stxcontractaddress = swapResponse.address.split('.')[0];
+    let stxcontractname = swapResponse.address.split('.')[1];
+
+    let paymenthash;
+    if (swapInfo.invoice.toLowerCase().slice(0, 2) === 'ln') {
+      var decoded = lightningPayReq.decode(swapInfo.invoice);
+      // console.log("decoded: ", decoded);
+
+      var obj = decoded.tags;
+      for (let index = 0; index < obj.length; index++) {
+        const tag = obj[index];
+        // console.log("tag: ", tag);
+        if (tag.tagName === 'payment_hash') {
+          // console.log("yay: ", tag.data);
+          paymenthash = tag.data;
+        }
+      }
+    } else {
+      paymenthash = swapInfo.preimageHash;
+    }
+
+    console.log('paymenthash: ', paymenthash);
+
+    let swapamount, postconditionamount, amountToLock;
+    if (swapResponse.expectedAmount === 0) {
+      // atomic swap
+      console.log(
+        'expectedAmount is 0, this is an atomic swap ',
+        swapResponse.expectedAmount,
+        swapResponse.baseAmount
+      );
+      amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
+      swapamount = amountToLock.toString(16).split('.')[0] + '';
+      postconditionamount = Math.ceil(amountToLock);
+    } else {
+      console.log(
+        'expectedAmount is NOT 0, regular swap ',
+        swapResponse.expectedAmount
+      );
+      amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100);
+      swapamount = amountToLock.toString(16).split('.')[0] + '';
+      postconditionamount = Math.ceil(amountToLock);
+      // *1000
+      // 199610455 -> 199 STX
+    }
+    console.log(
+      'swapamount, amountToLock, postconditionamount: ',
+      swapamount,
+      amountToLock,
+      postconditionamount
+    );
+
+    // console.log(
+    //   'calc: ',
+    //   swapResponse.expectedAmount,
+    //   parseInt(swapResponse.expectedAmount) / 100,
+    //   swapResponse.baseAmount
+    // );
+
+    let paddedamount = swapamount.padStart(32, '0');
+
+    let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
+      .toString(16)
+      .padStart(32, '0');
+    console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
+
+    let userData = userSession.loadUserData();
+
+    let postConditionAddress = stxcontractaddress;
+    if (activeNetwork === mainnet) {
+      postConditionAddress = userData.profile.stxAddress.mainnet;
+    } else {
+      postConditionAddress = userData.profile.stxAddress.testnet;
+    }
+
+    const postConditionCode = FungibleConditionCode.LessEqual;
+    const postConditionAmount = new BN(postconditionamount);
+    // const postConditionAmount = new BigNumber(2000000)
+    // const postConditionAmount = Buffer.from('00000000000000000000000000100000','hex');
+    // const postConditions = [
+    //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+    // ];
+
+    // it was working before - not anymore
+    const postConditions = [
+      createSTXPostCondition(
+        postConditionAddress,
+        postConditionCode,
+        postConditionAmount
+      ),
+    ];
+
+    // const postConditions = [
+    //   makeContractSTXPostCondition(
+    //     postConditionAddress,
+    //     stxcontractname,
+    //     postConditionCode,
+    //     postConditionAmount
+    //   )
+    // ];
+
+    // typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike
+    console.log('postConditions: ', postConditionAddress, postConditions);
+
+    // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
+    const functionArgs = [
+      // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+      // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
+      bufferCV(Buffer.from(paymenthash, 'hex')),
+      uintCV(amountToLock),
+      uintCV(Number(swapResponse.timeoutBlockHeight)),
+      // bufferCV(Buffer.from(paddedamount, 'hex')),
+      // bufferCV(Buffer.from('01', 'hex')),
+      // bufferCV(Buffer.from('01', 'hex')),
+      // bufferCV(Buffer.from(paddedtimelock, 'hex')),
+      standardPrincipalCV(swapResponse.claimAddress),
+    ];
+    // console.log("functionArgs: ", JSON.stringify(functionArgs));
+    // return false;
+    const options = {
+      network: activeNetwork,
+      contractAddress: stxcontractaddress,
+      contractName: stxcontractname,
+      functionName: 'lockStx',
+      functionArgs,
+      appDetails: {
+        name: 'LNSwap',
+        icon: window.location.origin + './favicon.ico',
+      },
+      // authOrigin: "localhost:3888",
+      postConditions,
+      // postConditionMode: PostConditionMode.Allow,
+      onFinish: data => {
+        console.log('Stacks Transaction:', data.stacksTransaction);
+        console.log('Transaction ID:', data.txId);
+        console.log('Raw transaction:', data.txRaw);
+        let explorerTransactionUrl =
+          'https://explorer.stacks.co/txid/' + data.txId;
+        if (activeNetwork === testnet) {
+          explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
+        }
+        this.setState({
+          txId: data.txId,
+          explorerLink: explorerTransactionUrl,
+        });
+        console.log('View transaction in explorer:', explorerTransactionUrl);
+        document.querySelector('a').href = explorerTransactionUrl;
+        document.querySelector('a').style.display = 'block';
+        // this.explorerTransactionUrl = explorerTransactionUrl;
+      },
+    };
+    console.log('options: ', options);
+    await openContractCall(options);
+  };
+
+  lockToken = async (swapInfo, swapResponse) => {
+    console.log('lockToken: ', swapInfo, swapResponse);
+    let stxcontractaddress = swapResponse.address.split('.')[0];
+    let stxcontractname = swapResponse.address.split('.')[1];
+
+    let paymenthash;
+    if (swapInfo.invoice.toLowerCase().slice(0, 2) === 'ln') {
+      var decoded = lightningPayReq.decode(swapInfo.invoice);
+      // console.log("decoded: ", decoded);
+
+      var obj = decoded.tags;
+      for (let index = 0; index < obj.length; index++) {
+        const tag = obj[index];
+        // console.log("tag: ", tag);
+        if (tag.tagName === 'payment_hash') {
+          // console.log("yay: ", tag.data);
+          paymenthash = tag.data;
+        }
+      }
+    } else {
+      paymenthash = swapInfo.preimageHash;
+    }
+    console.log('paymenthash: ', paymenthash);
+
+    let swapamount, postconditionamount, amountToLock;
+    if (swapResponse.expectedAmount === 0) {
+      // atomic swap
+      console.log(
+        'expectedAmount is 0, this is an atomic swap ',
+        swapResponse.expectedAmount,
+        swapResponse.baseAmount
+      );
+      amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
+      swapamount = amountToLock.toString(16).split('.')[0] + '';
+      postconditionamount = Math.ceil(amountToLock);
+    } else {
+      console.log(
+        'expectedAmount is NOT 0, regular swap ',
+        swapResponse.expectedAmount
+      );
+      // need to confirm token decimals!!!
+      // * 1000000
+      console.log(
+        'calc: ',
+        swapResponse.expectedAmount,
+        parseInt(swapResponse.expectedAmount) / 100
+      );
+      amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100);
+      swapamount = amountToLock.toString(16).split('.')[0] + '';
+      // postcondition amount should be in stx not mstx - WRONG!
+      postconditionamount = Math.ceil(amountToLock);
+    }
+    // let postconditionamount =
+    //   parseInt(swapResponse.expectedAmount) / (100 * 1000000);
+    // *1000
+    // 199610455 -> 199 STX
+    console.log(
+      'swapamount, amountToLock,  postconditionamount: ',
+      swapamount,
+      amountToLock,
+      postconditionamount
+    );
+    let paddedamount = swapamount.padStart(32, '0');
+
+    let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
+      .toString(16)
+      .padStart(32, '0');
+    console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
+
+    let userData = userSession.loadUserData();
+
+    let postConditionAddress = stxcontractaddress;
+    if (activeNetwork === mainnet) {
+      postConditionAddress = userData.profile.stxAddress.mainnet;
+    } else {
+      postConditionAddress = userData.profile.stxAddress.testnet;
+    }
+
+    // With a standard principal
+    // const postConditionAddress = postConditionAddress;
+    const postConditionCode = FungibleConditionCode.LessEqual;
+    const postConditionAmount = new BN(postconditionamount);
+
+    // const tokenAddress = Buffer.from(swapResponse.redeemScript, 'hex').toString(
+    //   'utf8'
+    // );
+    const tokenAddress = swapResponse.tokenAddress;
+    console.log('tokenAddress: ', tokenAddress);
+
+    const assetAddress = tokenAddress.split('.')[0];
+    const assetContractName = tokenAddress.split('.')[1];
+    const assetName = assetContractName.split('-')[0];
+    const fungibleAssetInfo = createAssetInfo(
+      assetAddress,
+      assetContractName,
+      assetName
+    );
+
+    const standardFungiblePostCondition = makeStandardFungiblePostCondition(
+      postConditionAddress,
+      postConditionCode,
+      postConditionAmount,
+      fungibleAssetInfo
+    );
+
+    // const postConditionCode = FungibleConditionCode.LessEqual;
+    // const postConditionAmount = new BN(postconditionamount);
+
+    // it was working before - not anymore
+    const postConditions = [
+      // createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+      standardFungiblePostCondition,
+    ];
+
+    // const postConditions = [
+    //   makeContractSTXPostCondition(
+    //     postConditionAddress,
+    //     stxcontractname,
+    //     postConditionCode,
+    //     postConditionAmount
+    //   )
+    // ];
+
+    // typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike
+    console.log('postConditions: ', postConditionAddress, postConditions);
+
+    // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
+    const functionArgs = [
+      // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+      // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
+      bufferCV(Buffer.from(paymenthash, 'hex')),
+      uintCV(amountToLock),
+      uintCV(Number(swapResponse.timeoutBlockHeight)),
+      // bufferCV(Buffer.from(paddedamount, 'hex')),
+      // bufferCV(Buffer.from('01', 'hex')),
+      // bufferCV(Buffer.from('01', 'hex')),
+      // bufferCV(Buffer.from(paddedtimelock, 'hex')),
+      standardPrincipalCV(swapResponse.claimAddress),
+      contractPrincipalCV(assetAddress, assetContractName), // token address + contractname
+    ];
+    // console.log("functionArgs: ", JSON.stringify(functionArgs));
+    // return false;
+    const options = {
+      network: activeNetwork,
+      contractAddress: stxcontractaddress,
+      contractName: stxcontractname,
+      functionName: 'lockToken',
+      functionArgs,
+      appDetails: {
+        name: 'LNSwap',
+        icon: window.location.origin + './favicon.ico',
+      },
+      // authOrigin: "localhost:3888",
+      postConditions,
+      // postConditionMode: PostConditionMode.Allow,
+      onFinish: data => {
+        console.log('Stacks Transaction:', data.stacksTransaction);
+        console.log('Transaction ID:', data.txId);
+        console.log('Raw transaction:', data.txRaw);
+        let explorerTransactionUrl =
+          'https://explorer.stacks.co/txid/' + data.txId;
+        if (activeNetwork === testnet) {
+          explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
+        }
+        this.setState({
+          txId: data.txId,
+          explorerLink: explorerTransactionUrl,
+        });
+        console.log('View transaction in explorer:', explorerTransactionUrl);
+        document.querySelector('a').href = explorerTransactionUrl;
+        document.querySelector('a').style.display = 'block';
+        // this.explorerTransactionUrl = explorerTransactionUrl;
+      },
+    };
+    console.log('options: ', options);
+    await openContractCall(options);
+  };
 
   render() {
     // setAllowZeroConf
@@ -1125,10 +1069,24 @@ class SendTransaction extends React.Component {
     //   swapStatus = 'Send';
     // }
     // ${swapResponse.address}
-    let swapText = `Send ${amountToLock} ${swapInfo.base} to the `;
-    let swapContractLink = `https://explorer.stacks.co/txid/${swapResponse.address}?chain=mainnet`;
+    if (!this.state.swapText.includes('Send')) {
+      this.setState({
+        swapText: `Send ${amountToLock} ${swapInfo.base} to the `,
+      });
+    }
 
-    console.log('swapText ', swapText);
+    if (!this.state.explorerLink.includes(swapResponse.address)) {
+      this.setState({
+        explorerLink: `https://explorer.stacks.co/txid/${swapResponse.address}?chain=mainnet`,
+      });
+    }
+
+    console.log(
+      'this.state.swapText ',
+      this.state.swapText,
+      this.state.explorerLink
+    );
+
     return (
       <View className={classes.wrapper}>
         {/* {swapInfo.base !== 'SOV' ? (
@@ -1150,13 +1108,19 @@ class SendTransaction extends React.Component {
               fullWidth
             >
               {/* fontSize="large" sx={{ fontSize: '5em'}} */}
-              {swapText.includes('Send') ? (
+              {this.state.swapText.includes('Send') ? (
                 <Lock
-                  // color="secondary"
+                  color="secondary"
                   fontSize="large"
                   sx={{ m: 1, fontSize: 36 }}
                 />
-              ) : null}
+              ) : (
+                <LockOpen
+                  color="secondary"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              )}
               {/* {swapText.includes('fail') ||
               swapText.includes('Unable to reach') ? (
                 <Cancel
@@ -1192,9 +1156,11 @@ class SendTransaction extends React.Component {
                 }}
                 // color={this.state.statusColor}
               >
-                {swapText}{' '}
+                {!this.state.txId
+                  ? `Send ${amountToLock} ${swapInfo.base} to the `
+                  : `You sent ${amountToLock} ${swapInfo.base} to the `}
                 <Link
-                  href={swapContractLink}
+                  href={this.state.swapContractLink}
                   underline="none"
                   sx={{ mx: 1 }}
                   target="_blank"
@@ -1242,8 +1208,8 @@ class SendTransaction extends React.Component {
               }
               onClick={() =>
                 swapInfo.base === 'STX'
-                  ? lockStx(swapInfo, swapResponse)
-                  : lockToken(swapInfo, swapResponse)
+                  ? this.lockStx(swapInfo, swapResponse)
+                  : this.lockToken(swapInfo, swapResponse)
               }
               size="large"
             >
