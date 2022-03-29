@@ -103,7 +103,7 @@ const Controls = ({
   console.log('showProgress, ', showProgress);
 
   let buttonText = 'Next';
-  if (loadingText === 'Swap Again!') buttonText = 'Swap Again!';
+  if (text === 'Swap Again!') buttonText = 'Swap Again!';
 
   return (
     <View
