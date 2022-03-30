@@ -22,7 +22,7 @@ import { ContentCopy, Info } from '@mui/icons-material';
 
 const styles = () => ({
   qrwrapper: {
-    flexDirection: 'column',
+    // flexDirection: 'column',
   },
   wrapper: {
     flex: 1,
@@ -57,6 +57,9 @@ const styles = () => ({
   },
   invoiceInfo: {
     paddingRight: '15px',
+    margin: '8px',
+    marginBottom: 0,
+    marginTop: '16px',
   },
   link: {
     '@media (max-width: 425px)': {
@@ -123,7 +126,8 @@ class PayInvoice extends React.Component {
               marginBottom: 0,
             }}
           >
-            Pay the {swapInfo.base} Lightning invoice to start the swap
+            Pay the {swapInfo.base} Lightning invoice
+            {swapResponse.minerFeeInvoice ? 's' : ''} to start the swap
           </Typography>
         </Paper>
 
@@ -190,28 +194,66 @@ class PayInvoice extends React.Component {
 
         {swapResponse.minerFeeInvoice ? (
           <View className={classes.info}>
-            <p className={classes.title}>
-              Pay these 2 {swapInfo.base} Lightning invoices:
-            </p>
+            {/* <p className={classes.title}>
+              Pay these 2 {swapInfo.base} Lightning invoices
+            </p> */}
             <p className={classes.invoiceInfo}>
               First invoice is for the funds that will be used to sponsor your
-              contract call to claim the funds from swap contract. <br />
-              <Input
+              transaction. <br />
+              {/* <Input
                 value={swapResponse.minerFeeInvoice}
                 disabled={true}
                 id="minerfeeinvoice"
-              />{' '}
+              />{' '} */}
               <br />
-              Second one is a{' '}
+              {/* Second one is a{' '}
               <Link
                 text="HOLD invoice"
                 to="https://wiki.ion.radar.tech/tech/research/hodl-invoice"
               />{' '}
               and its preimage was generated in your browser. Which means we
               cannot receive the lightning coins unless your browser claims the
-              onchain funds for you.
+              onchain funds for you. */}
             </p>
-            <Input value={swapResponse.invoice} disabled={true} id="invoice" />
+            <FormControl sx={{ m: 1, mt: 0 }} variant="standard">
+              <OutlinedInput
+                id="standard-adornment-password1"
+                value={swapResponse.minerFeeInvoice}
+                disabled={true}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <CopyToClipboard
+                      text={swapResponse.minerFeeInvoice}
+                      onCopy={() => this.setState({ copied: true })}
+                    >
+                      <IconButton>
+                        <ContentCopy />
+                      </IconButton>
+                    </CopyToClipboard>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+            <FormControl sx={{ m: 1 }} variant="standard">
+              <OutlinedInput
+                id="standard-adornment-password2"
+                value={swapResponse.invoice}
+                disabled={true}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <CopyToClipboard
+                      text={swapResponse.invoice}
+                      onCopy={() => this.setState({ copied: true })}
+                    >
+                      <IconButton>
+                        <ContentCopy />
+                      </IconButton>
+                    </CopyToClipboard>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+            {/* <Input value={swapResponse.invoice} disabled={true} id="invoice" /> */}
           </View>
         ) : (
           <View className={classes.info}>
@@ -249,9 +291,6 @@ class PayInvoice extends React.Component {
 
             {/* width: '25ch' */}
             <FormControl sx={{ m: 1 }} variant="standard">
-              {/* <InputLabel htmlFor="standard-adornment-password">
-                Password
-              </InputLabel> */}
               <OutlinedInput
                 id="standard-adornment-password"
                 value={swapResponse.invoice}

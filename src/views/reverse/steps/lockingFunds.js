@@ -41,6 +41,7 @@ import {
   CheckCircle,
   Info,
   Lock,
+  OpenInNew,
 } from '@mui/icons-material';
 import { Button, Link, Paper, Typography } from '@mui/material';
 
@@ -182,6 +183,7 @@ class LockingFunds extends React.Component {
     this.state = {
       checked: false,
       txId: '',
+      txRaw: '',
       statusText: '',
       explorerLink: '',
     };
@@ -398,6 +400,7 @@ class LockingFunds extends React.Component {
       onFinish: data => {
         console.log('Stacks sign onFinish:', data);
         const serializedTx = data.stacksTransaction.serialize().toString('hex');
+        this.setState({ txRaw: serializedTx });
         // data.txRaw
         setSignedTx(swapResponse.id, serializedTx);
       },
@@ -582,6 +585,7 @@ class LockingFunds extends React.Component {
             // mb: 2,
             display: 'flex',
             width: '100%',
+            alignItems: 'center',
           }}
           fullWidth
         >
@@ -609,7 +613,7 @@ class LockingFunds extends React.Component {
             {swapStatus.includes('Waiting for confirmation') &&
             !this.state.txId ? (
               <>
-                {'Liquidity provider is'}
+                {'LP is'}
                 <Link
                   href={`${getExplorer(swapInfo.quote)}/txid/0x${
                     swapResponse.transactionId
@@ -619,7 +623,7 @@ class LockingFunds extends React.Component {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  locking
+                  locking <OpenInNew sx={{ verticalAlign: 'middle' }} />
                 </Link>
                 {`${swapAmount} ${getCurrencyName(
                   swapInfo.quote
@@ -631,9 +635,10 @@ class LockingFunds extends React.Component {
               ? `This may take up to 10 minutes.`
               : null} */}
             {swapStatus.includes('Transaction confirmed') &&
-            !this.state.txId ? (
+            !this.state.txId &&
+            !swapResponse.txId ? (
               <>
-                Liquidity provider
+                LP
                 <Link
                   href={`${getExplorer(swapInfo.quote)}/txid/0x${
                     swapResponse.transactionId
@@ -643,7 +648,7 @@ class LockingFunds extends React.Component {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  locked
+                  locked <OpenInNew sx={{ verticalAlign: 'middle' }} />
                 </Link>
                 {`${swapAmount} ${getCurrencyName(
                   swapInfo.quote
@@ -651,21 +656,21 @@ class LockingFunds extends React.Component {
               </>
             ) : null}
 
-            {this.state.txId ? (
+            {this.state.txId || swapResponse.txId ? (
               <>
                 You are
                 <Link
-                  href={`${getExplorer(swapInfo.quote)}/txid/0x${
-                    this.state.txId
-                  }`}
+                  href={`${getExplorer(swapInfo.quote)}/txid/0x${this.state
+                    .txId || swapResponse.txId}`}
                   underline="none"
                   sx={{ mx: 1 }}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  claiming
+                  claiming <OpenInNew sx={{ verticalAlign: 'middle' }} />
                 </Link>
-                {swapAmount} {getCurrencyName(swapInfo.quote)}
+                {swapAmount} {getCurrencyName(swapInfo.quote)}. This may take up
+                to 10 minutes.
               </>
             ) : null}
           </Typography>
@@ -716,7 +721,7 @@ class LockingFunds extends React.Component {
               endIcon={<AccountBalanceWallet />}
               sx={{ margin: 'auto' }}
               // ref={this.ref}
-              disabled={this.state.txId}
+              disabled={this.state.txId || this.state.txRaw}
               onClick={() =>
                 swapInfo.quote === 'STX'
                   ? !swapInfo.isSponsored
@@ -778,6 +783,7 @@ LockingFunds.propTypes = {
   setAllowZeroConf: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   swapStatus: PropTypes.string.isRequired,
+  setSignedTx: PropTypes.func,
 };
 
 export default injectSheet(styles)(LockingFunds);

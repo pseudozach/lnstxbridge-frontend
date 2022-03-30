@@ -58,6 +58,7 @@ import {
   Info,
   Lock,
   LockOpen,
+  OpenInNew,
 } from '@mui/icons-material';
 
 let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
@@ -1104,6 +1105,7 @@ class SendTransaction extends React.Component {
                 py: 1,
                 mb: 2,
                 display: 'flex',
+                alignItems: 'center',
               }}
               fullWidth
             >
@@ -1166,7 +1168,7 @@ class SendTransaction extends React.Component {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Swap Contract
+                  Swap Contract <OpenInNew sx={{ verticalAlign: 'middle' }} />
                 </Link>
               </Typography>
             </Paper>
