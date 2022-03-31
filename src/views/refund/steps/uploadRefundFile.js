@@ -7,8 +7,8 @@ import InputArea from '../../../components/inputarea';
 import DropZone from '../../../components/dropzone';
 import FileUpload from '../../../components/fileupload';
 import { lockupTransactionHash, sampleStacksTxId } from '../../../constants';
-import { Upload } from '@mui/icons-material';
-import { IconButton, Input } from '@mui/material';
+import { CheckCircle, Upload } from '@mui/icons-material';
+import { Button, IconButton, Input } from '@mui/material';
 
 const UploadRefundFileStyles = theme => ({
   notfullwidth: {
@@ -46,7 +46,7 @@ const UploadRefundFileStyles = theme => ({
   },
   info: {
     fontSize: '30px',
-    color: '#4A4A4A',
+    // color: '#4A4A4A',
     '@media (max-width: 425px)': {
       fontSize: '18px',
     },
@@ -69,7 +69,12 @@ const StyledUploadRefundFile = ({
 }) => (
   <View className={classes.wrapper}>
     {isUploaded ? (
-      <FaCheckCircle size={240} className={classes.icon} />
+      <CheckCircle
+        size={240}
+        style={{ fontSize: 240 }}
+        className={classes.icon}
+        color="success"
+      />
     ) : (
       <>
         <DropZone className={classes.dropZone} onFileRead={setRefundFile}>
@@ -89,7 +94,16 @@ const StyledUploadRefundFile = ({
               hidden
               sx={{ display: 'none' }}
             />
-            <IconButton
+            <Button
+              variant="contained"
+              color="primary"
+              aria-label="upload picture"
+              component="span"
+              endIcon={<Upload />}
+            >
+              Upload
+            </Button>
+            {/* <IconButton
               color="primary"
               aria-label="upload picture"
               component="span"
@@ -97,7 +111,7 @@ const StyledUploadRefundFile = ({
               variant="outlined"
             >
               <Upload />
-            </IconButton>
+            </IconButton> */}
           </label>
         </DropZone>
         <View className={classes.regular}>
@@ -106,7 +120,7 @@ const StyledUploadRefundFile = ({
             transaction Id
           </p>
           <InputArea
-            height={50}
+            height={100}
             width={400}
             onChange={setRefundFromTx}
             placeholder={`EG: ${sampleStacksTxId}`}
@@ -120,7 +134,7 @@ const StyledUploadRefundFile = ({
           Paste the hash of the lockup transaction
         </p>
         <InputArea
-          height={50}
+          height={100}
           width={400}
           className={classes.notfullwidth}
           onChange={setTransactionHash}

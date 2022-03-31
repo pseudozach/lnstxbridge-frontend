@@ -128,11 +128,14 @@ class StepsWizard extends PureComponent {
 
   render() {
     const { stage } = this.state;
-    const { classes, onExit, range } = this.props;
+    const { classes, onExit, range, refundFile } = this.props;
     console.log('stepwizard stage, range ', stage, range);
     if (range === 3) {
       // refund
       steps = ['Start', 'Upload', 'Connect', 'Refund'];
+    }
+    if (refundFile?.currency === 'STX') {
+      steps = ['Start', 'Upload', 'Refund'];
     }
 
     if (window.location.href.includes('/swap')) {
@@ -236,6 +239,7 @@ StepsWizard.propTypes = {
   stage: PropTypes.number,
   range: PropTypes.number,
   dark: PropTypes.bool,
+  refundFile: PropTypes.func,
 };
 
 export default injectSheet(styles)(StepsWizard);

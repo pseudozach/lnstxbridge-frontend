@@ -80,15 +80,29 @@ const Controls = ({
   loadingStyle,
   loadingRender,
   swapResponse,
+  refundFile,
+  destinationAddress,
 }) => {
   // const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
   // const loadingTextSelect = loadingText ? loadingText : text;
   console.log('loading: ', loadingText, loading, loadingRender);
   console.log('text, errorText: ', text, errorText);
-  console.log('error, errorRender: ', error, errorRender, errorAction);
+  console.log(
+    'error, errorRender, errorAction: ',
+    error,
+    errorRender,
+    errorAction
+  );
   let swapId = '';
-  if (swapResponse && swapResponse.id) swapId = swapResponse.id;
-  console.log('controls swapId, ', swapId, swapResponse);
+  if (swapResponse?.id) swapId = swapResponse.id;
+  if (refundFile?.swapResponse?.id) swapId = refundFile?.swapResponse?.id;
+  console.log(
+    'controls swapId, swapResponse, destinationAddress ',
+    swapId,
+    swapResponse,
+    destinationAddress,
+    destinationAddress?.length
+  );
   let copied = false;
   let showProgress = false;
   if (
@@ -101,13 +115,20 @@ const Controls = ({
   if (loading) showProgress = true;
   if (loadingText && loadingText.includes('Invalid invoice'))
     showProgress = false;
-  // if (loadingText === 'Transaction confirmed') showProgress = false;
+  if (loadingText === 'Upload refund file') showProgress = false;
+  if (refundFile?.currency === 'BTC') showProgress = false;
 
   console.log('showProgress, ', showProgress);
 
   let buttonText = 'Next';
   if (text === 'Swap Again!') buttonText = 'Swap Again';
   if (errorText) buttonText = 'Retry';
+  if (destinationAddress?.length === 64 && refundFile?.currency === 'STX')
+    buttonText = 'Swap Again';
+
+  // if (loading === false && refundFile?.currency === 'STX') {
+  //   showProgress = true;
+  // }
 
   return (
     <View
@@ -207,7 +228,11 @@ const Controls = ({
               // className={classes.greenman}
               // errorText
               disabled={error || errorRender || loading}
-              onClick={() => onPress()}
+              onClick={
+                destinationAddress?.length === 64
+                  ? () => (window.location.href = '/')
+                  : () => onPress()
+              }
             >
               {/* {loading ? loadingTextSelect : text} */}
               {buttonText}
@@ -278,6 +303,8 @@ Controls.propTypes = {
   errorRender: PropTypes.node,
   mobile: PropTypes.bool,
   swapResponse: PropTypes.object,
+  refundFile: PropTypes.object,
+  destinationAddress: PropTypes.object,
 };
 
 export default injectSheet(styles)(Controls);

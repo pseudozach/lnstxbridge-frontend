@@ -37,6 +37,7 @@ import {
   AccountBalanceWallet,
   Lock,
   LockOpen,
+  OpenInNew,
   Report,
 } from '@mui/icons-material';
 
@@ -70,7 +71,7 @@ const InputDestinationAddressStyles = theme => ({
   },
   info: {
     fontSize: '30px',
-    color: '#4A4A4A',
+    // color: '#4A4A4A',
     '@media (max-width: 425px)': {
       fontSize: '18px',
     },
@@ -232,7 +233,9 @@ class InputDestinationAddress extends React.Component {
     let stxcontractname = refundFile.contract.split('.')[1];
 
     let paymenthash;
-    if (refundFile.preimageHash) {
+    if (refundFile.preimageHash?.preimageHash) {
+      paymenthash = refundFile.preimageHash.preimageHash;
+    } else if (refundFile.preimageHash) {
       paymenthash = refundFile.preimageHash;
     } else {
       paymenthash = refundFile.swapInfo.preimageHash;
@@ -319,9 +322,16 @@ class InputDestinationAddress extends React.Component {
         console.log('Stacks Transaction:', data.stacksTransaction);
         console.log('Transaction ID:', data.txId);
         console.log('Raw transaction:', data.txRaw);
-        const explorerTransactionUrl =
-          'https://explorer.stacks.co/txid/' + data.txId + '?chain=';
-        console.log('View transaction in explorer:', explorerTransactionUrl);
+        let explorerTransactionUrl =
+          'https://explorer.stacks.co/txid/' + data.txId;
+        if (activeNetwork === testnet) {
+          explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
+        }
+        console.log('Stacks claim onFinish state before: ', this.state);
+        this.setState({
+          txId: data.txId,
+          explorerLink: explorerTransactionUrl,
+        });
         // dispatch(setRefundTransactionHash(refundTransaction.getId()));
         setDestinationAddress(data.txId);
       },
@@ -460,9 +470,17 @@ class InputDestinationAddress extends React.Component {
         console.log('Stacks Transaction:', data.stacksTransaction);
         console.log('Transaction ID:', data.txId);
         console.log('Raw transaction:', data.txRaw);
-        const explorerTransactionUrl =
-          'https://explorer.stacks.co/txid/' + data.txId + '?chain=';
-        console.log('View transaction in explorer:', explorerTransactionUrl);
+        console.log('Stacks claim onFinish: ', data);
+        let explorerTransactionUrl =
+          'https://explorer.stacks.co/txid/' + data.txId;
+        if (activeNetwork === testnet) {
+          explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
+        }
+        console.log('Stacks claim onFinish state before: ', this.state);
+        this.setState({
+          txId: data.txId,
+          explorerLink: explorerTransactionUrl,
+        });
         // dispatch(setRefundTransactionHash(refundTransaction.getId()));
         setDestinationAddress(data.txId);
       },
@@ -497,7 +515,6 @@ class InputDestinationAddress extends React.Component {
                 alignItems: 'center',
                 width: '100%',
               }}
-              fullWidth
             >
               {/* fontSize="large" sx={{ fontSize: '5em'}} */}
               {currentBlockHeight > 0 &&
@@ -529,9 +546,9 @@ class InputDestinationAddress extends React.Component {
               >
                 {currentBlockHeight > 0 &&
                 refundFile.timeoutBlockHeight > currentBlockHeight
-                  ? `Refund blockheight not reached yet Please wait ~
-                ${(refundFile.timeoutBlockHeight - currentBlockHeight) *
-                  10} more
+                  ? `Refund blockheight not reached yet Please try again in ~${(refundFile.timeoutBlockHeight -
+                      currentBlockHeight) *
+                      10} 
                 minutes.`
                   : // Current Stacks blockheight: {currentBlockHeight} <br />
                     // Refund timeout blockheight: {refundFile.timeoutBlockHeight}
@@ -541,7 +558,16 @@ class InputDestinationAddress extends React.Component {
                     // Please wait ~
                     // {(refundFile.timeoutBlockHeight - currentBlockHeight) * 10} more
                     // minutes.
-                    `Ready to refund`}
+                    null}
+                {!(
+                  currentBlockHeight > 0 &&
+                  refundFile.timeoutBlockHeight > currentBlockHeight
+                ) && !this.state.txId
+                  ? `Ready to refund ${refundFile.swapResponse?.baseAmount} ${currency}`
+                  : null}
+                {this.state.txId
+                  ? `Refunding ${refundFile.swapResponse?.baseAmount} ${currency}. You can close this window.`
+                  : null}
                 {/* {!this.state.txId && !swapStatus?.transaction?.id
                 ? `Send ${amountToLock} ${swapInfo.base}`
                 : null}
@@ -636,15 +662,19 @@ class InputDestinationAddress extends React.Component {
               endIcon={<AccountBalanceWallet />}
               sx={{ margin: 'auto' }}
               // ref={this.ref}
-              // disabled={this.state.txId}
+              disabled={
+                this.state.txId ||
+                (currentBlockHeight > 0 &&
+                  refundFile.timeoutBlockHeight > currentBlockHeight)
+              }
               onClick={() =>
                 currency === 'STX'
-                  ? refundStx(
+                  ? this.refundStx(
                       refundFile,
                       setRefundTransactionHash,
                       setDestinationAddress
                     )
-                  : refundToken(
+                  : this.refundToken(
                       refundFile,
                       setRefundTransactionHash,
                       setDestinationAddress
@@ -661,17 +691,17 @@ class InputDestinationAddress extends React.Component {
         {currency === 'BTC' ? (
           <View className={classes.wrapper}>
             {bitcoinBlockHeight > 0 &&
-            refundFile.swapResponse.origBlockHeight > bitcoinBlockHeight ? (
+            refundFile.swapResponse?.origBlockHeight > bitcoinBlockHeight ? (
               <p className={classes.infosm}>
                 Warning: You can't refund your coins yet! <br />
                 Current Bitcoin blockheight: {bitcoinBlockHeight} <br />
                 Refund timeout blockheight:{' '}
-                {refundFile.swapResponse.origBlockHeight}
+                {refundFile.swapResponse?.origBlockHeight}
                 {'\n'}
                 <br />* Refund will fail until chain reaches refund timeout
                 blockheight. <br />
                 Please wait ~
-                {(refundFile.swapResponse.origBlockHeight -
+                {(refundFile.swapResponse?.origBlockHeight -
                   bitcoinBlockHeight) *
                   10}{' '}
                 more minutes.
@@ -692,6 +722,21 @@ class InputDestinationAddress extends React.Component {
             />
           </View>
         ) : null}
+
+        {this.state.explorerLink && (
+          <Button
+            href={this.state.explorerLink}
+            // underline="none"
+            sx={{ m: 1, color: 'white', display: 'flex !important', mt: 3 }}
+            target="_blank"
+            rel="noreferrer"
+            variant="outlined"
+            endIcon={<OpenInNew sx={{ verticalAlign: 'middle' }} />}
+            fullWidth
+          >
+            View on Explorer
+          </Button>
+        )}
       </View>
     );
   }
@@ -705,7 +750,7 @@ InputDestinationAddress.propTypes = {
   currency: PropTypes.string.isRequired,
   setDestinationAddress: PropTypes.func.isRequired,
   refundFile: PropTypes.object.isRequired,
-  setRefundTransactionHash: PropTypes.func.isRequired,
+  setRefundTransactionHash: PropTypes.func,
 };
 
 // const InputDestinationAddress = injectSheet(InputDestinationAddressStyles)(

@@ -173,6 +173,9 @@ class StyledDownloadRefund extends React.Component {
             privateKey,
             redeemScript,
             timeoutBlockHeight,
+            paymenthash,
+            parseInt(swapResponse.expectedAmount / 100),
+            contract,
             swapInfo,
             swapResponse
           )}

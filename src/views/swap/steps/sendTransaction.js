@@ -796,6 +796,7 @@ class SendTransaction extends React.Component {
         if (activeNetwork === testnet) {
           explorerTransactionUrl = explorerTransactionUrl + '?chain=testnet';
         }
+        console.log('Stacks claim onFinish state before: ', this.state);
         this.setState({
           txId: data.txId,
           explorerLink: explorerTransactionUrl,
@@ -1082,15 +1083,21 @@ class SendTransaction extends React.Component {
                   ? ` to ${swapResponse.address}`
                   : null}
                 {this.state.txId && !swapStatus?.transaction?.id
-                  ? `Waiting confirmation of the ${amountToLock} ${swapInfo.base} sent`
+                  ? `Pending confirmation of the ${amountToLock} ${swapInfo.base} sent`
                   : null}
                 {swapStatus?.transaction?.id &&
                 swapStatus?.message?.includes('asmempool')
-                  ? `Waiting confirmation of the ${swapResponse.quoteAmount} ${swapInfo.quote} provider sent`
+                  ? `Pending confirmation of the ${swapResponse.quoteAmount} ${swapInfo.quote} provider sent`
                   : null}
                 {swapStatus?.transaction?.id &&
-                swapStatus?.message?.includes('Atomic Swap is ready')
+                swapStatus?.message?.includes('Atomic Swap is ready') &&
+                !this.state.txId
                   ? `Funds are ready to claim ${swapResponse.quoteAmount} ${swapInfo.quote}`
+                  : null}
+                {swapStatus?.transaction?.id &&
+                swapStatus?.message?.includes('Atomic Swap is ready') &&
+                this.state.txId
+                  ? `Claiming funds ${swapResponse.quoteAmount} ${swapInfo.quote}`
                   : null}
                 {/* <Link
                   href={this.state.explorerLink}
@@ -1245,7 +1252,9 @@ class SendTransaction extends React.Component {
               //   (swapStatus.transaction && swapStatus.transaction.hex) ||
               //   this.state.txId
               // }
-              onClick={() => claimSwap(swapInfo, swapResponse, swapStatus)}
+              onClick={() => {
+                claimSwap(swapInfo, swapResponse, swapStatus);
+              }}
               size="large"
             >
               Claim {swapInfo.quote}

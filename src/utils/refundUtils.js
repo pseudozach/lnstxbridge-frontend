@@ -9,7 +9,7 @@ export const createRefundQr = (
   amount,
   contract,
   swapInfo,
-  swapResponse,
+  swapResponse
 ) => {
   // console.log("createrefundqr: ", preimageHash, amount)
   const jsonData = JSON.stringify({
