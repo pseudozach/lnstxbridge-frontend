@@ -6,7 +6,7 @@ import { stacksNetworkType } from '../../../constants';
 import InputArea from '../../../components/inputarea';
 import { getCurrencyName, getSampleAddress } from '../../../utils';
 
-import { Button as SButton, Box } from '@stacks/ui'
+import { Button as SButton, Box } from '@stacks/ui';
 import { MdFileDownload } from 'react-icons/md';
 
 // import lightningPayReq from 'bolt11';
@@ -32,6 +32,13 @@ import axios from 'axios';
 
 import bigInt from 'big-integer';
 import { BN } from 'bn.js';
+import { Button, Paper, Typography } from '@mui/material';
+import {
+  AccountBalanceWallet,
+  Lock,
+  LockOpen,
+  Report,
+} from '@mui/icons-material';
 
 let mocknet = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 // mocknet.coreApiUrl = 'http://localhost:3999';
@@ -40,16 +47,15 @@ const mainnet = new StacksMainnet();
 let activeNetwork = mocknet;
 
 let apiUrl = process.env.REACT_APP_STACKS_API;
-if(stacksNetworkType==="mocknet"){
-  activeNetwork = mocknet
-} else if(stacksNetworkType==="testnet"){
-  activeNetwork = testnet
-  apiUrl = 'https://stacks-node-api.testnet.stacks.co'
-} else if(stacksNetworkType==="mainnet"){
-  activeNetwork = mainnet
-  apiUrl = 'https://stacks-node-api.mainnet.stacks.co'
+if (stacksNetworkType === 'mocknet') {
+  activeNetwork = mocknet;
+} else if (stacksNetworkType === 'testnet') {
+  activeNetwork = testnet;
+  apiUrl = 'https://stacks-node-api.testnet.stacks.co';
+} else if (stacksNetworkType === 'mainnet') {
+  activeNetwork = mainnet;
+  apiUrl = 'https://stacks-node-api.mainnet.stacks.co';
 }
-
 
 const InputDestinationAddressStyles = theme => ({
   wrapper: {
@@ -58,8 +64,9 @@ const InputDestinationAddressStyles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: '1vh',
+    width: '100%',
     // backgroundColor: theme.colors.aeroBlue,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
   },
   info: {
     fontSize: '30px',
@@ -84,15 +91,19 @@ const InputDestinationAddressStyles = theme => ({
 
 let currentBlockHeight = 0;
 let bitcoinBlockHeight = 0;
-async function getBlockHeight(){
+async function getBlockHeight() {
   try {
     const response = await axios.get(`${apiUrl}/v2/info`);
     if (response.data && response.data.stacks_tip_height) {
       currentBlockHeight = response.data.stacks_tip_height;
       bitcoinBlockHeight = response.data.burn_block_height;
-      console.log('got currentBlockHeight, bitcoinBlockHeight ', currentBlockHeight, bitcoinBlockHeight);
+      console.log(
+        'got currentBlockHeight, bitcoinBlockHeight ',
+        currentBlockHeight,
+        bitcoinBlockHeight
+      );
     }
-  } catch(error) {
+  } catch (error) {
     console.log('failed to get current blockheight');
     return currentBlockHeight;
   }
@@ -100,230 +111,6 @@ async function getBlockHeight(){
 }
 getBlockHeight();
 // console.log('got currentBlockHeight: ', currentBlockHeight);
-
-async function refundStx (refundFile, setRefundTransactionHash, setDestinationAddress) {
-  // console.log("enter refundstx action");
-//   amount: 2002777
-// currency: "STX"
-// preimageHash: "aa3ce25175bfcecd49e303177c8214feda7907821348883d4251a6446c8c43b9"
-// privateKey: "b0e08e2eeea8f1c9a165ed10d5f3455acb6de50a1c6549664666ed5744656f69"
-// timeoutBlockHeight: 19862
-// contract: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3_debug"
-  console.log("refundStx: ", refundFile, setRefundTransactionHash, setDestinationAddress);
-
-  let stxcontractaddress = refundFile.contract.split(".")[0];
-  let stxcontractname = refundFile.contract.split(".")[1];
-
-  let paymenthash;
-  if(refundFile.preimageHash) {
-    paymenthash = refundFile.preimageHash;
-  } else {
-    paymenthash = refundFile.swapInfo.preimageHash;
-  }
-
-  // amount no longer needed for refund!
-  // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
-  let swapamount, postconditionamount;
-  if(refundFile.amount) {
-    swapamount = refundFile.amount.toString(16).split(".")[0] + "";
-    postconditionamount = Math.ceil(parseInt(refundFile.amount));
-  } else {
-    swapamount = (refundFile.swapResponse.baseAmount*1000000).toString(16).split(".")[0] + "";
-    postconditionamount = Math.ceil(parseInt(refundFile.swapResponse.baseAmount*1000000));
-  }
-  
-  // let postconditionamount = refundFile.amount + 100000
-
-  // 199610455 -> 199 STX
-  console.log("swapamount, postconditionamount: ", swapamount, postconditionamount);
-  let paddedamount = swapamount.padStart(32, "0");
-
-  let paddedtimelock = Number(refundFile.timeoutBlockHeight).toString(16).padStart(32, "0");
-  console.log("paddedamount, paddedtimelock: ", paddedamount, paddedtimelock);
-
-  const postConditionAddress = stxcontractaddress;
-  const postConditionCode = FungibleConditionCode.LessEqual;
-  const postConditionAmount = new BN(postconditionamount);
-  // const postConditions = [
-  //   createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
-  // ];
-  const postConditions = [
-    makeContractSTXPostCondition(
-      postConditionAddress,
-      stxcontractname,
-      postConditionCode,
-      postConditionAmount
-    )
-  ];
-
-  console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
-
-    // (claimStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
-  const functionArgs = [
-    // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
-    // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
-    bufferCV(Buffer.from(paymenthash, 'hex')),
-    // bufferCV(Buffer.from(paddedamount,'hex')),
-    // bufferCV(Buffer.from('01','hex')),
-    // bufferCV(Buffer.from('01','hex')),
-    // bufferCV(Buffer.from(paddedtimelock,'hex')),
-  ];
-  console.log("functionArgs: ", JSON.stringify(functionArgs));
-  // return false;
-  const options = {
-    network: activeNetwork,
-    contractAddress: stxcontractaddress,
-    contractName: stxcontractname,
-    functionName: 'refundStx',
-    functionArgs,
-    appDetails: {
-      name: 'lnswap',
-      icon: window.location.origin + './favicon.ico',
-    },
-    // authOrigin: "localhost:3888",
-    postConditions,
-    onFinish: data => {
-      console.log('Stacks Transaction:', data.stacksTransaction);
-      console.log('Transaction ID:', data.txId);
-      console.log('Raw transaction:', data.txRaw);
-      const explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=';
-      console.log('View transaction in explorer:', explorerTransactionUrl);
-      // dispatch(setRefundTransactionHash(refundTransaction.getId()));
-      setDestinationAddress(data.txId);
-    },
-  };
-  console.log("options: ", options);
-  await openContractCall(options);
-}
-
-async function refundToken (refundFile, setRefundTransactionHash, setDestinationAddress) {
-  // console.log("enter refundstx action");
-//   amount: 2002777
-// currency: "STX"
-// preimageHash: "aa3ce25175bfcecd49e303177c8214feda7907821348883d4251a6446c8c43b9"
-// privateKey: "b0e08e2eeea8f1c9a165ed10d5f3455acb6de50a1c6549664666ed5744656f69"
-// timeoutBlockHeight: 19862
-// contract: "STR187KT73T0A8M0DEWDX06TJR2B8WM0WP9VGZY3.stxswap_v3_debug"
-  console.log("refundToken: ", refundFile, setRefundTransactionHash, setDestinationAddress);
-
-  let stxcontractaddress = refundFile.contract.split(".")[0];
-  let stxcontractname = refundFile.contract.split(".")[1];
-
-  let paymenthash;
-  if(refundFile.preimageHash) {
-    paymenthash = refundFile.preimageHash;
-  } else {
-    paymenthash = refundFile.swapInfo.preimageHash;
-  }
-
-  // old way
-  // // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
-  // let swapamount = refundFile.amount.toString(16).split(".")[0] + "";
-  // // let postconditionamount = refundFile.amount + 100000
-  // let postconditionamount = Math.ceil(parseInt(refundFile.amount));
-  // // 199610455 -> 199 STX
-
-  // new way
-  let swapamount, postconditionamount;
-  if(refundFile.amount) {
-    swapamount = refundFile.amount.toString(16).split(".")[0] + "";
-    postconditionamount = Math.ceil(parseInt(refundFile.amount));
-  } else {
-    swapamount = (refundFile.swapResponse.baseAmount*1000000).toString(16).split(".")[0] + "";
-    postconditionamount = Math.ceil(parseInt(refundFile.swapResponse.baseAmount*1000000));
-  }
-
-  console.log("swapamount, postconditionamount: ", swapamount, postconditionamount);
-  let paddedamount = swapamount.padStart(32, "0");
-
-  let paddedtimelock = Number(refundFile.timeoutBlockHeight).toString(16).padStart(32, "0");
-  console.log("paddedamount, paddedtimelock: ", paddedamount, paddedtimelock);
-
-  const postConditionAddress = stxcontractaddress;
-  const postConditionCode = FungibleConditionCode.LessEqual;
-  const postConditionAmount = new BN(postconditionamount);
-  // const postConditions = [
-  //   createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
-  // ];
-
-  let tokenAddress;
-  if(refundFile.redeemScript.includes(".")){
-    tokenAddress = Buffer.from(refundFile.redeemScript, 'hex').toString('utf8');
-  } else {
-    tokenAddress = refundFile.swapResponse.tokenAddress;
-  }
-  console.log('refundFile tokenAddress: ', tokenAddress);
-
-  const assetAddress = tokenAddress.split('.')[0];
-  const assetContractName = tokenAddress.split('.')[1];
-  const assetName = assetContractName.split('-')[0];
-  const fungibleAssetInfo = createAssetInfo(
-    assetAddress,
-    assetContractName,
-    assetName
-  );
-
-  const standardFungiblePostCondition = makeContractFungiblePostCondition(
-    postConditionAddress,
-    stxcontractname,
-    postConditionCode,
-    postConditionAmount,
-    fungibleAssetInfo
-  );
-  const postConditions = [
-    // createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
-    standardFungiblePostCondition,
-  ];
-  
-  // const postConditions = [
-  //   makeContractSTXPostCondition(
-  //     postConditionAddress,
-  //     stxcontractname,
-  //     postConditionCode,
-  //     postConditionAmount
-  //   )
-  // ];
-
-  console.log("postConditions: ", postConditions, typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike);
-
-    // (refundToken (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)) (tokenPrincipal <ft-trait>))
-  const functionArgs = [
-    // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
-    // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
-    bufferCV(Buffer.from(paymenthash, 'hex')),
-    // bufferCV(Buffer.from(paddedamount,'hex')),
-    // bufferCV(Buffer.from('01','hex')),
-    // bufferCV(Buffer.from('01','hex')),
-    // bufferCV(Buffer.from(paddedtimelock,'hex')),
-    contractPrincipalCV(assetAddress, assetContractName),
-  ];
-  console.log("functionArgs: ", JSON.stringify(functionArgs));
-  // return false;
-  const options = {
-    network: activeNetwork,
-    contractAddress: stxcontractaddress,
-    contractName: stxcontractname,
-    functionName: 'refundToken',
-    functionArgs,
-    appDetails: {
-      name: 'lnswap',
-      icon: window.location.origin + './favicon.ico',
-    },
-    // authOrigin: "localhost:3888",
-    postConditions,
-    onFinish: data => {
-      console.log('Stacks Transaction:', data.stacksTransaction);
-      console.log('Transaction ID:', data.txId);
-      console.log('Raw transaction:', data.txRaw);
-      const explorerTransactionUrl = 'https://explorer.stacks.co/txid/'+data.txId+'?chain=';
-      console.log('View transaction in explorer:', explorerTransactionUrl);
-      // dispatch(setRefundTransactionHash(refundTransaction.getId()));
-      setDestinationAddress(data.txId);
-    },
-  };
-  console.log("options: ", options);
-  await openContractCall(options);
-}
 
 function makeContractSTXPostCondition(
   address,
@@ -340,14 +127,14 @@ function makeContractSTXPostCondition(
 
 function createSTXPostCondition(principal, conditionCode, amount) {
   if (typeof principal === 'string') {
-      principal = parsePrincipalString(principal);
+    principal = parsePrincipalString(principal);
   }
   return {
-      type: StacksMessageType.PostCondition,
-      conditionType: PostConditionType.STX,
-      principal,
-      conditionCode,
-      amount: intToBN(amount, false),
+    type: StacksMessageType.PostCondition,
+    conditionType: PostConditionType.STX,
+    principal,
+    conditionCode,
+    amount: intToBN(amount, false),
   };
 }
 // function intToBytes(value, signed, byteLength) {
@@ -359,140 +146,574 @@ function intToBN(value, signed) {
 }
 function intToBigInt(value, signed) {
   if (typeof value === 'number') {
-      if (!Number.isInteger(value)) {
-          throw new RangeError(`Invalid value. Values of type 'number' must be an integer.`);
-      }
-      // console.log("156")
-      // return 157;
-      return bigInt(value);
+    if (!Number.isInteger(value)) {
+      throw new RangeError(
+        `Invalid value. Values of type 'number' must be an integer.`
+      );
+    }
+    // console.log("156")
+    // return 157;
+    return bigInt(value);
   }
   if (typeof value === 'string') {
-      if (value.toLowerCase().startsWith('0x')) {
-          let hex = value.slice(2);
-          hex = hex.padStart(hex.length + (hex.length % 2), '0');
-          value = Buffer.from(hex, 'hex');
+    if (value.toLowerCase().startsWith('0x')) {
+      let hex = value.slice(2);
+      hex = hex.padStart(hex.length + (hex.length % 2), '0');
+      value = Buffer.from(hex, 'hex');
+    } else {
+      try {
+        // return 168;
+        return bigInt(value);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          throw new RangeError(
+            `Invalid value. String integer '${value}' is not finite.`
+          );
+        }
       }
-      else {
-          try {
-            // return 168;
-              return bigInt(value);
-          }
-          catch (error) {
-              if (error instanceof SyntaxError) {
-                  throw new RangeError(`Invalid value. String integer '${value}' is not finite.`);
-              }
-          }
-      }
+    }
   }
   if (typeof value === 'bigint') {
-      return value;
+    return value;
   }
   if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
-      if (signed) {
-          const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
-          // return 184;
-          return bigInt(bn.toString());
-      }
-      else {
-          // return 188;
-          return bigInt(new BN(value, 'be').toString());
-      }
+    if (signed) {
+      const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
+      // return 184;
+      return bigInt(bn.toString());
+    } else {
+      // return 188;
+      return bigInt(new BN(value, 'be').toString());
+    }
   }
   if (value instanceof BN || BN.isBN(value)) {
-      // return 193;
-      return bigInt(value.toString());
+    // return 193;
+    return bigInt(value.toString());
   }
-  throw new TypeError(`Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`);
+  throw new TypeError(
+    `Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`
+  );
 }
 
-const StyledInputDestinationAddress = ({
-  classes,
-  setDestinationAddress,
-  currency,
-  refundFile,
-  setRefundTransactionHash,
-}) => (
-  <View className={classes.wrapper}>
-    {currency !== 'BTC' ? <View className={classes.wrapper}>
-        {((currentBlockHeight > 0) && (refundFile.timeoutBlockHeight > currentBlockHeight)) ? (<p className={classes.infosm}>
-        Warning: You can't refund your coins yet! <br/>
-        Current Stacks blockheight: {currentBlockHeight} <br/>
-        Refund timeout blockheight: {refundFile.timeoutBlockHeight}{'\n'}<br/>
-        * Refund will fail until chain reaches refund timeout blockheight. <br/>
-        Please wait ~{(refundFile.timeoutBlockHeight - currentBlockHeight)*10} more minutes.
-      </p>) : null}
-      <p className={classes.info}>
-      {/* {getCurrencyName(currency)} */}
-        Click to trigger Refund
-        {/* Use same account you used for locking the STX */}
-      </p>
+// const StyledInputDestinationAddress = ({
+//   classes,
+//   setDestinationAddress,
+//   currency,
+//   refundFile,
+//   setRefundTransactionHash,
+// }) => (
 
-      <SButton
-        size="large"
-        pl="base-tight"
-        pr={'base'}
-        py="tight"
-        fontSize={2}
-        mode="primary"
-        position="relative"
-        className={classes.sbuttoncl}
-        // ref={ref}
-        onClick={() => currency === 'STX'
-          ? refundStx(refundFile, setRefundTransactionHash, setDestinationAddress)
-          : refundToken(refundFile, setRefundTransactionHash, setDestinationAddress)
-        }
-        // onClick={refundStx}
-        borderRadius="10px"
-        // {...rest}
+class InputDestinationAddress extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      checked: false,
+      txId: '',
+      swapText: '',
+      explorerLink: '',
+      // swapText: '',
+    };
+  }
+
+  refundStx = async (
+    refundFile,
+    setRefundTransactionHash,
+    setDestinationAddress
+  ) => {
+    console.log(
+      'refundStx: ',
+      refundFile,
+      setRefundTransactionHash,
+      setDestinationAddress
+    );
+
+    let stxcontractaddress = refundFile.contract.split('.')[0];
+    let stxcontractname = refundFile.contract.split('.')[1];
+
+    let paymenthash;
+    if (refundFile.preimageHash) {
+      paymenthash = refundFile.preimageHash;
+    } else {
+      paymenthash = refundFile.swapInfo.preimageHash;
+    }
+
+    // amount no longer needed for refund!
+    // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
+    let swapamount, postconditionamount;
+    if (refundFile.amount) {
+      swapamount = refundFile.amount.toString(16).split('.')[0] + '';
+      postconditionamount = Math.ceil(parseInt(refundFile.amount));
+    } else {
+      swapamount =
+        (refundFile.swapResponse.baseAmount * 1000000)
+          .toString(16)
+          .split('.')[0] + '';
+      postconditionamount = Math.ceil(
+        parseInt(refundFile.swapResponse.baseAmount * 1000000)
+      );
+    }
+
+    // let postconditionamount = refundFile.amount + 100000
+
+    // 199610455 -> 199 STX
+    console.log(
+      'swapamount, postconditionamount: ',
+      swapamount,
+      postconditionamount
+    );
+    let paddedamount = swapamount.padStart(32, '0');
+
+    let paddedtimelock = Number(refundFile.timeoutBlockHeight)
+      .toString(16)
+      .padStart(32, '0');
+    console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
+
+    const postConditionAddress = stxcontractaddress;
+    const postConditionCode = FungibleConditionCode.LessEqual;
+    const postConditionAmount = new BN(postconditionamount);
+    // const postConditions = [
+    //   createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+    // ];
+    const postConditions = [
+      makeContractSTXPostCondition(
+        postConditionAddress,
+        stxcontractname,
+        postConditionCode,
+        postConditionAmount
+      ),
+    ];
+
+    console.log(
+      'postConditions: ',
+      postConditions,
+      typeof postConditions[0].amount,
+      postConditions[0].amount.toArrayLike
+    );
+
+    // (claimStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
+    const functionArgs = [
+      // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+      // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
+      bufferCV(Buffer.from(paymenthash, 'hex')),
+      // bufferCV(Buffer.from(paddedamount,'hex')),
+      // bufferCV(Buffer.from('01','hex')),
+      // bufferCV(Buffer.from('01','hex')),
+      // bufferCV(Buffer.from(paddedtimelock,'hex')),
+    ];
+    console.log('functionArgs: ', JSON.stringify(functionArgs));
+    // return false;
+    const options = {
+      network: activeNetwork,
+      contractAddress: stxcontractaddress,
+      contractName: stxcontractname,
+      functionName: 'refundStx',
+      functionArgs,
+      appDetails: {
+        name: 'lnswap',
+        icon: window.location.origin + './favicon.ico',
+      },
+      // authOrigin: "localhost:3888",
+      postConditions,
+      onFinish: data => {
+        console.log('Stacks Transaction:', data.stacksTransaction);
+        console.log('Transaction ID:', data.txId);
+        console.log('Raw transaction:', data.txRaw);
+        const explorerTransactionUrl =
+          'https://explorer.stacks.co/txid/' + data.txId + '?chain=';
+        console.log('View transaction in explorer:', explorerTransactionUrl);
+        // dispatch(setRefundTransactionHash(refundTransaction.getId()));
+        setDestinationAddress(data.txId);
+      },
+    };
+    console.log('options: ', options);
+    await openContractCall(options);
+  };
+
+  refundToken = async (
+    refundFile,
+    setRefundTransactionHash,
+    setDestinationAddress
+  ) => {
+    console.log(
+      'refundToken: ',
+      refundFile,
+      setRefundTransactionHash,
+      setDestinationAddress
+    );
+
+    let stxcontractaddress = refundFile.contract.split('.')[0];
+    let stxcontractname = refundFile.contract.split('.')[1];
+
+    let paymenthash;
+    if (refundFile.preimageHash) {
+      paymenthash = refundFile.preimageHash;
+    } else {
+      paymenthash = refundFile.swapInfo.preimageHash;
+    }
+
+    // old way
+    // // console.log("calc: ", swapResponse.expectedAmount, (parseInt(swapResponse.expectedAmount) / 100))
+    // let swapamount = refundFile.amount.toString(16).split(".")[0] + "";
+    // // let postconditionamount = refundFile.amount + 100000
+    // let postconditionamount = Math.ceil(parseInt(refundFile.amount));
+    // // 199610455 -> 199 STX
+
+    // new way
+    let swapamount, postconditionamount;
+    if (refundFile.amount) {
+      swapamount = refundFile.amount.toString(16).split('.')[0] + '';
+      postconditionamount = Math.ceil(parseInt(refundFile.amount));
+    } else {
+      swapamount =
+        (refundFile.swapResponse.baseAmount * 1000000)
+          .toString(16)
+          .split('.')[0] + '';
+      postconditionamount = Math.ceil(
+        parseInt(refundFile.swapResponse.baseAmount * 1000000)
+      );
+    }
+
+    console.log(
+      'swapamount, postconditionamount: ',
+      swapamount,
+      postconditionamount
+    );
+    let paddedamount = swapamount.padStart(32, '0');
+
+    let paddedtimelock = Number(refundFile.timeoutBlockHeight)
+      .toString(16)
+      .padStart(32, '0');
+    console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
+
+    const postConditionAddress = stxcontractaddress;
+    const postConditionCode = FungibleConditionCode.LessEqual;
+    const postConditionAmount = new BN(postconditionamount);
+    // const postConditions = [
+    //   createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+    // ];
+
+    let tokenAddress;
+    if (refundFile.redeemScript.includes('.')) {
+      tokenAddress = Buffer.from(refundFile.redeemScript, 'hex').toString(
+        'utf8'
+      );
+    } else {
+      tokenAddress = refundFile.swapResponse.tokenAddress;
+    }
+    console.log('refundFile tokenAddress: ', tokenAddress);
+
+    const assetAddress = tokenAddress.split('.')[0];
+    const assetContractName = tokenAddress.split('.')[1];
+    const assetName = assetContractName.split('-')[0];
+    const fungibleAssetInfo = createAssetInfo(
+      assetAddress,
+      assetContractName,
+      assetName
+    );
+
+    const standardFungiblePostCondition = makeContractFungiblePostCondition(
+      postConditionAddress,
+      stxcontractname,
+      postConditionCode,
+      postConditionAmount,
+      fungibleAssetInfo
+    );
+    const postConditions = [
+      // createSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
+      standardFungiblePostCondition,
+    ];
+
+    console.log(
+      'postConditions: ',
+      postConditions,
+      typeof postConditions[0].amount,
+      postConditions[0].amount.toArrayLike
+    );
+
+    // (refundToken (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)) (tokenPrincipal <ft-trait>))
+    const functionArgs = [
+      // bufferCV(Buffer.from('4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a', 'hex')),
+      // paymenthash:          a518e5782da3d6d58d9d3494448fc3a5f42d4704942e4e3154c7b36fc163a0e9
+      bufferCV(Buffer.from(paymenthash, 'hex')),
+      // bufferCV(Buffer.from(paddedamount,'hex')),
+      // bufferCV(Buffer.from('01','hex')),
+      // bufferCV(Buffer.from('01','hex')),
+      // bufferCV(Buffer.from(paddedtimelock,'hex')),
+      contractPrincipalCV(assetAddress, assetContractName),
+    ];
+    console.log('functionArgs: ', JSON.stringify(functionArgs));
+    // return false;
+    const options = {
+      network: activeNetwork,
+      contractAddress: stxcontractaddress,
+      contractName: stxcontractname,
+      functionName: 'refundToken',
+      functionArgs,
+      appDetails: {
+        name: 'lnswap',
+        icon: window.location.origin + './favicon.ico',
+      },
+      // authOrigin: "localhost:3888",
+      postConditions,
+      onFinish: data => {
+        console.log('Stacks Transaction:', data.stacksTransaction);
+        console.log('Transaction ID:', data.txId);
+        console.log('Raw transaction:', data.txRaw);
+        const explorerTransactionUrl =
+          'https://explorer.stacks.co/txid/' + data.txId + '?chain=';
+        console.log('View transaction in explorer:', explorerTransactionUrl);
+        // dispatch(setRefundTransactionHash(refundTransaction.getId()));
+        setDestinationAddress(data.txId);
+      },
+    };
+    console.log('options: ', options);
+    await openContractCall(options);
+  };
+
+  render() {
+    // setAllowZeroConf
+    const {
+      classes,
+      setDestinationAddress,
+      currency,
+      refundFile,
+      setRefundTransactionHash,
+    } = this.props;
+
+    return (
+      <View className={classes.wrapper}>
+        {currency !== 'BTC' ? (
+          <View className={classes.wrapper}>
+            {/* {swapInfo ? ( */}
+            <Paper
+              variant="outlined"
+              sx={{
+                // backgroundColor: '#f8f4fc',
+                m: 1,
+                py: 1,
+                mb: 2,
+                display: 'flex',
+                alignItems: 'center',
+                width: '100%',
+              }}
+              fullWidth
+            >
+              {/* fontSize="large" sx={{ fontSize: '5em'}} */}
+              {currentBlockHeight > 0 &&
+              refundFile.timeoutBlockHeight > currentBlockHeight ? (
+                <Report
+                  color="error"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              ) : (
+                <Lock
+                  color="secondary"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              )}
+              <Typography
+                variant="body1"
+                gutterBottom
+                component="div"
+                sx={{
+                  mx: 'auto',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: 0,
+                }}
+                // color={this.state.statusColor}
+              >
+                {currentBlockHeight > 0 &&
+                refundFile.timeoutBlockHeight > currentBlockHeight
+                  ? `Refund blockheight not reached yet Please wait ~
+                ${(refundFile.timeoutBlockHeight - currentBlockHeight) *
+                  10} more
+                minutes.`
+                  : // Current Stacks blockheight: {currentBlockHeight} <br />
+                    // Refund timeout blockheight: {refundFile.timeoutBlockHeight}
+                    // {'\n'}
+                    // <br />* Refund will fail until chain reaches refund timeout
+                    // blockheight. <br />
+                    // Please wait ~
+                    // {(refundFile.timeoutBlockHeight - currentBlockHeight) * 10} more
+                    // minutes.
+                    `Ready to refund`}
+                {/* {!this.state.txId && !swapStatus?.transaction?.id
+                ? `Send ${amountToLock} ${swapInfo.base}`
+                : null}
+              {swapResponse.bip21 &&
+              swapResponse.address &&
+              swapStatus.message?.includes('Waiting')
+                ? ` to ${swapResponse.address}`
+                : null}
+              {this.state.txId && !swapStatus?.transaction?.id
+                ? `Waiting confirmation of the ${amountToLock} ${swapInfo.base} sent`
+                : null}
+              {swapStatus?.transaction?.id &&
+              swapStatus?.message?.includes('asmempool')
+                ? `Waiting confirmation of the ${swapResponse.quoteAmount} ${swapInfo.quote} provider sent`
+                : null}
+              {swapStatus?.transaction?.id &&
+              swapStatus?.message?.includes('Atomic Swap is ready') &&
+              !this.state.txId
+                ? `Funds are ready to claim ${swapResponse.quoteAmount} ${swapInfo.quote}`
+                : null}
+              {swapStatus?.transaction?.id &&
+              swapStatus?.message?.includes('Atomic Swap is ready') &&
+              this.state.txId
+                ? `Claiming funds ${swapResponse.quoteAmount} ${swapInfo.quote}`
+                : null} */}
+              </Typography>
+            </Paper>
+            {/* ) : null} */}
+
+            {/* {currentBlockHeight > 0 &&
+        refundFile.timeoutBlockHeight > currentBlockHeight ? (
+          <p className={classes.infosm}>
+            Warning: You can't refund your coins yet! <br />
+            Current Stacks blockheight: {currentBlockHeight} <br />
+            Refund timeout blockheight: {refundFile.timeoutBlockHeight}
+            {'\n'}
+            <br />* Refund will fail until chain reaches refund timeout
+            blockheight. <br />
+            Please wait ~
+            {(refundFile.timeoutBlockHeight - currentBlockHeight) * 10} more
+            minutes.
+          </p>
+        ) : null} */}
+            {/* <p className={classes.info}>
+          {getCurrencyName(currency)}
+          Click to trigger Refund
+          Use same account you used for locking the STX
+        </p> */}
+
+            {/* <SButton
+          size="large"
+          pl="base-tight"
+          pr={'base'}
+          py="tight"
+          fontSize={2}
+          mode="primary"
+          position="relative"
+          className={classes.sbuttoncl}
+          // ref={ref}
+          onClick={() =>
+            currency === 'STX'
+              ? refundStx(
+                  refundFile,
+                  setRefundTransactionHash,
+                  setDestinationAddress
+                )
+              : refundToken(
+                  refundFile,
+                  setRefundTransactionHash,
+                  setDestinationAddress
+                )
+          }
+          // onClick={refundStx}
+          borderRadius="10px"
+          // {...rest}
         >
-        <Box
-          as={MdFileDownload}
-          // transform={isSend ? 'unset' : 'scaleY(-1)'}
-          size={'16px'}
-          mr={'2px'}
-        />
-        <Box as="span" ml="2px" fontSize="large">
-          Refund {currency}
-        </Box>
-      </SButton>
-    </View> : null }
+          <Box
+            as={MdFileDownload}
+            // transform={isSend ? 'unset' : 'scaleY(-1)'}
+            size={'16px'}
+            mr={'2px'}
+          />
+          <Box as="span" ml="2px" fontSize="large">
+            Refund {currency}
+          </Box>
+        </SButton> */}
 
-    {currency === 'BTC' ? 
-    <View className={classes.wrapper}>
-      {((bitcoinBlockHeight > 0) && (refundFile.swapResponse.origBlockHeight > bitcoinBlockHeight)) ? (<p className={classes.infosm}>
-        Warning: You can't refund your coins yet! <br/>
-        Current Bitcoin blockheight: {bitcoinBlockHeight} <br/>
-        Refund timeout blockheight: {refundFile.swapResponse.origBlockHeight}{'\n'}<br/>
-        * Refund will fail until chain reaches refund timeout blockheight. <br/>
-        Please wait ~{(refundFile.swapResponse.origBlockHeight - bitcoinBlockHeight)*10} more minutes.
-      </p>) : null}
-      <p className={classes.info}>
-      {/* {getCurrencyName(currency)} */}
-        Enter your {currency} Address
-        {/* Use same account you used for locking the STX */}
-      </p>
-      <InputArea
-        height={150}
-        width={500}
-        showQrScanner={true}
-        onChange={setDestinationAddress}
-        placeholder={`EG: ${getSampleAddress(currency)}`}
-        // value={123}
-      />
-    </View> : null}
-  </View>
-);
+            {/* {(swapInfo.base === 'STX' || swapInfo.base === 'USDA') &&
+        swapStatus.message !== 'Atomic Swap is ready' ? ( */}
+            <Button
+              variant="contained"
+              endIcon={<AccountBalanceWallet />}
+              sx={{ margin: 'auto' }}
+              // ref={this.ref}
+              // disabled={this.state.txId}
+              onClick={() =>
+                currency === 'STX'
+                  ? refundStx(
+                      refundFile,
+                      setRefundTransactionHash,
+                      setDestinationAddress
+                    )
+                  : refundToken(
+                      refundFile,
+                      setRefundTransactionHash,
+                      setDestinationAddress
+                    )
+              }
+              size="large"
+            >
+              Refund {currency}
+            </Button>
+            {/* ) : null} */}
+          </View>
+        ) : null}
 
-StyledInputDestinationAddress.propTypes = {
+        {currency === 'BTC' ? (
+          <View className={classes.wrapper}>
+            {bitcoinBlockHeight > 0 &&
+            refundFile.swapResponse.origBlockHeight > bitcoinBlockHeight ? (
+              <p className={classes.infosm}>
+                Warning: You can't refund your coins yet! <br />
+                Current Bitcoin blockheight: {bitcoinBlockHeight} <br />
+                Refund timeout blockheight:{' '}
+                {refundFile.swapResponse.origBlockHeight}
+                {'\n'}
+                <br />* Refund will fail until chain reaches refund timeout
+                blockheight. <br />
+                Please wait ~
+                {(refundFile.swapResponse.origBlockHeight -
+                  bitcoinBlockHeight) *
+                  10}{' '}
+                more minutes.
+              </p>
+            ) : null}
+            <p className={classes.info}>
+              {/* {getCurrencyName(currency)} */}
+              Enter your {currency} Address
+              {/* Use same account you used for locking the STX */}
+            </p>
+            <InputArea
+              height={150}
+              width={500}
+              showQrScanner={true}
+              onChange={setDestinationAddress}
+              placeholder={`EG: ${getSampleAddress(currency)}`}
+              // value={123}
+            />
+          </View>
+        ) : null}
+      </View>
+    );
+  }
+}
+
+// );
+
+// StyledInputDestinationAddress.propTypes = {
+InputDestinationAddress.propTypes = {
   classes: PropTypes.object.isRequired,
   currency: PropTypes.string.isRequired,
   setDestinationAddress: PropTypes.func.isRequired,
   refundFile: PropTypes.object.isRequired,
-  setRefundTransactionHash: PropTypes.func.isRequired, 
+  setRefundTransactionHash: PropTypes.func.isRequired,
 };
 
-const InputDestinationAddress = injectSheet(InputDestinationAddressStyles)(
-  StyledInputDestinationAddress
+// const InputDestinationAddress = injectSheet(InputDestinationAddressStyles)(
+//   StyledInputDestinationAddress
+// );
+
+export default injectSheet(InputDestinationAddressStyles)(
+  InputDestinationAddress
 );
 
-export default InputDestinationAddress;
+// export default InputDestinationAddress;
