@@ -173,12 +173,12 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
 };
 
 export const setSignedTx = (dispatch, id, tx) => {
-  console.log('reverseActions setSignedTx ', dispatch, id, tx);
+  // console.log('reverseActions setSignedTx ', dispatch, id, tx);
   broadcastSponsoredTx(dispatch, id, tx);
 };
 
 const broadcastSponsoredTx = (dispatch, id, tx) => {
-  console.log('reverseActions broadcastSponsoredTx ', id, tx, dispatch);
+  // console.log('reverseActions broadcastSponsoredTx ', id, tx, dispatch);
   const url = `${boltzApi}/broadcastsponsoredtx`;
   // return dispatch => {
   axios

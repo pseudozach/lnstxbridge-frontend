@@ -26,7 +26,7 @@ const styles = () => ({
   },
   wrapper: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'column',
   },

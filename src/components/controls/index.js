@@ -83,8 +83,8 @@ const Controls = ({
   refundFile,
   destinationAddress,
 }) => {
-  // const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
-  // const loadingTextSelect = loadingText ? loadingText : text;
+  const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
+  const loadingTextSelect = loadingText ? loadingText : text;
   console.log('loading: ', loadingText, loading, loadingRender);
   console.log('text, errorText: ', text, errorText);
   console.log(
@@ -96,14 +96,14 @@ const Controls = ({
   let swapId = '';
   if (swapResponse?.id) swapId = swapResponse.id;
   if (refundFile?.swapResponse?.id) swapId = refundFile?.swapResponse?.id;
-  console.log(
-    'controls swapId, swapResponse, destinationAddress ',
-    swapId,
-    swapResponse,
-    destinationAddress,
-    destinationAddress?.length
-  );
-  let copied = false;
+  // console.log(
+  //   'controls swapId, swapResponse, destinationAddress ',
+  //   swapId,
+  //   swapResponse,
+  //   destinationAddress,
+  //   destinationAddress?.length
+  // );
+  // let copied = false;
   let showProgress = false;
   if (
     loadingText &&
@@ -118,7 +118,7 @@ const Controls = ({
   if (loadingText === 'Upload refund file') showProgress = false;
   if (refundFile?.currency === 'BTC') showProgress = false;
 
-  console.log('showProgress, ', showProgress);
+  // console.log('showProgress, ', showProgress);
 
   let buttonText = 'Next';
   if (text === 'Swap Again!') buttonText = 'Swap Again';

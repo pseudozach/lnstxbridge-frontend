@@ -19,7 +19,7 @@ const DownloadRefundStyles = () => ({
   wrapper: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   placer: {

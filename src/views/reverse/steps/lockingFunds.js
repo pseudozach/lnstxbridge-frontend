@@ -41,6 +41,7 @@ import {
   CheckCircle,
   Info,
   Lock,
+  LockOpen,
   OpenInNew,
 } from '@mui/icons-material';
 import { Button, Link, Paper, Typography } from '@mui/material';
@@ -63,7 +64,7 @@ const styles = () => ({
   wrapper: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   text: {
@@ -589,7 +590,32 @@ class LockingFunds extends React.Component {
           }}
           fullWidth
         >
-          {!this.state.txId ? (
+          <React.Fragment>
+            {!this.state.txId &&
+              swapStatus.includes('Waiting for confirmation') && (
+                <LockOpen
+                  color="secondary"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              )}
+            {!this.state.txId &&
+              swapStatus.includes('Transaction confirmed') && (
+                <Lock
+                  color="secondary"
+                  fontSize="large"
+                  sx={{ m: 1, fontSize: 36 }}
+                />
+              )}
+            {this.state.txId && (
+              <Info
+                color="secondary"
+                fontSize="large"
+                sx={{ m: 1, fontSize: 36 }}
+              />
+            )}
+          </React.Fragment>
+          {/* {!this.state.txId ? (
             <Info color="info" fontSize="large" sx={{ m: 1, fontSize: 36 }} />
           ) : (
             <Lock
@@ -597,7 +623,7 @@ class LockingFunds extends React.Component {
               fontSize="large"
               sx={{ m: 1, fontSize: 36 }}
             />
-          )}
+          )} */}
           <Typography
             variant="body1"
             gutterBottom
@@ -613,8 +639,8 @@ class LockingFunds extends React.Component {
             {swapStatus.includes('Waiting for confirmation') &&
             !this.state.txId ? (
               <>
-                {'LP is'}
-                <Link
+                {/* {'LP is locking '} */}
+                {/* <Link
                   href={`${getExplorer(swapInfo.quote)}/txid/0x${
                     swapResponse.transactionId
                   }`}
@@ -624,8 +650,8 @@ class LockingFunds extends React.Component {
                   rel="noreferrer"
                 >
                   locking <OpenInNew sx={{ verticalAlign: 'middle' }} />
-                </Link>
-                {`${swapAmount} ${getCurrencyName(
+                </Link> */}
+                {`Provider is locking ${swapAmount} ${getCurrencyName(
                   swapInfo.quote
                 )}. This may take up to 10
                 minutes.`}
@@ -638,7 +664,7 @@ class LockingFunds extends React.Component {
             !this.state.txId &&
             !swapResponse.txId ? (
               <>
-                LP
+                {/* LP
                 <Link
                   href={`${getExplorer(swapInfo.quote)}/txid/0x${
                     swapResponse.transactionId
@@ -649,8 +675,8 @@ class LockingFunds extends React.Component {
                   rel="noreferrer"
                 >
                   locked <OpenInNew sx={{ verticalAlign: 'middle' }} />
-                </Link>
-                {`${swapAmount} ${getCurrencyName(
+                </Link> */}
+                {`Provider locked ${swapAmount} ${getCurrencyName(
                   swapInfo.quote
                 )}. Funds are ready to claim.`}
               </>
@@ -658,7 +684,7 @@ class LockingFunds extends React.Component {
 
             {this.state.txId || swapResponse.txId ? (
               <>
-                You are
+                {/* You are
                 <Link
                   href={`${getExplorer(swapInfo.quote)}/txid/0x${this.state
                     .txId || swapResponse.txId}`}
@@ -667,10 +693,10 @@ class LockingFunds extends React.Component {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  claiming <OpenInNew sx={{ verticalAlign: 'middle' }} />
-                </Link>
-                {swapAmount} {getCurrencyName(swapInfo.quote)}. This may take up
-                to 10 minutes.
+                  Claiming <OpenInNew sx={{ verticalAlign: 'middle' }} />
+                </Link> */}
+                Claiming {swapAmount} {getCurrencyName(swapInfo.quote)}. This
+                may take up to 10 minutes.
               </>
             ) : null}
           </Typography>
@@ -772,6 +798,28 @@ class LockingFunds extends React.Component {
             </SButton> */}
           </>
         ) : null}
+
+        {swapResponse.transactionId && (
+          <Button
+            href={
+              !this.state.txId
+                ? `${getExplorer(swapInfo.quote)}/txid/0x${
+                    swapResponse.transactionId
+                  }`
+                : `${getExplorer(swapInfo.quote)}/txid/0x${this.state.txId ||
+                    swapResponse.txId}`
+            }
+            // underline="none"
+            sx={{ m: 1, color: 'white', display: 'flex !important', mt: 3 }}
+            target="_blank"
+            rel="noreferrer"
+            variant="outlined"
+            endIcon={<OpenInNew sx={{ verticalAlign: 'middle' }} />}
+            fullWidth
+          >
+            View on Explorer
+          </Button>
+        )}
       </View>
     );
   }

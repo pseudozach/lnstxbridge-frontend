@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 import View from '../../../components/view';
@@ -62,7 +62,7 @@ const InputDestinationAddressStyles = theme => ({
   wrapper: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingBottom: '1vh',
     width: '100%',
@@ -89,29 +89,6 @@ const InputDestinationAddressStyles = theme => ({
     padding: '15px',
   },
 });
-
-let currentBlockHeight = 0;
-let bitcoinBlockHeight = 0;
-async function getBlockHeight() {
-  try {
-    const response = await axios.get(`${apiUrl}/v2/info`);
-    if (response.data && response.data.stacks_tip_height) {
-      currentBlockHeight = response.data.stacks_tip_height;
-      bitcoinBlockHeight = response.data.burn_block_height;
-      console.log(
-        'got currentBlockHeight, bitcoinBlockHeight ',
-        currentBlockHeight,
-        bitcoinBlockHeight
-      );
-    }
-  } catch (error) {
-    console.log('failed to get current blockheight');
-    return currentBlockHeight;
-  }
-  return currentBlockHeight;
-}
-getBlockHeight();
-// console.log('got currentBlockHeight: ', currentBlockHeight);
 
 function makeContractSTXPostCondition(
   address,
@@ -213,6 +190,8 @@ class InputDestinationAddress extends React.Component {
       txId: '',
       swapText: '',
       explorerLink: '',
+      bitcoinBlockHeight: 0,
+      currentBlockHeight: 0,
       // swapText: '',
     };
   }
@@ -489,6 +468,35 @@ class InputDestinationAddress extends React.Component {
     await openContractCall(options);
   };
 
+  getBlockHeight = async () => {
+    let currentBlockHeight = 0;
+    let bitcoinBlockHeight = 0;
+    try {
+      const response = await axios.get(`${apiUrl}/v2/info`);
+      if (response.data && response.data.stacks_tip_height) {
+        currentBlockHeight = response.data.stacks_tip_height;
+        bitcoinBlockHeight = response.data.burn_block_height;
+        console.log(
+          'got currentBlockHeight, bitcoinBlockHeight ',
+          currentBlockHeight,
+          bitcoinBlockHeight
+        );
+        this.setState({
+          bitcoinBlockHeight,
+          currentBlockHeight,
+        });
+      }
+    } catch (error) {
+      console.log('failed to get current blockheight');
+      return currentBlockHeight;
+    }
+    return currentBlockHeight;
+  };
+
+  componentDidMount = () => {
+    this.getBlockHeight();
+  };
+
   render() {
     // setAllowZeroConf
     const {
@@ -501,74 +509,85 @@ class InputDestinationAddress extends React.Component {
 
     return (
       <View className={classes.wrapper}>
-        {currency !== 'BTC' ? (
-          <View className={classes.wrapper}>
-            {/* {swapInfo ? ( */}
-            <Paper
-              variant="outlined"
-              sx={{
-                // backgroundColor: '#f8f4fc',
-                m: 1,
-                py: 1,
-                mb: 2,
-                display: 'flex',
-                alignItems: 'center',
-                width: '100%',
-              }}
-            >
-              {/* fontSize="large" sx={{ fontSize: '5em'}} */}
-              {currentBlockHeight > 0 &&
-              refundFile.timeoutBlockHeight > currentBlockHeight ? (
-                <Report
-                  color="error"
-                  fontSize="large"
-                  sx={{ m: 1, fontSize: 36 }}
-                />
-              ) : (
-                <Lock
-                  color="secondary"
-                  fontSize="large"
-                  sx={{ m: 1, fontSize: 36 }}
-                />
-              )}
-              <Typography
-                variant="body1"
-                gutterBottom
-                component="div"
-                sx={{
-                  mx: 'auto',
-                  textAlign: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginBottom: 0,
-                }}
-                // color={this.state.statusColor}
-              >
-                {currentBlockHeight > 0 &&
-                refundFile.timeoutBlockHeight > currentBlockHeight
-                  ? `Refund blockheight not reached yet Please try again in ~${(refundFile.timeoutBlockHeight -
-                      currentBlockHeight) *
-                      10} 
+        {/* {currency !== 'BTC' ? (
+          <View className={classes.wrapper}> */}
+        {/* {swapInfo ? ( */}
+        <Paper
+          variant="outlined"
+          sx={{
+            // backgroundColor: '#f8f4fc',
+            m: 1,
+            py: 1,
+            mb: 2,
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+          }}
+        >
+          {/* fontSize="large" sx={{ fontSize: '5em'}} */}
+          {currency !== 'BTC' && this.state.currentBlockHeight > 0 &&
+          refundFile.timeoutBlockHeight > this.state.currentBlockHeight ? (
+            <Report
+              color="error"
+              fontSize="large"
+              sx={{ m: 1, fontSize: 36 }}
+            />
+          ) : (
+            <Lock
+              color="secondary"
+              fontSize="large"
+              sx={{ m: 1, fontSize: 36 }}
+            />
+          )}
+          <Typography
+            variant="body1"
+            gutterBottom
+            component="div"
+            sx={{
+              mx: 'auto',
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: 0,
+            }}
+            // color={this.state.statusColor}
+          >
+            {currency !== 'BTC' &&
+            this.state.currentBlockHeight > 0 &&
+            refundFile.timeoutBlockHeight > this.state.currentBlockHeight
+              ? `Refund blockheight not reached yet. Please try again in ~${(refundFile.timeoutBlockHeight -
+                  this.state.currentBlockHeight) *
+                  10} 
                 minutes.`
-                  : // Current Stacks blockheight: {currentBlockHeight} <br />
-                    // Refund timeout blockheight: {refundFile.timeoutBlockHeight}
-                    // {'\n'}
-                    // <br />* Refund will fail until chain reaches refund timeout
-                    // blockheight. <br />
-                    // Please wait ~
-                    // {(refundFile.timeoutBlockHeight - currentBlockHeight) * 10} more
-                    // minutes.
-                    null}
-                {!(
-                  currentBlockHeight > 0 &&
-                  refundFile.timeoutBlockHeight > currentBlockHeight
-                ) && !this.state.txId
-                  ? `Ready to refund ${refundFile.swapResponse?.baseAmount} ${currency}`
-                  : null}
-                {this.state.txId
-                  ? `Refunding ${refundFile.swapResponse?.baseAmount} ${currency}. You can close this window.`
-                  : null}
-                {/* {!this.state.txId && !swapStatus?.transaction?.id
+              : null}
+            {currency === 'BTC' &&
+            this.state.bitcoinBlockHeight > 0 &&
+            refundFile.swapResponse?.origBlockHeight >
+              this.state.bitcoinBlockHeight
+              ? `Refund blockheight not reached yet. Please try again in ~${(refundFile
+                  .swapResponse?.origBlockHeight -
+                  this.state.bitcoinBlockHeight) *
+                  10} 
+                minutes.`
+              : null}
+            {!(
+              this.state.currentBlockHeight > 0 &&
+              refundFile.timeoutBlockHeight > this.state.currentBlockHeight
+            ) &&
+            !this.state.txId &&
+            currency !== 'BTC'
+              ? `Ready to refund ${refundFile.swapResponse?.baseAmount} ${currency}`
+              : null}
+            {currency === 'BTC' &&
+            this.state.bitcoinBlockHeight > 0 &&
+            refundFile.swapResponse?.origBlockHeight <
+              this.state.bitcoinBlockHeight
+              ? `Ready to refund ${refundFile.swapResponse?.baseAmount} ${currency}`
+              : null}
+            {this.state.txId
+              ? `Refunding ${refundFile.swapResponse?.baseAmount} ${currency}. You can close this window.`
+              : null}
+            {/* {!this.state.txId && !swapStatus?.transaction?.id
                 ? `Send ${amountToLock} ${swapInfo.base}`
                 : null}
               {swapResponse.bip21 &&
@@ -593,11 +612,11 @@ class InputDestinationAddress extends React.Component {
               this.state.txId
                 ? `Claiming funds ${swapResponse.quoteAmount} ${swapInfo.quote}`
                 : null} */}
-              </Typography>
-            </Paper>
-            {/* ) : null} */}
+          </Typography>
+        </Paper>
+        {/* ) : null} */}
 
-            {/* {currentBlockHeight > 0 &&
+        {/* {currentBlockHeight > 0 &&
         refundFile.timeoutBlockHeight > currentBlockHeight ? (
           <p className={classes.infosm}>
             Warning: You can't refund your coins yet! <br />
@@ -611,13 +630,13 @@ class InputDestinationAddress extends React.Component {
             minutes.
           </p>
         ) : null} */}
-            {/* <p className={classes.info}>
+        {/* <p className={classes.info}>
           {getCurrencyName(currency)}
           Click to trigger Refund
           Use same account you used for locking the STX
         </p> */}
 
-            {/* <SButton
+        {/* <SButton
           size="large"
           pl="base-tight"
           pr={'base'}
@@ -655,42 +674,47 @@ class InputDestinationAddress extends React.Component {
           </Box>
         </SButton> */}
 
-            {/* {(swapInfo.base === 'STX' || swapInfo.base === 'USDA') &&
+        {/* {(swapInfo.base === 'STX' || swapInfo.base === 'USDA') &&
         swapStatus.message !== 'Atomic Swap is ready' ? ( */}
-            <Button
-              variant="contained"
-              endIcon={<AccountBalanceWallet />}
-              sx={{ margin: 'auto' }}
-              // ref={this.ref}
-              disabled={
-                this.state.txId ||
-                (currentBlockHeight > 0 &&
-                  refundFile.timeoutBlockHeight > currentBlockHeight)
-              }
-              onClick={() =>
-                currency === 'STX'
-                  ? this.refundStx(
-                      refundFile,
-                      setRefundTransactionHash,
-                      setDestinationAddress
-                    )
-                  : this.refundToken(
-                      refundFile,
-                      setRefundTransactionHash,
-                      setDestinationAddress
-                    )
-              }
-              size="large"
-            >
-              Refund {currency}
-            </Button>
-            {/* ) : null} */}
-          </View>
-        ) : null}
+        {currency !== 'BTC' && (
+          <Button
+            variant="contained"
+            endIcon={<AccountBalanceWallet />}
+            sx={{ margin: 'auto' }}
+            // ref={this.ref}
+            disabled={
+              this.state.txId ||
+              (this.state.currentBlockHeight > 0 &&
+                refundFile.timeoutBlockHeight > this.state.currentBlockHeight)
+            }
+            onClick={() =>
+              currency === 'STX'
+                ? this.refundStx(
+                    refundFile,
+                    setRefundTransactionHash,
+                    setDestinationAddress
+                  )
+                : this.refundToken(
+                    refundFile,
+                    setRefundTransactionHash,
+                    setDestinationAddress
+                  )
+            }
+            size="large"
+          >
+            Refund {currency}
+          </Button>
+        )}
+        {/* ) : null} */}
+        {/* </View>
+        ) : null} */}
 
-        {currency === 'BTC' ? (
+        {currency === 'BTC' &&
+        this.state.bitcoinBlockHeight > 0 &&
+        refundFile.swapResponse?.origBlockHeight <=
+          this.state.bitcoinBlockHeight ? (
           <View className={classes.wrapper}>
-            {bitcoinBlockHeight > 0 &&
+            {/* {bitcoinBlockHeight > 0 &&
             refundFile.swapResponse?.origBlockHeight > bitcoinBlockHeight ? (
               <p className={classes.infosm}>
                 Warning: You can't refund your coins yet! <br />
@@ -706,7 +730,7 @@ class InputDestinationAddress extends React.Component {
                   10}{' '}
                 more minutes.
               </p>
-            ) : null}
+            ) : null} */}
             <p className={classes.info}>
               {/* {getCurrencyName(currency)} */}
               Enter your {currency} Address

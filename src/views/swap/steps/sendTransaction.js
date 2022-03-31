@@ -352,6 +352,7 @@ class SendTransaction extends React.Component {
       txId: '',
       swapText: '',
       explorerLink: '',
+      claimingAS: false,
       // swapText: '',
     };
   }
@@ -408,12 +409,12 @@ class SendTransaction extends React.Component {
       // *1000
       // 199610455 -> 199 STX
     }
-    console.log(
-      'swapamount, amountToLock, postconditionamount: ',
-      swapamount,
-      amountToLock,
-      postconditionamount
-    );
+    // console.log(
+    //   'swapamount, amountToLock, postconditionamount: ',
+    //   swapamount,
+    //   amountToLock,
+    //   postconditionamount
+    // );
 
     // console.log(
     //   'calc: ',
@@ -422,12 +423,12 @@ class SendTransaction extends React.Component {
     //   swapResponse.baseAmount
     // );
 
-    let paddedamount = swapamount.padStart(32, '0');
+    // let paddedamount = swapamount.padStart(32, '0');
 
-    let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
-      .toString(16)
-      .padStart(32, '0');
-    console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
+    // let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
+    //   .toString(16)
+    //   .padStart(32, '0');
+    // console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
 
     let userData = userSession.loadUserData();
 
@@ -465,7 +466,7 @@ class SendTransaction extends React.Component {
     // ];
 
     // typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike
-    console.log('postConditions: ', postConditionAddress, postConditions);
+    // console.log('postConditions: ', postConditionAddress, postConditions);
 
     // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
     const functionArgs = [
@@ -580,12 +581,12 @@ class SendTransaction extends React.Component {
       amountToLock,
       postconditionamount
     );
-    let paddedamount = swapamount.padStart(32, '0');
+    // let paddedamount = swapamount.padStart(32, '0');
 
-    let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
-      .toString(16)
-      .padStart(32, '0');
-    console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
+    // let paddedtimelock = Number(swapResponse.timeoutBlockHeight)
+    //   .toString(16)
+    //   .padStart(32, '0');
+    // console.log('paddedamount, paddedtimelock: ', paddedamount, paddedtimelock);
 
     let userData = userSession.loadUserData();
 
@@ -642,7 +643,7 @@ class SendTransaction extends React.Component {
     // ];
 
     // typeof(postConditions[0].amount), postConditions[0].amount.toArrayLike
-    console.log('postConditions: ', postConditionAddress, postConditions);
+    // console.log('postConditions: ', postConditionAddress, postConditions);
 
     // (lockStx (preimageHash (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16))
     const functionArgs = [
@@ -998,11 +999,11 @@ class SendTransaction extends React.Component {
       });
     }
 
-    console.log(
-      'this.state.swapText ',
-      this.state.swapText,
-      this.state.explorerLink
-    );
+    // console.log(
+    //   'this.state.swapText ',
+    //   this.state.swapText,
+    //   this.state.explorerLink
+    // );
 
     return (
       <View className={classes.wrapper}>
@@ -1091,12 +1092,13 @@ class SendTransaction extends React.Component {
                   : null}
                 {swapStatus?.transaction?.id &&
                 swapStatus?.message?.includes('Atomic Swap is ready') &&
-                !this.state.txId
+                (!this.state.txId || swapInfo.quote === 'BTC')
                   ? `Funds are ready to claim ${swapResponse.quoteAmount} ${swapInfo.quote}`
                   : null}
                 {swapStatus?.transaction?.id &&
                 swapStatus?.message?.includes('Atomic Swap is ready') &&
-                this.state.txId
+                this.state.txId &&
+                swapInfo.quote !== 'BTC'
                   ? `Claiming funds ${swapResponse.quoteAmount} ${swapInfo.quote}`
                   : null}
                 {/* <Link
@@ -1254,6 +1256,7 @@ class SendTransaction extends React.Component {
               // }
               onClick={() => {
                 claimSwap(swapInfo, swapResponse, swapStatus);
+                this.setState({ claimingAS: true });
               }}
               size="large"
             >
