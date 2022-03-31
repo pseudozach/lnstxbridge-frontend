@@ -20,7 +20,7 @@ import {
   TextField,
 } from '@mui/material';
 import NavigateNext from '@mui/icons-material/NavigateNext';
-import { ContentCopy } from '@mui/icons-material';
+import { ContentCopy, Undo } from '@mui/icons-material';
 
 const styles = theme => ({
   wrapper: {
@@ -39,7 +39,7 @@ const styles = theme => ({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF0000',
+    // backgroundColor: '#FF0000',
   },
   controls: {
     flex: 2,
@@ -84,7 +84,7 @@ const Controls = ({
   // const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
   // const loadingTextSelect = loadingText ? loadingText : text;
   console.log('loading: ', loadingText, loading, loadingRender);
-  console.log('text: ', text, errorText);
+  console.log('text, errorText: ', text, errorText);
   console.log('error, errorRender: ', error, errorRender, errorAction);
   let swapId = '';
   if (swapResponse && swapResponse.id) swapId = swapResponse.id;
@@ -107,6 +107,7 @@ const Controls = ({
 
   let buttonText = 'Next';
   if (text === 'Swap Again!') buttonText = 'Swap Again';
+  if (errorText) buttonText = 'Retry';
 
   return (
     <View
@@ -190,23 +191,38 @@ const Controls = ({
         >{'Connect Wallet'}
         </Button> */}
         {error && errorRender && (
-          <Alert severity="error" sx={{ flex: 1, mx: 1 }}>
-            {errorRender(classes.errorCommand, errorAction)}
+          <Alert severity="error" sx={{ flex: 1, mx: 1, alignItems: 'center' }}>
+            {/* {errorRender(classes.errorCommand, errorAction)} */}
+            {errorText}
           </Alert>
         )}
         {showProgress && <CircularProgress sx={{ m: 2 }} />}
-        {!showProgress && (
+        {!showProgress &&
+          !(errorText && errorText.includes('refund your coins')) && (
+            <Button
+              variant="contained"
+              size="large"
+              endIcon={<NavigateNext />}
+              sx={{ margin: 2, marginLeft: 'auto' }}
+              // className={classes.greenman}
+              // errorText
+              disabled={error || errorRender || loading}
+              onClick={() => onPress()}
+            >
+              {/* {loading ? loadingTextSelect : text} */}
+              {buttonText}
+            </Button>
+          )}
+        {errorText && errorText.includes('refund your coins') && (
           <Button
             variant="contained"
             size="large"
-            endIcon={<NavigateNext />}
+            endIcon={<Undo />}
             sx={{ margin: 2, marginLeft: 'auto' }}
-            // className={classes.greenman}
-            disabled={error || errorRender || loading}
-            onClick={() => onPress()}
+            // disabled={error || errorRender || loading || errorText}
+            onClick={() => (window.location.href = '/refund')}
           >
-            {/* {loading ? loadingTextSelect : text} */}
-            {buttonText}
+            Refund
           </Button>
         )}
       </Box>

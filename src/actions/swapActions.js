@@ -170,13 +170,25 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
       callback();
       break;
 
-    case SwapUpdateEvent.ASTransactionMempool:
     case SwapUpdateEvent.TransactionMempool:
-      console.log('got mempool');
+      // console.log('got mempool');
       // eslint-disable-next-line no-case-declarations
       swapStatusObj = {
         pending: true,
         message: 'Transaction is in mempool...',
+      };
+      if (data.transaction) {
+        swapStatusObj.transaction = data.transaction;
+      }
+      dispatch(setSwapStatus(swapStatusObj));
+      break;
+
+    case SwapUpdateEvent.ASTransactionMempool:
+      console.log('got ASTransactionMempool');
+      // eslint-disable-next-line no-case-declarations
+      swapStatusObj = {
+        pending: true,
+        message: 'Transaction is in asmempool...',
       };
       if (data.transaction) {
         swapStatusObj.transaction = data.transaction;
@@ -193,9 +205,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
       if (data.transaction && data.transaction.hex) {
         swapStatusObj.transaction = data.transaction;
       }
-      dispatch(
-        setSwapStatus(swapStatusObj)
-      );
+      dispatch(setSwapStatus(swapStatusObj));
       break;
 
     case SwapUpdateEvent.TransactionFailed:
@@ -383,7 +393,7 @@ const getClaimTransaction = (
     lockupTransaction.getHash(),
     lockupTransaction,
     // ECPair.fromPrivateKey(getHexBuffer(swapInfo.keys.privateKey)),
-    getNetwork(swapInfo.quote),
+    getNetwork(swapInfo.quote)
     // networks.regtest,
     // address.toOutputScript(swapInfo.invoice, networks.regtest),
   );
@@ -395,7 +405,7 @@ const getClaimTransaction = (
     redeemScript,
     swapInfo.invoice,
     swapInfo.quote,
-    getNetwork(swapInfo.quote),
+    getNetwork(swapInfo.quote)
     // address.toOutputScript(swapInfo.invoice, getNetwork(swapInfo.quote)), // replace getNetwork with networks.regtest
     // address.toOutputScript(swapInfo.invoice, networks.regtest),
   );

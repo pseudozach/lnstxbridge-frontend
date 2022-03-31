@@ -56,8 +56,11 @@ const styles = theme => ({
   },
   content: {
     // width: '100%',
-    height: '75%',
+    height: '100%',
     margin: '8px',
+    display: 'flex',
+    // flexDirection: 'column',
+    flex: 1,
   },
   controls: {
     width: '100%',
