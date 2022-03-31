@@ -977,9 +977,23 @@ class SendTransaction extends React.Component {
       });
     }
 
-    if (!this.state.explorerLink.includes(swapResponse.address)) {
+    if (
+      !swapResponse.address &&
+      !this.state.explorerLink.includes(swapResponse.address)
+    ) {
       this.setState({
         explorerLink: `https://explorer.stacks.co/txid/${swapResponse.address}?chain=mainnet`,
+      });
+    }
+
+    if (
+      swapResponse.address &&
+      !this.state.explorerLink.includes(swapResponse.address)
+    ) {
+      this.setState({
+        explorerLink: `${getExplorer(swapInfo.base)}/address/${
+          swapResponse.address
+        }`,
       });
     }
 
@@ -1062,6 +1076,11 @@ class SendTransaction extends React.Component {
                 {!this.state.txId && !swapStatus?.transaction?.id
                   ? `Send ${amountToLock} ${swapInfo.base}`
                   : null}
+                {swapResponse.bip21 &&
+                swapResponse.address &&
+                swapStatus.message?.includes('Waiting')
+                  ? ` to ${swapResponse.address}`
+                  : null}
                 {this.state.txId && !swapStatus?.transaction?.id
                   ? `Waiting confirmation of the ${amountToLock} ${swapInfo.base} sent`
                   : null}
@@ -1106,7 +1125,13 @@ class SendTransaction extends React.Component {
           {swapResponse.bip21 &&
           (!swapStatus || swapStatus.message !== 'Atomic Swap is ready') ? (
             <View className={classes.qrcode}>
-              <QrCode size={250} link={swapResponse.bip21} />
+              <a
+                href={`bitcoin:${swapResponse.bip21}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <QrCode size={250} link={swapResponse.bip21} />
+              </a>
             </View>
           ) : null}
 
