@@ -131,7 +131,7 @@ const StyledUploadRefundFile = ({
     {refundFile.currency === 'BTC' ? (
       <View className={classes.regular}>
         <p className={`${classes.info} ${classes.mobileInfo}`}>
-          Paste the hash of the lockup transaction
+          Paste the tx id of the BTC lockup transaction
         </p>
         <InputArea
           height={100}
