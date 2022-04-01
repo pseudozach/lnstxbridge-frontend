@@ -149,7 +149,7 @@ const Controls = ({
             id="outlined-start-adornment"
             disabled
             // , width: '25ch'  m: 2,
-            sx={{ width: '115px', p: 1 }}
+            sx={{ width: '115px', p: 1, ml: 1 }}
             value={swapId}
             InputProps={{
               style: {
@@ -217,7 +217,7 @@ const Controls = ({
             {errorText}
           </Alert>
         )}
-        {showProgress && <CircularProgress sx={{ m: 2 }} />}
+        {showProgress && <CircularProgress sx={{ m: 2, marginLeft: 'auto' }} />}
         {!showProgress &&
           !(errorText && errorText.includes('refund your coins')) && (
             <Button
