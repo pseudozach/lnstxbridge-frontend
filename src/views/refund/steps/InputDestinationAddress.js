@@ -525,7 +525,8 @@ class InputDestinationAddress extends React.Component {
           }}
         >
           {/* fontSize="large" sx={{ fontSize: '5em'}} */}
-          {currency !== 'BTC' && this.state.currentBlockHeight > 0 &&
+          {currency !== 'BTC' &&
+          this.state.currentBlockHeight > 0 &&
           refundFile.timeoutBlockHeight > this.state.currentBlockHeight ? (
             <Report
               color="error"
@@ -576,7 +577,8 @@ class InputDestinationAddress extends React.Component {
             ) &&
             !this.state.txId &&
             currency !== 'BTC'
-              ? `Ready to refund ${refundFile.swapResponse?.baseAmount} ${currency}`
+              ? `Ready to refund ${refundFile.swapResponse?.baseAmount ||
+                  refundFile.amount / 10 ** 6} ${currency}`
               : null}
             {currency === 'BTC' &&
             this.state.bitcoinBlockHeight > 0 &&
@@ -585,7 +587,9 @@ class InputDestinationAddress extends React.Component {
               ? `Ready to refund ${refundFile.swapResponse?.baseAmount} ${currency}`
               : null}
             {this.state.txId
-              ? `Refunding ${refundFile.swapResponse?.baseAmount} ${currency}. You can close this window.`
+              ? `Refunding ${refundFile.swapResponse?.baseAmount ||
+                  refundFile.amount /
+                    10 ** 6} ${currency}. You can close this window.`
               : null}
             {/* {!this.state.txId && !swapStatus?.transaction?.id
                 ? `Send ${amountToLock} ${swapInfo.base}`
