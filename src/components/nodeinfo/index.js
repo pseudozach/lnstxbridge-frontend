@@ -34,7 +34,7 @@ const styles = theme => ({
     fontSize: '25px',
     fontWeight: 'bold',
     marginBottom: '10px',
-    color: theme.colors.black,
+    color: '#000',
   },
 });
 

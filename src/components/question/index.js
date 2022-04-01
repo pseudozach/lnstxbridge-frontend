@@ -17,7 +17,7 @@ const styles = theme => ({
     },
   },
   title: {
-    color: theme.colors.black,
+    color: '#000',
     fontSize: '25px',
     fontWeight: 'bold',
     fontStyle: 'normal',
