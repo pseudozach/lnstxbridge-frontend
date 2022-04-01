@@ -5,14 +5,14 @@ import View from '../view';
 
 const styles = theme => ({
   wrapper: {
-    background: theme.colors.mischkaGrey,
+    background: '#DDD9DF',
     height: 'auto',
     width: '100%',
     margin: '10px',
     borderRadius: '15px',
   },
   bar: {
-    backgroundColor: theme.colors.celloBlue,
+    backgroundColor: 'rgba(85,70,255,1)',
     height: '20px',
     borderRadius: '15px',
   },

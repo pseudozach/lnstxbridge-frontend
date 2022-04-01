@@ -325,6 +325,7 @@ class SwapTabWrapper extends React.Component {
       },
       redirectTo: '/',
       onFinish: () => {
+        this.stacksUserSession();
         window.location.reload();
       },
       userSession: userSession,
@@ -332,11 +333,11 @@ class SwapTabWrapper extends React.Component {
   };
 
   stacksUserSession = () => {
-    // console.log("stacksUserSession: ", userSession);
+    // console.log('stacksUserSession: ', userSession);
     let userstxaddress;
     if (userSession.isUserSignedIn()) {
       let userData = userSession.loadUserData();
-      // console.log("userData, network: ", userData, network);
+      // console.log('userData, network: ', userData, network);
       if (network === 'mainnet') {
         userstxaddress = userData.profile.stxAddress.mainnet;
       } else {
@@ -344,10 +345,11 @@ class SwapTabWrapper extends React.Component {
       }
 
       userstxaddress =
-        'Logged in as ' +
-        userstxaddress.slice(0, 5) +
-        '...' +
-        userstxaddress.slice(-5);
+        // 'Logged in as ' +
+        userstxaddress.slice(0, 5) + '...' + userstxaddress.slice(-5);
+
+      localStorage.setItem('ua', userstxaddress);
+      // console.log('stacksUserSession localStorage.setItem: ', userstxaddress);
     }
     return userstxaddress;
   };
@@ -692,7 +694,7 @@ class SwapTabWrapper extends React.Component {
     )}/${this.parseBoltSuffix(this.state.quote, false)}`;
   };
 
-  componentWillMount = () => {
+  UNSAFE_componentWillMount = () => {
     if (localStorage.getItem('quote')) {
       this.setState({
         base: localStorage.getItem('base'),
@@ -882,6 +884,14 @@ class SwapTabWrapper extends React.Component {
   };
 
   updateBaseAmount = quoteAmount => {
+    if (quoteAmount.c) {
+      quoteAmount = quoteAmount.toString();
+    } else if (!quoteAmount.target || !quoteAmount.target.value) {
+      quoteAmount = '';
+    } else {
+      quoteAmount = quoteAmount.target.value.toString();
+    }
+
     const amount = new BigNumber(quoteAmount);
     const rate = new BigNumber(this.state.rate.rate);
 
@@ -903,6 +913,14 @@ class SwapTabWrapper extends React.Component {
   updateQuoteAmount = baseAmount => {
     if (!this.state.rate) return;
 
+    if (baseAmount.c) {
+      baseAmount = baseAmount.toString();
+    } else if (!baseAmount.target || !baseAmount.target.value) {
+      baseAmount = '';
+    } else {
+      baseAmount = baseAmount.target.value.toString();
+    }
+
     const amount = new BigNumber(baseAmount.toString());
     const rate = new BigNumber(this.state.rate.rate);
 
@@ -915,7 +933,7 @@ class SwapTabWrapper extends React.Component {
 
     let newQuote = new BigNumber(quote);
 
-    if (newQuote.isLessThanOrEqualTo(0)) {
+    if (newQuote === null || newQuote.isLessThanOrEqualTo(0)) {
       newQuote = new BigNumber('0');
     }
 

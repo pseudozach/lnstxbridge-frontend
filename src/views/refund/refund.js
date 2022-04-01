@@ -20,7 +20,7 @@ const styles = theme => ({
     justifyContent: 'center',
   },
   fileUpload: {
-    color: theme.colors.white,
+    color: '#fff',
     fontWeight: '300',
   },
 });
@@ -63,6 +63,7 @@ const Refund = ({
             }
           }}
           message={'Are you sure?'}
+          refundFile={refundFile}
         >
           <StepsWizard.Steps>
             <StepsWizard.Step
@@ -115,6 +116,7 @@ const Refund = ({
                     Object.keys(refundFile).length === 0 ||
                     transactionHash === ''
                   }
+                  refundFile={refundFile}
                 />
               )}
             />
@@ -133,6 +135,8 @@ const Refund = ({
                       props.nextStage
                     )
                   }
+                  refundFile={refundFile}
+                  destinationAddress={destinationAddress}
                 />
               )}
             />

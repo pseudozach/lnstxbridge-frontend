@@ -4,6 +4,8 @@ import injectSheet from 'react-jss';
 import QrReader from 'react-qr-reader';
 import ReactNotification from 'react-notifications-component';
 import { notificationData } from '../../utils';
+import { QrCodeScanner } from '@mui/icons-material';
+import { TextField } from '@mui/material';
 
 const cameraIcon = require('../../asset/icons/camera_icon.svg');
 
@@ -12,19 +14,27 @@ const styles = theme => ({
     position: 'relative',
   },
   textBox: {
-    border: 'none',
+    // border: 'none',
     resize: 'none',
     fontSize: '18px',
     borderRadius: '3px',
-    padding: '6px 12px',
+    // padding: '6px 12px',
     wordBreak: 'break-all',
-    width: p => `${p.width}px`,
+    // width: p => `${p.width}px`,
+    width: '100%',
     height: p => `${p.height}px`,
     outline: p => (p.error ? '1px solid red' : 'none'),
-    backgroundColor: theme.colors.lightGrey,
+    // backgroundColor: '#D3D3D3',
     '@media (max-width: 425px)': {
       width: () => `${300}px`,
     },
+    background: 'transparent',
+    border: '1px solid gray',
+    boxSizing: 'border-box',
+    padding: '16px',
+    fontFamily: 'Roboto',
+    caretColor: 'white',
+    color: 'white',
   },
   cameraIcon: {
     width: '32px',
@@ -33,6 +43,7 @@ const styles = theme => ({
     right: '5px',
     bottom: '6px',
     cursor: 'pointer',
+    color: 'black',
   },
   qrScannerWrapper: {
     position: 'fixed',
@@ -148,6 +159,26 @@ class InputArea extends React.Component {
             onChange(newValue);
           }}
         />
+        {/* <TextField
+          // label="Multiline"
+          // error={p.error}
+          multiline
+          autoFocus={autoFocus}
+          value={this.state.value}
+          placeholder={placeholder}
+          className={classes.textBox}
+          rows={5}
+          cols={width}
+          id={'textareaid'}
+          onChange={event => {
+            const newValue = event.target.value;
+
+            this.setState({
+              value: newValue,
+            });
+            onChange(newValue);
+          }}
+        /> */}
         {this.state.openScanner ? (
           <div className={classes.qrScannerWrapper}>
             <QrReader
@@ -162,11 +193,17 @@ class InputArea extends React.Component {
           undefined
         )}
         {showQrScanner ? (
-          <img
+          // <img
+          //   className={classes.cameraIcon}
+          //   src={cameraIcon}
+          //   alt={'Scan QR code'}
+          //   onClick={this.openScanner}
+          // />
+          <QrCodeScanner
             className={classes.cameraIcon}
-            src={cameraIcon}
-            alt={'Scan QR code'}
             onClick={this.openScanner}
+            alt={'Scan QR code'}
+            sx={{ color: 'white', m: 1 }}
           />
         ) : (
           undefined

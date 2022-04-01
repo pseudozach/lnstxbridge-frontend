@@ -7,7 +7,7 @@ class PlatformSelector extends React.Component {
     this.state = { width: window.innerWidth };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     window.addEventListener('resize', this.handleWindowSizeChange);
   }
 

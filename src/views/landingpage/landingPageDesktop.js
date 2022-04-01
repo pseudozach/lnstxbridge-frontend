@@ -14,8 +14,9 @@ import NavigationBar from '../../components/navigationbar';
 import { bitcoinNetwork, litecoinNetwork } from '../../constants';
 import { generateKeys, randomBytes, navigation } from '../../actions';
 import { getHexString } from '../../utils';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const boltz_logo = require('../../asset/icons/scuba2.png');
 
@@ -35,7 +36,7 @@ const LandingPageDeskTopContent = ({
   lastSwap,
 }) => {
   const loading = currencies.length === 0;
-  
+
   // let ls = await lastSwap();
   // console.log(`landingpagedesktop.41 `, lastSwap);
 
@@ -60,17 +61,16 @@ const LandingPageDeskTopContent = ({
   //   </ModalComponent>
   // </View>
 
-
   return (
     <BackGround>
       <ReactNotification ref={notificationDom} />
       <NavigationBar />
       <View className={classes.wrapper}>
-
         {loading ? (
           <View className={classes.loading}>
-            <img alt="logo" src={boltz_logo} className={classes.loadingLogo} />
-            <p className={classes.loadingText}>Loading...</p>
+            {/* <img alt="logo" src={boltz_logo} className={classes.loadingLogo} />
+            <p className={classes.loadingText}>Loading...</p> */}
+            <CircularProgress />
           </View>
         ) : (
           <DeskTopSwapTab
@@ -82,7 +82,11 @@ const LandingPageDeskTopContent = ({
 
               const preimage = randomBytes(32);
               // console.log("generated preimage: ", preimage);
-              console.log("preimage, preimagehash: ", getHexString(preimage), getHexString(crypto.sha256(preimage)));
+              console.log(
+                'preimage, preimagehash: ',
+                getHexString(preimage),
+                getHexString(crypto.sha256(preimage))
+              );
 
               if (state.isReverseSwap) {
                 initReverseSwap({
@@ -123,15 +127,16 @@ const LandingPageDeskTopContent = ({
         className={classes.carousel}
       >
         <div>
-
-            {/* <img src="asset/scuba1.png" /> */}
-            {/* <p className="legend">Previous Swap Details: </p> */}
-            <a 
-              href={lastSwap.link}
-              target="_blank"
-              className={classes.carouseltext}>
-              Previous Swap Amount: {lastSwap.amount} STX  🔄
-            </a>
+          {/* <img src="asset/scuba1.png" /> */}
+          {/* <p className="legend">Previous Swap Details: </p> */}
+          <a
+            href={lastSwap.link}
+            target="_blank"
+            className={classes.carouseltext}
+            rel="noreferrer"
+          >
+            Previous Swap Amount: {lastSwap.amount} STX 🔄
+          </a>
         </div>
       </Carousel>
     </BackGround>
@@ -157,16 +162,16 @@ const styles = theme => ({
     justifyContent: 'center',
   },
   title: {
-    fontSize: theme.fontSize.sizeXXL,
-    color: theme.colors.white,
+    fontSize: 32,
+    color: '#fff',
     '@media (min-width: 1500px)': {
-      fontSize: theme.fontSize.sizeXXXL,
+      fontSize: 42,
     },
   },
   description: {
-    fontSize: theme.fontSize.sizeXXL,
+    fontSize: 32,
     '@media (min-width: 1500px)': {
-      fontSize: theme.fontSize.sizeXXXL,
+      fontSize: 42,
     },
   },
   loading: {
@@ -177,7 +182,7 @@ const styles = theme => ({
     alignContent: 'center',
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: theme.colors.white,
+    // backgroundColor: '#fff',
     '@media (min-width: 1500px)': {
       width: '800px',
       height: '600px',

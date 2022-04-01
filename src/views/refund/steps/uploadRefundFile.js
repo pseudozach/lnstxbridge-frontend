@@ -7,8 +7,13 @@ import InputArea from '../../../components/inputarea';
 import DropZone from '../../../components/dropzone';
 import FileUpload from '../../../components/fileupload';
 import { lockupTransactionHash, sampleStacksTxId } from '../../../constants';
+import { CheckCircle, Upload } from '@mui/icons-material';
+import { Button, IconButton, Input } from '@mui/material';
 
 const UploadRefundFileStyles = theme => ({
+  notfullwidth: {
+    width: '90%',
+  },
   regular: {
     display: 'block !important',
     margin: 'auto',
@@ -21,17 +26,17 @@ const UploadRefundFileStyles = theme => ({
     alignItems: 'center',
     paddingBottom: '1vh',
     // backgroundColor: theme.colors.aeroBlue,
-    backgroundColor: theme.colors.white,
+    // backgroundColor: '#fff',
   },
   icon: {
-    color: theme.colors.turquoise,
+    color: '#50E3C2',
   },
   dropZone: {
     height: '300px',
     zIndex: 2000,
-    width: '700px',
+    // width: '700px',
     flexDirection: 'column',
-    border: `3px dotted ${theme.colors.lightGrey}`,
+    // border: `3px dotted ${'#D3D3D3'}`,
     alignItems: 'center',
     justifyContent: 'space-around',
     '@media (max-width: 425px)': {
@@ -41,7 +46,7 @@ const UploadRefundFileStyles = theme => ({
   },
   info: {
     fontSize: '30px',
-    color: theme.colors.tundoraGrey,
+    // color: '#4A4A4A',
     '@media (max-width: 425px)': {
       fontSize: '18px',
     },
@@ -64,40 +69,79 @@ const StyledUploadRefundFile = ({
 }) => (
   <View className={classes.wrapper}>
     {isUploaded ? (
-      <FaCheckCircle size={240} className={classes.icon} />
+      <CheckCircle
+        size={240}
+        style={{ fontSize: 240 }}
+        className={classes.icon}
+        color="success"
+      />
     ) : (
       <>
-      <DropZone className={classes.dropZone} onFileRead={setRefundFile}>
-        <p className={classes.info}>Drag the refund.png file here</p>
-        <span className={classes.info}>or</span>
-        <FileUpload
-          text={'Select file'}
-          onFileRead={setRefundFile}
-          acceptMimeType={'image/png'}
-        />
-      </DropZone>
-      <View className={classes.regular}>
-        <p className={`${classes.mobileInfo}`}>
-          (Optional) If you don't have the refund file, paste Stacks lockStx transaction Id
-        </p>
-        <InputArea
-          height={50}
-          width={500}
-          onChange={setRefundFromTx}
-          placeholder={`EG: ${sampleStacksTxId}`}
-        />
-      </View>
+        <DropZone className={classes.dropZone} onFileRead={setRefundFile}>
+          <p className={classes.info}>Drag the refund.png here</p>
+          {/* <span className={classes.info}>or click to select file</span> */}
+          {/* <FileUpload
+            text={'Select file'}
+            onFileRead={setRefundFile}
+            acceptMimeType={'image/png'}
+          /> */}
+          <label htmlFor="icon-button-file">
+            <Input
+              accept="image/*"
+              id="icon-button-file"
+              type="file"
+              onChange={setRefundFile}
+              hidden
+              sx={{ display: 'none' }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              aria-label="upload picture"
+              component="span"
+              endIcon={<Upload />}
+            >
+              Upload
+            </Button>
+            {/* <IconButton
+              color="primary"
+              aria-label="upload picture"
+              component="span"
+              size="large"
+              variant="outlined"
+            >
+              <Upload />
+            </IconButton> */}
+          </label>
+        </DropZone>
+        <View className={classes.regular}>
+          <p className={`${classes.mobileInfo}`}>
+            (Optional) If you don't have the refund file, paste Stacks lockStx
+            transaction Id
+          </p>
+          <InputArea
+            height={100}
+            width={400}
+            onChange={setRefundFromTx}
+            placeholder={`EG: ${sampleStacksTxId}`}
+          />
+        </View>
       </>
     )}
-    {refundFile.currency === 'BTC' ? (<View className={classes.regular}><p className={`${classes.info} ${classes.mobileInfo}`}>
-      Paste the hash of the lockup transaction
-    </p>
-    <InputArea
-      height={50}
-      width={500}
-      onChange={setTransactionHash}
-      placeholder={`EG: ${lockupTransactionHash}`}
-    /></View>) : null}
+    {refundFile.currency === 'BTC' ? (
+      <View className={classes.regular}>
+        <p className={`${classes.info} ${classes.mobileInfo}`}>
+          Paste the hash of the lockup transaction
+        </p>
+        <InputArea
+          height={100}
+          width={400}
+          className={classes.notfullwidth}
+          onChange={setTransactionHash}
+          placeholder={`EG: ${lockupTransactionHash}`}
+        />
+      </View>
+    ) : null}
   </View>
 );
 

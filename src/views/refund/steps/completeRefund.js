@@ -5,6 +5,8 @@ import Link from '../../../components/link';
 import View from '../../../components/view';
 import { getExplorer } from '../../../utils';
 import { FaCheckCircle } from 'react-icons/fa';
+import { CheckCircle, OpenInNew } from '@mui/icons-material';
+import { Button, Paper, Typography } from '@mui/material';
 
 const CompleteRefundStyles = theme => ({
   wrapper: {
@@ -13,10 +15,10 @@ const CompleteRefundStyles = theme => ({
     alignItems: 'center',
     flexDirection: 'column',
     // backgroundColor: theme.colors.aeroBlue,
-    backgroundColor: theme.colors.white,
+    // backgroundColor: '#fff',
   },
   icon: {
-    color: theme.colors.turquoise,
+    color: '#50E3C2',
   },
   title: {
     margin: '15px',
@@ -37,15 +39,66 @@ const CompleteRefundStyles = theme => ({
 
 const StyledCompleteRefund = ({ classes, currency, refundTransactionHash }) => (
   <View className={classes.wrapper}>
-    <FaCheckCircle size={200} className={classes.icon} />
-    <span className={classes.title}> Success! </span>
-    <p className={classes.transaction}>
+    <Paper
+      variant="outlined"
+      sx={{
+        // backgroundColor: '#f8f4fc',
+        m: 1,
+        py: 1,
+        mb: 2,
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+      }}
+    >
+      <CheckCircle
+        color="success"
+        fontSize="large"
+        sx={{ m: 1, fontSize: 36 }}
+      />
+      <Typography
+        variant="body1"
+        gutterBottom
+        component="div"
+        sx={{
+          mx: 'auto',
+          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          marginBottom: 0,
+        }}
+        // color={this.state.statusColor}
+      >
+        Refund Successful!
+      </Typography>
+    </Paper>
+
+    {/* <CheckCircle
+      size={200}
+      style={{ fontSize: 240 }}
+      className={classes.icon}
+      color="success"
+    />
+    <span className={classes.title}> Success! </span> */}
+    {/* <p className={classes.transaction}>
       <Link
         to={`${getExplorer(currency)}/tx/${refundTransactionHash}`}
         text={'Click here'}
       />{' '}
       to see the refund transaction
-    </p>
+    </p> */}
+    <Button
+      href={`${getExplorer(currency)}/tx/${refundTransactionHash}`}
+      // underline="none"
+      sx={{ m: 1, color: 'white', display: 'flex !important', mt: 3 }}
+      target="_blank"
+      rel="noreferrer"
+      variant="outlined"
+      endIcon={<OpenInNew sx={{ verticalAlign: 'middle' }} />}
+      fullWidth
+    >
+      View on Explorer
+    </Button>
   </View>
 );
 

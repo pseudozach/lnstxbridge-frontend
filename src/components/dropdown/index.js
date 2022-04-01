@@ -9,7 +9,7 @@ const styles = theme => ({
     border: 'none',
     borderRadius: '3px',
     textAlign: 'center',
-    fontSize: theme.fontSize.sizeM,
+    fontSize: 18,
     padding: '5px',
     '&:focus': {
       outline: 'none',
@@ -22,7 +22,7 @@ class DropDown extends React.Component {
     value: undefined,
   };
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { defaultValue } = nextProps;
 
     if (defaultValue !== this.state.value) {

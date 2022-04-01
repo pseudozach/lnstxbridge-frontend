@@ -170,19 +170,14 @@ export const getPairs = () => {
 };
 
 export const getLastSwap = async () => {
-  const contract = `SP2507VNQZC9VBXM7X7KB4SF4QJDJRSWHG4V39WPY.stxswap_v8`
-  const url = `https://stacks-node-api.mainnet.stacks.co/extended/v1/address/${contract}/transactions_with_transfers`
-  let response = await axios.get(url)
+  const contract = `SP2507VNQZC9VBXM7X7KB4SF4QJDJRSWHG4V39WPY.stxswap_v10`;
+  const url = `https://stacks-node-api.mainnet.stacks.co/extended/v1/address/${contract}/transactions_with_transfers`;
+  let response = await axios.get(url);
   const resultsarr = response.data.results;
-  let lastSwap = resultsarr.find((item) => item.tx.tx_status === 'success')
+  let lastSwap = resultsarr.find(item => item.tx.tx_status === 'success');
   // console.log(`getlastswap `, lastSwap)
-  return {amount: parseInt((lastSwap.stx_sent || lastSwap.stx_received)/1000000), link: `https://explorer.stacks.co/txid/${lastSwap.tx.tx_id}?chain=mainnet`};
-
-    // axios
-    //   .get(url)
-    //   .then(response => {
-    //     const resultsarr = response.data.results;
-    //     let lastSwap = resultsarr.find((item) => item.tx.tx_status === 'success')
-    //     return {amount: lastSwap.stx_sent || lastSwap.stx_received, link: lastSwap.tx_id};
-    //   })
+  return {
+    amount: parseInt((lastSwap.stx_sent || lastSwap.stx_received) / 1000000),
+    link: `https://explorer.stacks.co/txid/${lastSwap.tx.tx_id}?chain=mainnet`,
+  };
 };

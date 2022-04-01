@@ -25,7 +25,7 @@ export const SwapUpdateEvent = {
   SwapExpired: 'swap.expired',
 
   MinerFeePaid: 'minerfee.paid',
-  
+
   ChannelCreated: 'channel.created',
 };
 
@@ -42,6 +42,18 @@ export const boltzOnion = process.env.REACT_APP_BOLTZ_ONION;
 
 // Network Type
 export const stacksNetworkType = process.env.REACT_APP_STACKS_NETWORK_TYPE;
+
+export const coreApiUrl = () => {
+  let apiUrl = 'https://stacks-node-api.mainnet.stacks.co';
+  if (stacksNetworkType === 'mocknet') {
+    apiUrl = 'http://localhost:3999';
+  } else if (stacksNetworkType === 'testnet') {
+    apiUrl = 'https://stacks-node-api.testnet.stacks.co';
+  } else if (stacksNetworkType === 'mainnet') {
+    apiUrl = 'https://stacks-node-api.mainnet.stacks.co';
+  }
+  return apiUrl;
+};
 
 // API endpoint; will be set to the onion endpoint if Boltz is accessed via Tor
 const splitHost = window.location.hostname.split('.');
@@ -91,4 +103,4 @@ export const erc20tokenaddress = process.env.REACT_APP_ERC20TOKEN_ADDRESS;
 export const boltzAddress = process.env.REACT_APP_BOLTZ_ADDRESS;
 
 export const sampleStacksTxId =
-  "0x8a7e35f55c72d672982e5c0355783c55d7958a4fa3fdf54cc90356269eed9316";
+  '0x8a7e35f55c72d672982e5c0355783c55d7958a4fa3fdf54cc90356269eed9316';

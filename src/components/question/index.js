@@ -7,7 +7,7 @@ const styles = theme => ({
   wrapper: {
     height: 'auto',
     flexDirection: 'column',
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#fff',
     margin: '20px',
     marginTop: '10px',
     marginBottom: '10px',
@@ -38,7 +38,7 @@ const styles = theme => ({
     fontStretch: 'condensed',
     lineHeight: 'normal',
     letterSpacing: 'normal',
-    color: theme.colors.tundoraGrey,
+    color: '#4A4A4A',
     '@media (max-width: 768px)': {
       fontSize: '18px',
     },

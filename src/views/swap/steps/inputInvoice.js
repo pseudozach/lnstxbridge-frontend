@@ -12,8 +12,16 @@ import {
   getSmallestDenomination,
   getSampleAddress,
 } from '../../../utils';
+import { TextField } from '@mui/material';
 
-const InputInvoiceStyles = () => ({
+// import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
+import { AppConfig, UserSession } from '@stacks/connect';
+import { stacksNetworkType } from '../../../constants';
+
+import axios from 'axios';
+import { Box } from '@mui/system';
+
+const InputInvoiceStyles = theme => ({
   wrapper: {
     flex: 1,
     flexDirection: 'column',
@@ -39,6 +47,9 @@ const InputInvoiceStyles = () => ({
   },
 });
 
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
+
 let bitcoinNetwork =
   process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet'
     ? bitcoin.networks.regtest
@@ -49,7 +60,7 @@ function validate(input) {
     bitcoin.address.toOutputScript(input, bitcoinNetwork);
     return true;
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     return false;
   }
 }
@@ -59,18 +70,52 @@ class StyledInputInvoice extends React.Component {
     error: false,
   };
 
+  getUserStacksAddress = () => {
+    if (userSession.isUserSignedIn()) {
+      let userData = userSession.loadUserData();
+      let userStacksAddress = '';
+      if (stacksNetworkType === 'mainnet') {
+        userStacksAddress = userData.profile.stxAddress.mainnet;
+      } else {
+        userStacksAddress = userData.profile.stxAddress.testnet;
+      }
+      return userStacksAddress;
+    }
+  };
+
+  getUserBalance = async () => {
+    const userAddress = this.getUserStacksAddress();
+    const apiUrl = `https://stacks-node-api.${stacksNetworkType}.stacks.co`;
+    const url = `${apiUrl}/extended/v1/address/${userAddress}/balances`;
+    let response = await axios.get(url);
+    const userBalance = response.data.stx?.balance;
+    console.log('getUserBalance ', userBalance);
+    this.onCheck({ target: { checked: true } });
+    return userBalance;
+  };
+
   componentDidMount() {
     const { swapInfo, webln } = this.props;
+    console.log('inputinvoice componentDidMount ', swapInfo);
 
-    if (webln) {
+    if (webln && swapInfo.quote === 'BTC') {
       webln.makeInvoice(toSatoshi(swapInfo.quoteAmount)).then(response => {
-        if(response && response.paymentRequest) {
+        if (response && response.paymentRequest) {
           const invoice = response.paymentRequest;
 
           this.setState({ value: invoice });
           this.onChange(invoice);
         }
       });
+    }
+
+    if (swapInfo.quote === 'STX' || swapInfo.quote === 'USDA') {
+      const userStacksAddress = this.getUserStacksAddress();
+      this.onChange(userStacksAddress);
+      let element = document.getElementById('addressTextfield');
+      element.value = userStacksAddress;
+      var event = new Event('change');
+      element.dispatchEvent(event);
     }
   }
 
@@ -82,6 +127,7 @@ class StyledInputInvoice extends React.Component {
       input.slice(0, 1).toUpperCase() === 'S' ||
       validate(input)
     ) {
+      // console.log('inputinvoice validate ', input);
       this.setState({ value: input, error: false }, () =>
         this.props.onChange(input, false)
       );
@@ -107,26 +153,61 @@ class StyledInputInvoice extends React.Component {
 
     return (
       <View className={classes.wrapper}>
-        <p className={classes.title}>
-          Paste or scan a <b>{getCurrencyName(swapInfo.quote)}</b> {pasteText}{' '}
-          <br />
-          {swapInfo.quote === 'BTC' && isLN ? (
-            <b>
-              {toSatoshi(swapInfo.quoteAmount)}{' '}
-              {getSmallestDenomination(swapInfo.quote)}
-            </b>
-          ) : null}
-        </p>
-        <InputArea
-          width={600}
-          height={150}
-          error={error}
-          autoFocus={true}
-          showQrScanner={true}
+        {swapInfo.quote === 'BTC' && (
+          <p className={classes.title}>
+            <b>{getCurrencyName(swapInfo.quote)}</b> {pasteText} {/* <br /> */}
+            {swapInfo.quote === 'BTC' && isLN ? (
+              <b>
+                {toSatoshi(swapInfo.quoteAmount)}{' '}
+                {getSmallestDenomination(swapInfo.quote)}
+              </b>
+            ) : null}
+          </p>
+        )}
+        {(swapInfo.quote === 'STX' || swapInfo.quote === 'USDA') && (
+          <Box
+            sx={{
+              width: 500,
+              maxWidth: '100%',
+            }}
+          >
+            <TextField
+              fullWidth
+              label="Address"
+              defaultValue={
+                localStorage.getItem('ua') ||
+                `EG: ${getSampleAddress(swapInfo.quote)}`
+              }
+              id="addressTextfield"
+              disabled
+              placeholder={`EG: ${getSampleAddress(swapInfo.quote)}`}
+              onChange={this.onChange}
+              error={error}
+            />
+          </Box>
+        )}
+        {swapInfo.quote === 'BTC' && (
+          <InputArea
+            width={600}
+            height={150}
+            error={error}
+            autoFocus={true}
+            showQrScanner={true}
+            value={this.state.value}
+            onChange={this.onChange}
+            placeholder={`EG: ${placeholder}`}
+          />
+        )}
+        {/* <TextField
+          id="outlined-multiline-static"
+          label="Multiline"
+          multiline
+          rows={4}
           value={this.state.value}
           onChange={this.onChange}
           placeholder={`EG: ${placeholder}`}
-        />
+          // defaultValue="Default Value"
+        /> */}
       </View>
     );
   }

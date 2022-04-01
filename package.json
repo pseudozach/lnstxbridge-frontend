@@ -1,6 +1,6 @@
 {
-  "name": "boltz-frontend",
-  "version": "1.2.0-beta",
+  "name": "lnstxbridge-frontend",
+  "version": "1.0.0",
   "scripts": {
     "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
@@ -28,7 +28,11 @@
     "url": "git+https://github.com/BoltzExchange/boltz-frontend.git"
   },
   "dependencies": {
-    "@emotion/react": "^11.4.1",
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
+    "@fontsource/roboto": "^4.5.5",
+    "@mui/icons-material": "^5.5.1",
+    "@mui/material": "^5.5.2",
     "@stacks/connect": "^6.2.0",
     "@stacks/connect-react": "^11.0.0",
     "@stacks/network": "^2.0.1",
@@ -47,13 +51,13 @@
     "prop-types": "^15.7.2",
     "qrcode-parser": "^1.2.0",
     "qrious": "^4.0.2",
-    "react": "^16.14.0",
+    "react": "^17.0.2",
     "react-confetti": "^4.0.1",
     "react-copy-to-clipboard": "^5.0.4",
     "react-device-detect": "^1.17.0",
-    "react-dom": "^16.14.0",
+    "react-dom": "^17.0.2",
     "react-icons": "^3.11.0",
-    "react-jss": "^8.6.1",
+    "react-jss": "^10.9.0",
     "react-loader-spinner": "^3.1.14",
     "react-notifications-component": "^1.1.1",
     "react-qr-reader": "^2.2.1",

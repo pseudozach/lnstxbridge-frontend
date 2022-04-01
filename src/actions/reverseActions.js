@@ -173,12 +173,12 @@ export const claimSwap = (dispatch, nextStage, swapInfo, swapResponse) => {
 };
 
 export const setSignedTx = (dispatch, id, tx) => {
-  console.log('reverseActions setSignedTx ', dispatch, id, tx);
+  // console.log('reverseActions setSignedTx ', dispatch, id, tx);
   broadcastSponsoredTx(dispatch, id, tx);
 };
 
 const broadcastSponsoredTx = (dispatch, id, tx) => {
-  console.log('reverseActions broadcastSponsoredTx ', id, tx, dispatch);
+  // console.log('reverseActions broadcastSponsoredTx ', id, tx, dispatch);
   const url = `${boltzApi}/broadcastsponsoredtx`;
   // return dispatch => {
   axios
@@ -186,10 +186,15 @@ const broadcastSponsoredTx = (dispatch, id, tx) => {
       id,
       tx,
     })
-    .then(txId => {
+    .then(res => {
       // cb()
-      console.log('broadcastSponsoredTx done ', txId);
-      dispatch(reverseSwapResponse(true, 'Transaction broadcasted'));
+      console.log('broadcastSponsoredTx done ', res);
+      dispatch(
+        reverseSwapResponse(true, {
+          status: 'Transaction broadcasted',
+          txId: res.data.transactionId?.transactionId,
+        })
+      );
     })
     .catch(error => {
       const message = error.response.data.error;
@@ -259,7 +264,7 @@ const handleReverseSwapStatus = (
     latestSwapEvent = status;
   }
 
-  // console.log('reverseactions status: ', status);
+  console.log('reverseactions status: ', status);
   switch (status) {
     case SwapUpdateEvent.TransactionMempool:
       console.log('reverseactions data: ', data);

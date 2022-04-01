@@ -6,16 +6,28 @@ import View from '../../../components/view';
 import InputArea from '../../../components/inputarea';
 import { getCurrencyName, getSampleAddress, getNetwork } from '../../../utils';
 
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+
 import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 import { AppConfig, UserSession } from '@stacks/connect';
 import { stacksNetworkType } from '../../../constants';
+import { Checkbox, FormControlLabel, Typography } from '@mui/material';
+
+import axios from 'axios';
+
 let activeNetwork;
 if (stacksNetworkType === 'mocknet') {
   activeNetwork = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
 } else if (stacksNetworkType === 'testnet') {
   activeNetwork = new StacksTestnet();
 } else if (stacksNetworkType === 'mainnet') {
-  activeNetwork = new StacksMainnet();;
+  activeNetwork = new StacksMainnet();
 }
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
@@ -42,8 +54,8 @@ const inputAddressStyles = () => ({
   inputcb: {
     width: '20px',
     height: '20px',
-    marginRight: '4px',
-  }
+    marginRight: '4px !important',
+  },
 });
 
 class StyledInputAddress extends React.Component {
@@ -80,22 +92,33 @@ class StyledInputAddress extends React.Component {
   };
 
   getUserStacksAddress = () => {
-    if(userSession.isUserSignedIn()) {
+    if (userSession.isUserSignedIn()) {
       let userData = userSession.loadUserData();
       let userStacksAddress = '';
-      if(stacksNetworkType==="mainnet"){
+      if (stacksNetworkType === 'mainnet') {
         userStacksAddress = userData.profile.stxAddress.mainnet;
       } else {
         userStacksAddress = userData.profile.stxAddress.testnet;
       }
       return userStacksAddress;
     }
-  }
+  };
+
+  getUserBalance = async () => {
+    const userAddress = this.getUserStacksAddress();
+    const apiUrl = `https://stacks-node-api.${stacksNetworkType}.stacks.co`;
+    const url = `${apiUrl}/extended/v1/address/${userAddress}/balances`;
+    let response = await axios.get(url);
+    const userBalance = response.data.stx?.balance;
+    console.log('getUserBalance ', userBalance);
+    this.onCheck({ target: { checked: true } });
+    return userBalance;
+  };
 
   componentDidMount = () => {
     const userStacksAddress = this.getUserStacksAddress();
-    this.onChange(userStacksAddress)
-    let element = document.getElementById('textareaid');
+    this.onChange(userStacksAddress);
+    let element = document.getElementById('addressTextfield');
     element.value = userStacksAddress;
     var event = new Event('change');
     element.dispatchEvent(event);
@@ -104,11 +127,64 @@ class StyledInputAddress extends React.Component {
   render() {
     const { error } = this.state;
     const { classes, swapInfo } = this.props;
-    
+
     return (
       <View className={classes.wrapper}>
-        <p className={classes.title}>
-          Paste or scan a <b>{getCurrencyName(swapInfo.quote)}</b> address to
+        <Box
+          sx={{
+            width: 500,
+            maxWidth: '100%',
+          }}
+        >
+          <TextField
+            fullWidth
+            label="Address"
+            defaultValue={
+              localStorage.getItem('ua') ||
+              `EG: ${getSampleAddress(swapInfo.quote)}`
+            }
+            id="addressTextfield"
+            disabled
+            placeholder={`EG: ${getSampleAddress(swapInfo.quote)}`}
+            onChange={this.onChange}
+            error={error}
+          />
+          {swapInfo.quote === 'STX' ? (
+            <FormControlLabel
+              className={classes.checkbox}
+              sx={{ marginLeft: 0 }}
+              control={
+                <Checkbox
+                  checked={this.state.zeroStx}
+                  onChange={this.onCheck}
+                  className={classes.inputcb}
+                  name="zeroStx"
+                />
+              }
+              label=" Use sponsored transaction"
+            />
+          ) : // <label className={classes.checkbox}>
+          //   <input
+          //     name="zeroStx"
+          //     type="checkbox"
+          //     className={classes.inputcb}
+          //     onChange={this.onCheck}
+          //     checked={this.state.zeroStx}
+          //   />
+          //   Use sponsored transaction. (Enable this if you have no STX in your
+          //   wallet.)
+          // </label>
+          null}
+          {swapInfo.quote === 'STX' && !this.getUserBalance() ? (
+            <Typography>
+              * Enabled because current account has 0 STX to cover tx fee.
+            </Typography>
+          ) : null}
+        </Box>
+
+        {/* <p className={classes.title}>
+          <b>{getCurrencyName(swapInfo.quote)}</b> receive address
+           to
           which you want to receive
         </p>
         <InputArea
@@ -119,18 +195,7 @@ class StyledInputAddress extends React.Component {
           showQrScanner={true}
           onChange={this.onChange}
           placeholder={`EG: ${getSampleAddress(swapInfo.quote)}`}
-        />
-        {swapInfo.quote === 'STX' ? (<label
-          className={classes.checkbox}>
-          <input
-            name="zeroStx"
-            type="checkbox"
-            className={classes.inputcb}
-            onChange={this.onCheck}
-            checked={this.state.zeroStx} />
-            Use sponsored transaction. (Enable this if you have no STX in your wallet.)
-        </label>) : null}
-
+        /> */}
       </View>
     );
   }

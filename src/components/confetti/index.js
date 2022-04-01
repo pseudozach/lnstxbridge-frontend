@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import ReactConfetti from 'react-confetti';
 import View from '../../components/view';
+import { Typography } from '@mui/material';
 
 const confettiStyles = () => ({
   wrapper: {
@@ -35,7 +36,10 @@ const Confetti = ({ classes, notifie }) => (
       recycle={false}
       style={{ pointerEvents: 'none' }}
     />
-    <span className={classes.text}>Swap successful!</span>
+    {/* <span className={classes.text}>Swap successful 🎉</span> */}
+    <Typography variant="h4" gutterBottom component="div">
+      Swap successful 🎉
+    </Typography>
     {notifie(classes.notifie)}
   </View>
 );
