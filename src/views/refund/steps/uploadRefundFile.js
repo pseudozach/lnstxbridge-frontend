@@ -90,7 +90,10 @@ const StyledUploadRefundFile = ({
               accept="image/*"
               id="icon-button-file"
               type="file"
-              onChange={setRefundFile}
+              // onChange={setRefundFile}
+              onChange={event => {
+                setRefundFile(event.target.files[0]);
+              }}
               hidden
               sx={{ display: 'none' }}
             />

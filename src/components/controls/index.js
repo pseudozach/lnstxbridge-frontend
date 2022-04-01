@@ -85,14 +85,14 @@ const Controls = ({
 }) => {
   const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
   const loadingTextSelect = loadingText ? loadingText : text;
-  console.log('loading: ', loadingText, loading, loadingRender);
-  console.log('text, errorText: ', text, errorText);
-  console.log(
-    'error, errorRender, errorAction: ',
-    error,
-    errorRender,
-    errorAction
-  );
+  // console.log('loading: ', loadingText, loading, loadingRender);
+  // console.log('text, errorText: ', text, errorText);
+  // console.log(
+  //   'error, errorRender, errorAction: ',
+  //   error,
+  //   errorRender,
+  //   errorAction
+  // );
   let swapId = '';
   if (swapResponse?.id) swapId = swapResponse.id;
   if (refundFile?.swapResponse?.id) swapId = refundFile?.swapResponse?.id;

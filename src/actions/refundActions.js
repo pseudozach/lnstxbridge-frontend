@@ -34,6 +34,7 @@ export const completeRefund = () => {
 
 export const setRefundFile = file => {
   return dispatch => {
+    console.log('setRefundFile file ', file);
     qrcodeParser(file).then(res => {
       const fileJson = JSON.parse(res.data);
       console.log('setRefundFile: ', fileJson);
