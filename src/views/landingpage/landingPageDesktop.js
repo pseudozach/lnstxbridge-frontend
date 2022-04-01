@@ -182,7 +182,7 @@ const styles = theme => ({
     alignContent: 'center',
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     '@media (min-width: 1500px)': {
       width: '800px',
       height: '600px',
