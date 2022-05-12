@@ -61,6 +61,8 @@ const inputAddressStyles = () => ({
 class StyledInputAddress extends React.Component {
   state = {
     error: false,
+    userBalance: 0,
+    sponsoredTx: false,
   };
 
   onChange = input => {
@@ -87,8 +89,9 @@ class StyledInputAddress extends React.Component {
 
   onCheck = input => {
     const { onCheck } = this.props;
-    // console.log('onCheck input ', input.target.checked);
+    console.log('onCheck input ', input.target.checked);
     onCheck(input.target.checked, false);
+    this.setState({sponsoredTx: input.target.checked})
   };
 
   getUserStacksAddress = () => {
@@ -109,9 +112,10 @@ class StyledInputAddress extends React.Component {
     const apiUrl = `https://stacks-node-api.${stacksNetworkType}.stacks.co`;
     const url = `${apiUrl}/extended/v1/address/${userAddress}/balances`;
     let response = await axios.get(url);
-    const userBalance = response.data.stx?.balance;
-    console.log('getUserBalance ', userBalance);
-    this.onCheck({ target: { checked: true } });
+    const userBalance = parseInt(response.data.stx?.balance);
+    console.log('getUserBalance', userBalance, userBalance === 0, userBalance === "0", { checked: !userBalance });
+    this.onCheck({ target: { checked: !userBalance } });
+    this.setState({ sponsoredTx: userBalance === 0 });
     return userBalance;
   };
 
@@ -122,10 +126,12 @@ class StyledInputAddress extends React.Component {
     element.value = userStacksAddress;
     var event = new Event('change');
     element.dispatchEvent(event);
+
+    this.getUserBalance();
   };
 
   render() {
-    const { error } = this.state;
+    const { error, userBalance, sponsoredTx } = this.state;
     const { classes, swapInfo } = this.props;
 
     return (
@@ -155,7 +161,7 @@ class StyledInputAddress extends React.Component {
               sx={{ marginLeft: 0 }}
               control={
                 <Checkbox
-                  checked={this.state.zeroStx}
+                  checked={sponsoredTx}
                   onChange={this.onCheck}
                   className={classes.inputcb}
                   name="zeroStx"
@@ -175,9 +181,9 @@ class StyledInputAddress extends React.Component {
           //   wallet.)
           // </label>
           null}
-          {swapInfo.quote === 'STX' && !this.getUserBalance() ? (
+          {(swapInfo.quote === 'STX' && sponsoredTx) ? (
             <Typography>
-              * Enabled because current account has 0 STX to cover tx fee.
+              * Sponsored transaction enabled. Use when Account has 0 STX to cover transaction fee.
             </Typography>
           ) : null}
         </Box>
