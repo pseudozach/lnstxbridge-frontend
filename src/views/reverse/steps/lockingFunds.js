@@ -441,7 +441,8 @@ class LockingFunds extends React.Component {
     // let smallamount = decimalamount
     // .div(etherDecimals)
     // let smallamount = amount.toNumber();
-    let smallamount = parseInt(amount / 100) + 1;
+    let smallamount = parseInt(amount / 100);
+    //  + 1; -> never do this!!!
     console.log('smallamount: ' + smallamount);
 
     let swapamount = smallamount.toString(16).split('.')[0] + '';
