@@ -469,8 +469,15 @@ class LockingFunds extends React.Component {
 
     const assetAddress = tokenAddress.split('.')[0];
     const assetContractName = tokenAddress.split('.')[1];
-    const assetName = assetContractName.split('-')[0];
+    // const assetName = assetContractName.split('-')[0];
+    const assetName = assetContractName.toLowerCase();
     const fungibleAssetInfo = createAssetInfo(
+      assetAddress,
+      assetContractName,
+      assetName
+    );
+    console.log(
+      'assetAddress, assetContractName, assetName ',
       assetAddress,
       assetContractName,
       assetName
@@ -492,7 +499,8 @@ class LockingFunds extends React.Component {
       'postConditions: ' + contractAddress,
       contractName,
       postConditionCode,
-      postConditionAmount
+      postConditionAmount,
+      fungibleAssetInfo
     );
 
     let paddedamount = swapamount.padStart(32, '0');
