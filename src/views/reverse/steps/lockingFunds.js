@@ -441,15 +441,9 @@ class LockingFunds extends React.Component {
     // let smallamount = decimalamount
     // .div(etherDecimals)
     // let smallamount = amount.toNumber();
-    let smallamount = parseInt(amount / 100);
-    //  + 1; -> never do this!!!
-    console.log('smallamount: ' + smallamount);
 
-    let swapamount = smallamount.toString(16).split('.')[0] + '';
-    let postConditionAmount = new BN(
-      Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
-    );
-    console.log(`postConditionAmount: ${postConditionAmount}`);
+    // let swapamount = smallamount.toString(16).split('.')[0] + '';
+
     // *1000
 
     // // Add an optional post condition
@@ -467,10 +461,29 @@ class LockingFunds extends React.Component {
     );
     console.log('tokenAddress: ', tokenAddress);
 
+    // need to do both of this based on decimal of token
+    let smallamount = parseInt(amount / 100);
+    let postConditionAmount = new BN(
+      Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+    );
+
+    if (tokenAddress.includes('Wrapped-USD')) {
+      smallamount = parseInt(amount);
+      postConditionAmount = new BN(
+        Math.ceil(parseInt(swapResponse.onchainAmount))
+      );
+    }
+
+    //  + 1; -> never do this!!!
+    console.log('smallamount: ' + smallamount);
+    console.log(`postConditionAmount: ${postConditionAmount}`);
+
     const assetAddress = tokenAddress.split('.')[0];
     const assetContractName = tokenAddress.split('.')[1];
-    // const assetName = assetContractName.split('-')[0];
-    const assetName = assetContractName.toLowerCase();
+    let assetName = assetContractName.split('-')[0];
+    if (assetContractName.includes('Wrapped-USD')) {
+      assetName = assetContractName.toLowerCase();
+    }
     const fungibleAssetInfo = createAssetInfo(
       assetAddress,
       assetContractName,
@@ -503,15 +516,15 @@ class LockingFunds extends React.Component {
       fungibleAssetInfo
     );
 
-    let paddedamount = swapamount.padStart(32, '0');
-    let paddedtimelock = timeLock.toString(16).padStart(32, '0');
-    console.log(
-      'amount, timelock ',
-      smallamount,
-      swapamount,
-      paddedamount,
-      paddedtimelock
-    );
+    // let paddedamount = swapamount.padStart(32, '0');
+    // let paddedtimelock = timeLock.toString(16).padStart(32, '0');
+    // console.log(
+    //   'amount, timelock ',
+    //   smallamount,
+    //   swapamount,
+    //   paddedamount,
+    //   paddedtimelock
+    // );
 
     // (claimToken (preimage (buff 32)) (amount (buff 16)) (claimAddress (buff 42)) (refundAddress (buff 42)) (timelock (buff 16)) (tokenPrincipal <ft-trait>))
     const functionArgs = [
@@ -537,7 +550,7 @@ class LockingFunds extends React.Component {
       postConditions,
       // anchorMode: AnchorMode.Any,
       onFinish: data => {
-        console.log('Stacks sip10 claim onFinish:', JSON.stringify(data));
+        // console.log('Stacks sip10 claim onFinish:', JSON.stringify(data));
         this.setState({
           txId: data.txId,
         });
