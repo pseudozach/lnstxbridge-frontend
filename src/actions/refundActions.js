@@ -76,8 +76,10 @@ export const setRefundFromTx = txId => {
           tx.data &&
           tx.data.contract_call &&
           tx.data.tx_status === 'success' &&
-          tx.data.contract_call.function_name === 'lockStx'
+          (tx.data.contract_call.function_name === 'lockStx' ||
+            tx.data.contract_call.function_name === 'lockToken')
         ) {
+          console.log('setRefundFromTx tx.data ', tx.data);
           let refundFile = {};
           refundFile.currency = 'STX';
           refundFile.preimageHash = tx.data.contract_call.function_args[0].repr.slice(
@@ -86,6 +88,20 @@ export const setRefundFromTx = txId => {
           refundFile.amount = parseInt(
             tx.data.contract_call.function_args[1].repr.split('u')[1]
           );
+          if (tx.data.contract_call.function_name === 'lockToken') {
+            const tokenPrincipal = tx.data.contract_call.function_args.find(
+              item => item.name === 'tokenPrincipal'
+            );
+            console.log('tokenPrincipal ', tokenPrincipal);
+            if (tokenPrincipal.repr.includes('Wrapped-USD')) {
+              refundFile.currency = 'XUSD';
+              refundFile.amount = refundFile.amount / 100;
+            } else if (tokenPrincipal.repr.includes('usda')) {
+              refundFile.currency = 'USDA';
+            }
+            refundFile.swapResponse = { tokenAddress: tokenPrincipal.repr };
+          }
+
           // refundFile.amount = parseInt(
           //   tx.data.contract_call.function_args[1].repr,
           //   16

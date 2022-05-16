@@ -363,8 +363,12 @@ class InputDestinationAddress extends React.Component {
       );
     }
 
+    if (refundFile.currency === 'XUSD') {
+      postconditionamount = postconditionamount * 100;
+    }
+
     console.log(
-      'swapamount, postconditionamount: ',
+      'refundToken swapamount, postconditionamount: ',
       swapamount,
       postconditionamount
     );
@@ -383,7 +387,7 @@ class InputDestinationAddress extends React.Component {
     // ];
 
     let tokenAddress;
-    if (refundFile.redeemScript.includes('.')) {
+    if (refundFile?.redeemScript?.includes('.')) {
       tokenAddress = Buffer.from(refundFile.redeemScript, 'hex').toString(
         'utf8'
       );
