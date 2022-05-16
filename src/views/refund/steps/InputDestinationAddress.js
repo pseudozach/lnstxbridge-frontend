@@ -394,7 +394,10 @@ class InputDestinationAddress extends React.Component {
 
     const assetAddress = tokenAddress.split('.')[0];
     const assetContractName = tokenAddress.split('.')[1];
-    const assetName = assetContractName.split('-')[0];
+    let assetName = assetContractName.split('-')[0];
+    if (assetContractName.includes('Wrapped-USD')) {
+      assetName = assetContractName.toLowerCase();
+    }
     const fungibleAssetInfo = createAssetInfo(
       assetAddress,
       assetContractName,
