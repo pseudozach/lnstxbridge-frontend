@@ -109,7 +109,11 @@ class StyledInputInvoice extends React.Component {
       });
     }
 
-    if (swapInfo.quote === 'STX' || swapInfo.quote === 'USDA') {
+    if (
+      swapInfo.quote === 'STX' ||
+      swapInfo.quote === 'USDA' ||
+      swapInfo.quote === 'XUSD'
+    ) {
       const userStacksAddress = this.getUserStacksAddress();
       this.onChange(userStacksAddress);
       let element = document.getElementById('addressTextfield');
@@ -164,7 +168,9 @@ class StyledInputInvoice extends React.Component {
             ) : null}
           </p>
         )}
-        {(swapInfo.quote === 'STX' || swapInfo.quote === 'USDA') && (
+        {(swapInfo.quote === 'STX' ||
+          swapInfo.quote === 'USDA' ||
+          swapInfo.quote === 'XUSD') && (
           <Box
             sx={{
               width: 500,

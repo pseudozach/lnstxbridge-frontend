@@ -773,8 +773,12 @@ class SwapTabWrapper extends React.Component {
 
       // disable atomic swaps between only stacks assets
       if (
-        (this.baseAsset.symbol === 'STX' && this.quoteAsset.symbol == 'USDA') ||
-        (this.baseAsset.symbol === 'USDA' && this.quoteAsset.symbol == 'STX')
+        (this.baseAsset.symbol === 'STX' &&
+          (this.quoteAsset.symbol == 'USDA' ||
+            this.quoteAsset.symbol == 'XUSD')) ||
+        ((this.baseAsset.symbol === 'USDA' ||
+          this.baseAsset.symbol === 'XUSD') &&
+          this.quoteAsset.symbol == 'STX')
       ) {
         this.setState({
           rate: undefined,
