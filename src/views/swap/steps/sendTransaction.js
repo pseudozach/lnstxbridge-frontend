@@ -552,6 +552,9 @@ class SendTransaction extends React.Component {
         swapResponse.baseAmount
       );
       amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
+      if (swapInfo.base === 'XUSD') {
+        amountToLock = amountToLock * 100;
+      }
       swapamount = amountToLock.toString(16).split('.')[0] + '';
       postconditionamount = Math.ceil(amountToLock);
     } else {
@@ -851,6 +854,9 @@ class SendTransaction extends React.Component {
 
     // new way
     let amount = Math.floor(swapInfo.quoteAmount * 1000000);
+    if (swapInfo.quote === 'XUSD') {
+      amount = amount * 100;
+    }
     let timeLock = swapResponse.asTimeoutBlockHeight;
 
     // ${getHexString(preimage)}
