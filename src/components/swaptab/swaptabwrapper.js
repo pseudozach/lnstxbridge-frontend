@@ -766,7 +766,7 @@ class SwapTabWrapper extends React.Component {
         this.setState({
           rate: undefined,
           error: true,
-          errorMessage: 'Not available',
+          errorMessage: 'Pair Not available',
         });
         return;
       }
@@ -779,7 +779,7 @@ class SwapTabWrapper extends React.Component {
         this.setState({
           rate: undefined,
           error: true,
-          errorMessage: 'Not available',
+          errorMessage: 'Pair Not available',
         });
         return;
       }
