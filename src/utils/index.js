@@ -423,7 +423,7 @@ export const getNetwork = symbol => {
  * Get the block explorer URL for a symbol
  */
 export const getExplorer = symbol => {
-  if (symbol === 'STX' || symbol === 'USDA') {
+  if (symbol === 'STX' || symbol === 'USDA' || symbol === 'XUSD') {
     return stacksExplorer;
   } else {
     return symbol === 'BTC' ? bitcoinExplorer : litecoinExplorer;

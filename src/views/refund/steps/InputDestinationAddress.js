@@ -363,8 +363,12 @@ class InputDestinationAddress extends React.Component {
       );
     }
 
+    if (refundFile.currency === 'XUSD') {
+      postconditionamount = postconditionamount * 100;
+    }
+
     console.log(
-      'swapamount, postconditionamount: ',
+      'refundToken swapamount, postconditionamount: ',
       swapamount,
       postconditionamount
     );
@@ -383,7 +387,7 @@ class InputDestinationAddress extends React.Component {
     // ];
 
     let tokenAddress;
-    if (refundFile.redeemScript.includes('.')) {
+    if (refundFile?.redeemScript?.includes('.')) {
       tokenAddress = Buffer.from(refundFile.redeemScript, 'hex').toString(
         'utf8'
       );
@@ -394,7 +398,10 @@ class InputDestinationAddress extends React.Component {
 
     const assetAddress = tokenAddress.split('.')[0];
     const assetContractName = tokenAddress.split('.')[1];
-    const assetName = assetContractName.split('-')[0];
+    let assetName = assetContractName.split('-')[0];
+    if (assetContractName.includes('Wrapped-USD')) {
+      assetName = assetContractName.toLowerCase();
+    }
     const fungibleAssetInfo = createAssetInfo(
       assetAddress,
       assetContractName,

@@ -552,6 +552,9 @@ class SendTransaction extends React.Component {
         swapResponse.baseAmount
       );
       amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
+      if (swapInfo.base === 'XUSD') {
+        amountToLock = amountToLock * 100;
+      }
       swapamount = amountToLock.toString(16).split('.')[0] + '';
       postconditionamount = Math.ceil(amountToLock);
     } else {
@@ -567,6 +570,9 @@ class SendTransaction extends React.Component {
         parseInt(swapResponse.expectedAmount) / 100
       );
       amountToLock = Math.floor(parseInt(swapResponse.expectedAmount) / 100);
+      if (swapInfo.base === 'XUSD') {
+        amountToLock = Math.floor(parseInt(swapResponse.expectedAmount));
+      }
       swapamount = amountToLock.toString(16).split('.')[0] + '';
       // postcondition amount should be in stx not mstx - WRONG!
       postconditionamount = Math.ceil(amountToLock);
@@ -610,7 +616,10 @@ class SendTransaction extends React.Component {
 
     const assetAddress = tokenAddress.split('.')[0];
     const assetContractName = tokenAddress.split('.')[1];
-    const assetName = assetContractName.split('-')[0];
+    let assetName = assetContractName.split('-')[0];
+    if (assetContractName.includes('Wrapped-USD')) {
+      assetName = assetContractName.toLowerCase();
+    }
     const fungibleAssetInfo = createAssetInfo(
       assetAddress,
       assetContractName,
@@ -845,6 +854,9 @@ class SendTransaction extends React.Component {
 
     // new way
     let amount = Math.floor(swapInfo.quoteAmount * 1000000);
+    if (swapInfo.quote === 'XUSD') {
+      amount = amount * 100;
+    }
     let timeLock = swapResponse.asTimeoutBlockHeight;
 
     // ${getHexString(preimage)}
@@ -864,7 +876,10 @@ class SendTransaction extends React.Component {
 
     const assetAddress = tokenAddress.split('.')[0];
     const assetContractName = tokenAddress.split('.')[1];
-    const assetName = assetContractName.split('-')[0];
+    let assetName = assetContractName.split('-')[0];
+    if (assetContractName.includes('Wrapped-USD')) {
+      assetName = assetContractName.toLowerCase();
+    }
     const fungibleAssetInfo = createAssetInfo(
       assetAddress,
       assetContractName,
@@ -1144,7 +1159,9 @@ class SendTransaction extends React.Component {
             </View>
           ) : null}
 
-          {(swapInfo.base === 'STX' || swapInfo.base === 'USDA') &&
+          {(swapInfo.base === 'STX' ||
+            swapInfo.base === 'USDA' ||
+            swapInfo.base === 'XUSD') &&
           swapStatus.message !== 'Atomic Swap is ready' ? (
             <Button
               variant="contained"
