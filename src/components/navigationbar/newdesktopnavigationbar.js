@@ -4,7 +4,7 @@ import injectSheet from 'react-jss';
 // import View from '../view';
 // import Button from '../button';
 import { navigation } from '../../actions';
-// import { network } from '../../constants';
+import { network } from '../../constants';
 // boltzOnion
 
 import AppBar from '@mui/material/AppBar';
@@ -96,8 +96,9 @@ const DeskTopNavigationBar = ({ classes }) => {
             <span className={classes.logoText}>LN</span>
             <Avatar alt="LNSwap Icon" src="./whiteicon.png" sx={{}} />
             <span className={classes.logoText}>SWAP</span>
-            {/* <span className={classes.subLogoText}>beta</span> */}
+            {network==='testnet' ? <sub className={classes.subLogoText}>{network}</sub>: null}
             {/* {network}  */}
+            {/* beta */}
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -321,7 +322,7 @@ const styles = theme => ({
     color: '#fff',
     fontSize: '15px',
     fontWeight: '100',
-    textTransform: 'uppercase',
+    // textTransform: 'uppercase',
   },
 });
 
