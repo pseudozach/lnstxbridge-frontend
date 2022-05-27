@@ -54,6 +54,10 @@ let bitcoinNetwork =
   process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet'
     ? bitcoin.networks.regtest
     : bitcoin.networks.mainnet;
+  bitcoinNetwork =
+    process.env.REACT_APP_STACKS_NETWORK_TYPE === 'testnet'
+      ? bitcoin.networks.testnet
+      : bitcoinNetwork;
 // console.log('bitcoinNetwork ', bitcoinNetwork);
 function validate(input) {
   try {
