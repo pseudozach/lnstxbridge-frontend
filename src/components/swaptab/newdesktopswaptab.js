@@ -44,405 +44,358 @@ import Box from '@mui/material/Box';
 import { AccountBalanceWallet, Logout } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 
-const DeskTopSwapTabContent = ({
-  classes,
-  feeAmount,
-  minAmount,
-  maxAmount,
-  inputError,
-  baseAmount,
-  base,
-  currencies,
-  quote,
-  quoteAmount,
-  error,
-  errorMessage,
-  disabled,
-  rate,
-  switchPair,
-  updateQuoteAmount,
-  updateBaseAmount,
-  updatePair,
-  shouldSubmit,
-  baseStep,
-  quoteStep,
-  feePercentage,
-  connectWallet,
-  connectStacksWallet,
-  lockStx,
-  stacksUserSession,
-}) => (
-  <Card className={classes.wrapper}>
-    <CardHeader
-      sx={{ textAlign: 'center' }}
-      // avatar={
-      //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-      //     R
-      //   </Avatar>
-      // }
-      // action={
-      //   <IconButton aria-label="settings">
-      //     <MoreVertIcon />
-      //   </IconButton>
-      // }
-      title="Swap"
-      // subheader="September 14, 2016"
-    />
-    {/* <CardMedia
-    component="img"
-    height="194"
-    image="/static/images/cards/paella.jpg"
-    alt="Paella dish"
-  /> */}
-    <CardContent>
-      <Paper
-        // elevation={1}
-        variant="outlined"
-        // className={classes.darkpaper}
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          mb: 2,
-          alignItems: 'center',
-        }}
-      >
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
-          <Select
-            value={base}
-            defaultValue={base}
-            onChange={e => updatePair(quote, e.target.value)}
-            // displayEmpty
-            className={classes.inputMobile}
-            inputProps={{
-              'aria-label': 'Without label',
-              className: classes.midIcon,
-            }}
-            sx={{
-              m: 1,
-              minWidth: 120,
-            }}
-            // sx={{ color: 'white', backgroundColor: '#1a211f', display: 'block' }}
-          >
-            {currencies.map(currency => (
-              <MenuItem
-                value={currency}
-                key={currency}
-                sx={{ my: 2, display: 'block' }}
-              >
-                <img
-                  src={`./${currency.toLowerCase()}.svg`}
-                  height="20"
-                  style={{ marginRight: 4 }}
-                />
-                {currency}
-              </MenuItem>
-            ))}
-          </Select>
-          {/* <FormHelperText>Without label</FormHelperText> */}
-        </FormControl>
+class DeskTopSwapTabContent extends React.Component {
+  constructor(props) {
+    super(props);
 
-        <TextField
-          variant="outlined"
-          // disable={disabled}
-          className={classes.inputMobile}
-          min={0}
-          max={maxAmount}
-          step={quoteStep}
-          error={inputError}
-          value={baseAmount}
-          onChange={updateQuoteAmount}
-          type="number"
-          sx={{ mr: '16px !important' }}
-        />
-      </Paper>
+    this.state = {
+      minUSD: '',
+    };
+  }
 
-      <div height="0px !important" className={classes.zerodiv}>
-        <IconButton
-          aria-label="Swap Pairs"
-          className={classes.flipbutton}
-          onClick={switchPair}
-        >
-          <ArrowDownwardIcon />
-        </IconButton>
-      </div>
+  async fetchRates(base, quote, amount) {
+    console.log('fetchRates: ', base, quote, amount);
+    const response = await rateProvider(base, quote, amount);
+    console.log('got response: ', response);
+    this.setState({
+      minUSD: response,
+    });
+  }
 
-      <Paper
-        // elevation={1}
-        variant="outlined"
-        // className={classes.darkpaper}
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          mb: 2,
-          alignItems: 'center',
-        }}
-      >
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
-          <Select
-            value={quote}
-            defaultValue={quote}
-            onChange={e => updatePair(e.target.value, base)}
-            // displayEmpty
-            inputProps={{
-              'aria-label': 'Without label',
-              className: classes.midIcon,
-            }}
-            className={classes.inputMobile}
-            sx={{ m: 1, minWidth: 120 }}
-            // sx={{ color: 'white', backgroundColor: '#1a211f', display: 'block' }}
-          >
-            {currencies.map(currency => (
-              <MenuItem
-                value={currency}
-                key={currency}
-                sx={{ my: 2, display: 'block' }}
-              >
-                <img
-                  src={`./${currency.toLowerCase()}.svg`}
-                  height="20"
-                  style={{ marginRight: 4 }}
-                />
-                {currency}
-              </MenuItem>
-            ))}
-          </Select>
-          {/* <FormHelperText>Without label</FormHelperText> */}
-        </FormControl>
+  render() {
+    const {
+      classes,
+      feeAmount,
+      minAmount,
+      maxAmount,
+      inputError,
+      baseAmount,
+      base,
+      currencies,
+      quote,
+      quoteAmount,
+      error,
+      errorMessage,
+      // disabled,
+      rate,
+      switchPair,
+      updateQuoteAmount,
+      updateBaseAmount,
+      updatePair,
+      shouldSubmit,
+      baseStep,
+      quoteStep,
+      feePercentage,
+      // connectWallet,
+      connectStacksWallet,
+      // lockStx,
+      stacksUserSession,
+      baseUSD,
+      quoteUSD,
+    } = this.props;
 
-        <TextField
-          variant="outlined"
-          // disable={disabled}
-          className={classes.inputMobile}
-          min={baseStep}
-          max={Number.MAX_SAFE_INTEGER}
-          step={baseStep}
-          error={inputError}
-          value={quoteAmount}
-          onChange={updateBaseAmount}
-          type="number"
-          sx={{ mr: '16px !important' }}
-        />
-      </Paper>
+    // if (!this.state.minUSD) this.fetchRates(base, quote, minAmount);
 
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Typography>Fees & Limits</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography className={classes.spaceman}>
-            <span>Min</span>{' '}
-            <span>
-              {`${formatAmount(minAmount)} ${base}`}{' '}
-              {/* {`(~${rateProvider(base, quote, minAmount)})`} */}
-            </span>
-          </Typography>
-          <Typography className={classes.spaceman}>
-            <span>Max</span> <span>{`${formatAmount(maxAmount)} ${base}`}</span>
-          </Typography>
-          <Typography className={classes.spaceman}>
-            <span>Swap Fee </span>{' '}
-            <span>{`${feeAmount} ${base} (${feePercentage}%)`}</span>
-          </Typography>
-          <Typography className={classes.spaceman}>
-            <span>Rate </span> <span>{`${rate}`}</span>
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-
-      {/* <Typography variant="body2" color="text.secondary">
-      This impressive paella is a perfect party dish and a fun meal to cook
-      together with your guests. Add 1 cup of frozen peas along with the mussels,
-      if you like.
-    </Typography> */}
-    </CardContent>
-    <CardActions
-      sx={{ flexDirection: 'column', borderTop: '1px solid #7a40ee' }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          width: '100%',
-          alignItems: 'center',
-        }}
-      >
-        <Button
-          variant="outlined"
-          // className={classes.contractButton}
-          text={'Connect Wallet'}
-          sx={{ margin: 2, textTransform: 'initial' }}
-          onClick={async () => {
-            connectStacksWallet();
-
-            // if (localStorage.getItem('ua')) {
-            //   console.log('localstorage logout');
-            //   // logout / clear localstorage
-            //   localStorage.removeItem('ua');
-            //   window.location.reload();
-            // } else {
-            //   // let w3 = await connectWallet();
-            //   connectStacksWallet();
-            //   // console.log('onpress account ', w3);
-            //   // this.onChange(w3.account, false);
-            //   // document.getElementById('addressTextfield').value = w3.account;
-            //   const ua = stacksUserSession();
-            //   console.log('localstorage login ', ua);
-            //   localStorage.setItem('ua', ua);
-            //   window.location.reload();
+    return (
+      <>
+        <Card className={classes.wrapper}>
+          <CardHeader
+            sx={{ textAlign: 'center' }}
+            // avatar={
+            //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+            //     R
+            //   </Avatar>
             // }
-          }}
-          startIcon={!localStorage.getItem('ua') && <AccountBalanceWallet />}
-        >
-          {stacksUserSession()
-          //  && localStorage.getItem('ua')
-          //   ? localStorage.getItem('ua').slice(0, 4) +
-          //     '...' +
-          //     localStorage.getItem('ua').slice(-4)
-          //   : ''
-          }
-          {stacksUserSession() ? (
-            <Tooltip title="Disconnect Wallet">
-              <Logout sx={{ ml: 1 }} />
-            </Tooltip>
-          ) : (
-            'Connect Wallet'
-          )}
-        </Button>
-        {(error || inputError) && (
-          <Alert severity="error" sx={{ flex: 1, mx: 1 }}>
-            {errorMessage}
-          </Alert>
-        )}
-        <Button
-          variant="contained"
-          size="large"
-          endIcon={<NavigateNextIcon />}
-          sx={{ margin: 2 }}
-          className={classes.stacksButton}
-          disabled={error || inputError || !localStorage.getItem('ua')}
-          onClick={() => shouldSubmit()}
-        >
-          Start
-        </Button>
-      </Box>
-    </CardActions>
-  </Card>
+            // action={
+            //   <IconButton aria-label="settings">
+            //     <MoreVertIcon />
+            //   </IconButton>
+            // }
+            title="Swap"
+            // subheader="September 14, 2016"
+          />
+          {/* <CardMedia
+          component="img"
+          height="194"
+          image="/static/images/cards/paella.jpg"
+          alt="Paella dish"
+        /> */}
+          <CardContent>
+            <Paper
+              // elevation={1}
+              variant="outlined"
+              // className={classes.darkpaper}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                mb: 2,
+                alignItems: 'center',
+                flexDirection: 'column',
+              }}
+            >
+              <div className={classes.flexDiv}>
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                  <Select
+                    value={base}
+                    defaultValue={base}
+                    onChange={e => updatePair(quote, e.target.value)}
+                    // displayEmpty
+                    className={classes.inputMobile}
+                    inputProps={{
+                      'aria-label': 'Without label',
+                      className: classes.midIcon,
+                    }}
+                    sx={{
+                      m: 1,
+                      minWidth: 120,
+                    }}
+                    // sx={{ color: 'white', backgroundColor: '#1a211f', display: 'block' }}
+                  >
+                    {currencies.map(currency => (
+                      <MenuItem
+                        value={currency}
+                        key={currency}
+                        sx={{ my: 2, display: 'block' }}
+                      >
+                        <img
+                          src={`./${currency.toLowerCase()}.svg`}
+                          height="20"
+                          style={{ marginRight: 4 }}
+                        />
+                        {currency}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {/* <FormHelperText>Without label</FormHelperText> */}
+                </FormControl>
 
-  // <View className={classes.wrapper}>
-  //   <View className={classes.connectButton}>
-  //     {stacksUserSession() ? (<Button
-  //       text={stacksUserSession()}
-  //       className={classes.loggedintext}
-  //       // error={error || inputError}
-  //       onPress={error ? () => {} : () => connectStacksWallet()}
-  //       // errorText={errorMessage}
-  //     />) : null }
-  //     {/* <Button
-  //       text={'Lock STX'}
-  //       // error={error || inputError}
-  //       onPress={error ? () => {} : () => lockStx()}
-  //       // errorText={errorMessage}
-  //     /> */}
+                <TextField
+                  variant="outlined"
+                  // disable={disabled}
+                  className={classes.inputMobile}
+                  min={0}
+                  max={maxAmount}
+                  step={quoteStep}
+                  error={inputError}
+                  value={baseAmount}
+                  onChange={updateQuoteAmount}
+                  type="number"
+                  sx={{ mr: '16px !important' }}
+                />
+              </div>
+              <div className={classes.flexDiv}>
+                {/* <span
+                  className={classes.fiatSpan}
+                  style={{ marginLeft: 16 }}
+                </span> */}
+                <span className={classes.fiatSpan}>{`~$ ${baseUSD}`}</span>
+              </div>
+            </Paper>
 
-  //   </View>
-  //   <View className={classes.stats}>
-  //     <InfoText
-  //       title="Min amount"
-  //       text={`${formatAmount(minAmount)} ${base}`}
-  //     />
-  //     <InfoText
-  //       title="Max amount"
-  //       text={`${formatAmount(maxAmount)} ${base}`}
-  //     />
-  //     <InfoText
-  //       title="Current fee"
-  //       text={`${feeAmount} ${base} (${feePercentage}%)`}
-  //     />
-  //     <InfoText title="Rate" text={`${rate}`} />
-  //   </View>
-  //   <View className={classes.options}>
-  //     <View className={classes.select}>
-  //       <Text text="You send:" className={classes.text} />
-  //       <Input
-  //         disable={disabled}
-  //         className={classes.inputMobile}
-  //         min={minAmount}
-  //         max={maxAmount}
-  //         step={quoteStep}
-  //         error={inputError}
-  //         value={baseAmount}
-  //         onChange={updateQuoteAmount}
-  //       />
-  //       <DropDown
-  //         className={classes.inputMobile}
-  //         defaultValue={base}
-  //         fields={currencies}
-  //         onChange={e => updatePair(quote, e)}
-  //       />
-  //     </View>
+            <div height="0px !important" className={classes.zerodiv}>
+              <IconButton
+                aria-label="Swap Pairs"
+                className={classes.flipbutton}
+                onClick={switchPair}
+              >
+                <ArrowDownwardIcon />
+              </IconButton>
+            </div>
 
-  //     {/* <SButton
-  //         size="large"
-  //         pl="base-tight"
-  //         pr={'base'}
-  //         py="tight"
-  //         fontSize={2}
-  //         mode="primary"
-  //         position="relative"
-  //         className={classes.sbuttoncl}
-  //         // ref={ref}
-  //         onClick={() => lockStx()}
-  //         borderRadius="10px"
-  //         // {...rest}
-  //       >
-  //         <Box
-  //           as={MdAccountBalanceWallet}
-  //           // transform={isSend ? 'unset' : 'scaleY(-1)'}
-  //           size={'16px'}
-  //           mr={'2px'}
-  //         />
-  //         <Box as="span" ml="2px" fontSize="large">
-  //           Lock STX
-  //         </Box>
-  //       </SButton> */}
+            <Paper
+              // elevation={1}
+              variant="outlined"
+              // className={classes.darkpaper}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                mb: 2,
+                alignItems: 'center',
+                flexDirection: 'column',
+              }}
+            >
+              <div className={classes.flexDiv}>
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                  <Select
+                    value={quote}
+                    defaultValue={quote}
+                    onChange={e => updatePair(e.target.value, base)}
+                    // displayEmpty
+                    inputProps={{
+                      'aria-label': 'Without label',
+                      className: classes.midIcon,
+                    }}
+                    className={classes.inputMobile}
+                    sx={{ m: 1, minWidth: 120 }}
+                    // sx={{ color: 'white', backgroundColor: '#1a211f', display: 'block' }}
+                  >
+                    {currencies.map(currency => (
+                      <MenuItem
+                        value={currency}
+                        key={currency}
+                        sx={{ my: 2, display: 'block' }}
+                      >
+                        <img
+                          src={`./${currency.toLowerCase()}.svg`}
+                          height="20"
+                          style={{ marginRight: 4 }}
+                        />
+                        {currency}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {/* <FormHelperText>Without label</FormHelperText> */}
+                </FormControl>
 
-  //     <MdCompareArrows className={classes.arrows} onClick={switchPair} />
-  //     <View className={classes.select}>
-  //       <Text text="You receive:" className={classes.text} />
-  //       <Input
-  //         disable={disabled}
-  //         className={classes.inputMobile}
-  //         min={baseStep}
-  //         max={Number.MAX_SAFE_INTEGER}
-  //         step={baseStep}
-  //         error={inputError}
-  //         value={quoteAmount}
-  //         onChange={updateBaseAmount}
-  //       />
-  //       <DropDown
-  //         className={classes.inputMobile}
-  //         defaultValue={quote}
-  //         fields={currencies}
-  //         onChange={e => updatePair(e, base)}
-  //       />
-  //     </View>
-  //   </View>
-  //   <View className={classes.next}>
-  //     <Controls
-  //       text={'Start swap'}
-  //       error={error || inputError}
-  //       onPress={error ? () => {} : () => shouldSubmit()}
-  //       errorText={errorMessage}
-  //     />
-  //   </View>
-  // </View>
-);
+                <TextField
+                  variant="outlined"
+                  // disable={disabled}
+                  className={classes.inputMobile}
+                  min={baseStep}
+                  max={Number.MAX_SAFE_INTEGER}
+                  step={baseStep}
+                  error={inputError}
+                  value={quoteAmount}
+                  onChange={updateBaseAmount}
+                  type="number"
+                  sx={{ mr: '16px !important' }}
+                />
+              </div>
+              <div className={classes.flexDiv}>
+                {/* <span
+                  className={classes.fiatSpan}
+                  style={{ marginLeft: 16 }}
+                </span> */}
+                <span className={classes.fiatSpan}>{`~$ ${quoteUSD}`}</span>
+              </div>
+            </Paper>
 
-const styles = theme => ({
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography>Fees & Limits</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography className={classes.spaceman}>
+                  <span>Min</span>{' '}
+                  <span>{`${formatAmount(minAmount)} ${base}`} </span>{' '}
+                </Typography>
+                <Typography className={classes.spaceman}>
+                  <span>Max</span>{' '}
+                  <span>{`${formatAmount(maxAmount)} ${base}`}</span>
+                </Typography>
+                <Typography className={classes.spaceman}>
+                  <span>Swap Fee </span>{' '}
+                  <span>{`${feeAmount} ${base} (${feePercentage}%)`}</span>
+                </Typography>
+                <Typography className={classes.spaceman}>
+                  <span>Rate </span> <span>{`${rate}`}</span>
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+
+            {/* <Typography variant="body2" color="text.secondary">
+            This impressive paella is a perfect party dish and a fun meal to cook
+            together with your guests. Add 1 cup of frozen peas along with the mussels,
+            if you like.
+          </Typography> */}
+          </CardContent>
+          <CardActions
+            sx={{ flexDirection: 'column', borderTop: '1px solid #7a40ee' }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '100%',
+                alignItems: 'center',
+              }}
+            >
+              <Button
+                variant="outlined"
+                // className={classes.contractButton}
+                text={'Connect Wallet'}
+                sx={{ margin: 2, textTransform: 'initial' }}
+                onClick={async () => {
+                  connectStacksWallet();
+
+                  // if (localStorage.getItem('ua')) {
+                  //   console.log('localstorage logout');
+                  //   // logout / clear localstorage
+                  //   localStorage.removeItem('ua');
+                  //   window.location.reload();
+                  // } else {
+                  //   // let w3 = await connectWallet();
+                  //   connectStacksWallet();
+                  //   // console.log('onpress account ', w3);
+                  //   // this.onChange(w3.account, false);
+                  //   // document.getElementById('addressTextfield').value = w3.account;
+                  //   const ua = stacksUserSession();
+                  //   console.log('localstorage login ', ua);
+                  //   localStorage.setItem('ua', ua);
+                  //   window.location.reload();
+                  // }
+                }}
+                startIcon={
+                  !localStorage.getItem('ua') && <AccountBalanceWallet />
+                }
+              >
+                {stacksUserSession()
+                //  && localStorage.getItem('ua')
+                //   ? localStorage.getItem('ua').slice(0, 4) +
+                //     '...' +
+                //     localStorage.getItem('ua').slice(-4)
+                //   : ''
+                }
+                {stacksUserSession() ? (
+                  <Tooltip title="Disconnect Wallet">
+                    <Logout sx={{ ml: 1 }} />
+                  </Tooltip>
+                ) : (
+                  'Connect Wallet'
+                )}
+              </Button>
+              {(error || inputError) && (
+                <Alert severity="error" sx={{ flex: 1, mx: 1 }}>
+                  {errorMessage}
+                </Alert>
+              )}
+              <Button
+                variant="contained"
+                size="large"
+                endIcon={<NavigateNextIcon />}
+                sx={{ margin: 2 }}
+                className={classes.stacksButton}
+                disabled={error || inputError || !localStorage.getItem('ua')}
+                onClick={() => shouldSubmit()}
+              >
+                Start
+              </Button>
+            </Box>
+          </CardActions>
+        </Card>
+      </>
+    );
+  }
+}
+
+const styles = {
+  fiatSpan: {
+    marginLeft: 'auto',
+    marginRight: 16,
+    marginBottom: 4,
+    opacity: 0.5,
+    // minWidth: 120,
+  },
+  flexDiv: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   midIcon: {
     display: 'flex !important',
     alignItems: 'center !important',
@@ -592,7 +545,7 @@ const styles = theme => ({
       color: '#9D9D9D',
     },
   },
-});
+};
 
 DeskTopSwapTabContent.propTypes = {
   classes: PropTypes.object,
@@ -623,6 +576,16 @@ DeskTopSwapTabContent.propTypes = {
   connectStacksWallet: PropTypes.func,
   lockStx: PropTypes.func,
   stacksUserSession: PropTypes.func,
+  quoteUSD: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.object,
+  ]),
+  baseUSD: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.object,
+  ]),
 };
 
 const DeskTopSwapTab = props => (
