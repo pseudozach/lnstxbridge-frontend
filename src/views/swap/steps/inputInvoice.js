@@ -12,7 +12,7 @@ import {
   getSmallestDenomination,
   getSampleAddress,
 } from '../../../utils';
-import { TextField } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 
 // import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 import { AppConfig, UserSession } from '@stacks/connect';
@@ -194,6 +194,11 @@ class StyledInputInvoice extends React.Component {
               onChange={this.onChange}
               error={error}
             />
+            {(swapInfo.quote === 'STX') ? (
+              <Typography>
+                * Sponsored transaction unavailable. Proceed if you have enough STX balance to cover the withdrawal transaction fee.
+              </Typography>
+            ) : null}
           </Box>
         )}
         {swapInfo.quote === 'BTC' && (
