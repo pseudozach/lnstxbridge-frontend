@@ -2,7 +2,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import PropTypes from 'prop-types';
 import { network, ServiceWarnings, stacksNetworkType } from '../../constants';
-import { decimals } from '../../utils';
+import { decimals, rateProvider } from '../../utils';
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
 
@@ -104,6 +104,8 @@ class SwapTabWrapper extends React.Component {
       maxAmount: new BigNumber('0'),
       baseAmount: new BigNumber('2'),
       quoteAmount: new BigNumber('0'),
+      baseUSD: new BigNumber('0'),
+      quoteUSD: new BigNumber('0'),
       feeAmount: new BigNumber('0'),
       errorMessage: '',
       web3: null,
@@ -887,7 +889,7 @@ class SwapTabWrapper extends React.Component {
       : this.setState({ disabled: true });
   };
 
-  updateBaseAmount = quoteAmount => {
+  updateBaseAmount = async quoteAmount => {
     if (quoteAmount.c) {
       quoteAmount = quoteAmount.toString();
     } else if (!quoteAmount.target || !quoteAmount.target.value) {
@@ -905,16 +907,36 @@ class SwapTabWrapper extends React.Component {
     const newBaseWithFee = fee.plus(newBase);
     const inputError = !this.checkBaseAmount(newBaseWithFee);
 
+    let quoteUSD = 0;
+    let baseUSD = 0;
+    try {
+      // console.log('updateBaseAmount quoteAmount ', quoteAmount);
+      quoteUSD = (
+        await rateProvider(this.state.quote, 'USD', quoteAmount)
+      ).toFixed(2);
+      baseUSD = (
+        await rateProvider(
+          this.state.base,
+          'USD',
+          new BigNumber(newBaseWithFee.toFixed(8))
+        )
+      ).toFixed(2);
+    } catch (error) {
+      console.log('error fetching USD rates');
+    }
+
     this.setState({
       quoteAmount: amount,
       baseAmount: new BigNumber(newBaseWithFee.toFixed(8)),
       feeAmount: fee,
       inputError,
       errorMessage: 'Invalid amount',
+      baseUSD,
+      quoteUSD,
     });
   };
 
-  updateQuoteAmount = baseAmount => {
+  updateQuoteAmount = async baseAmount => {
     if (!this.state.rate) return;
 
     if (baseAmount.c) {
@@ -941,6 +963,18 @@ class SwapTabWrapper extends React.Component {
       newQuote = new BigNumber('0');
     }
 
+    let quoteUSD = 0;
+    let baseUSD = 0;
+    try {
+      // console.log('updateQuoteAmount baseAmount ', baseAmount);
+      quoteUSD = (
+        await rateProvider(this.state.quote, 'USD', newQuote)
+      ).toFixed(2);
+      baseUSD = (await rateProvider(this.state.base, 'USD', amount)).toFixed(2);
+    } catch (error) {
+      console.log('error fetching USD rates');
+    }
+
     const inputError = !this.checkBaseAmount(amount);
     this.setState({
       quoteAmount: newQuote,
@@ -948,6 +982,8 @@ class SwapTabWrapper extends React.Component {
       feeAmount: fee,
       inputError,
       errorMessage: 'Invalid amount',
+      baseUSD,
+      quoteUSD,
     });
   };
 
@@ -1015,6 +1051,8 @@ class SwapTabWrapper extends React.Component {
       feeAmount: feeAmount.isZero() ? 0 : feeAmount.toFixed(8),
       quoteAmount: this.state.quoteAmount.toNumber(),
       baseAmount: this.state.baseAmount.toNumber(),
+      quoteUSD: this.state.quoteUSD,
+      baseUSD: this.state.baseUSD,
       classes: this.props.classes,
       onPress: this.props.onPress,
       limits: this.props.limits,
