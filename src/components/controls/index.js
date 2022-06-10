@@ -88,9 +88,10 @@ const Controls = ({
   // console.log('loading: ', loadingText, loading, loadingRender);
   // console.log('text, errorText: ', text, errorText);
   // console.log(
-  //   'error, errorRender, errorAction: ',
+  //   'error, errorText, errorRender, errorAction: ',
   //   error,
-  //   errorRender,
+  //   errorText,
+  //   // errorRender,
   //   errorAction
   // );
   let swapId = '';
@@ -219,7 +220,11 @@ const Controls = ({
         )}
         {showProgress && <CircularProgress sx={{ m: 2, marginLeft: 'auto' }} />}
         {!showProgress &&
-          !(errorText && errorText.includes('refund your coins')) && (
+          !(
+            errorText &&
+            typeof errorText === 'string' &&
+            errorText.includes('refund your coins')
+          ) && (
             <Button
               variant="contained"
               size="large"
@@ -238,18 +243,20 @@ const Controls = ({
               {buttonText}
             </Button>
           )}
-        {errorText && errorText.includes('refund your coins') && (
-          <Button
-            variant="contained"
-            size="large"
-            endIcon={<Undo />}
-            sx={{ margin: 2, marginLeft: 'auto' }}
-            // disabled={error || errorRender || loading || errorText}
-            onClick={() => (window.location.href = '/refund')}
-          >
-            Refund
-          </Button>
-        )}
+        {errorText &&
+          typeof errorText === 'string' &&
+          errorText.includes('refund your coins') && (
+            <Button
+              variant="contained"
+              size="large"
+              endIcon={<Undo />}
+              sx={{ margin: 2, marginLeft: 'auto' }}
+              // disabled={error || errorRender || loading || errorText}
+              onClick={() => (window.location.href = '/refund')}
+            >
+              Refund
+            </Button>
+          )}
       </Box>
 
       {/* <MdContentCopy className={classes.nextIcon} size={30} /> */}
