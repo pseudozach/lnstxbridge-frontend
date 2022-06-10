@@ -8,21 +8,11 @@ import { getSampleAddress, getNetwork } from '../../../utils';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
-// import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 import { AppConfig, UserSession } from '@stacks/connect';
 import { stacksNetworkType } from '../../../constants';
 import { Checkbox, FormControlLabel, Typography } from '@mui/material';
 
 import axios from 'axios';
-
-// let activeNetwork;
-// if (stacksNetworkType === 'mocknet') {
-//   activeNetwork = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
-// } else if (stacksNetworkType === 'testnet') {
-//   activeNetwork = new StacksTestnet();
-// } else if (stacksNetworkType === 'mainnet') {
-//   activeNetwork = new StacksMainnet();
-// }
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });

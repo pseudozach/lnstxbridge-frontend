@@ -54,10 +54,10 @@ let bitcoinNetwork =
   process.env.REACT_APP_STACKS_NETWORK_TYPE === 'mocknet'
     ? bitcoin.networks.regtest
     : bitcoin.networks.mainnet;
-  bitcoinNetwork =
-    process.env.REACT_APP_STACKS_NETWORK_TYPE === 'testnet'
-      ? bitcoin.networks.testnet
-      : bitcoinNetwork;
+bitcoinNetwork =
+  process.env.REACT_APP_STACKS_NETWORK_TYPE === 'testnet'
+    ? bitcoin.networks.testnet
+    : bitcoinNetwork;
 // console.log('bitcoinNetwork ', bitcoinNetwork);
 function validate(input) {
   try {
@@ -194,9 +194,10 @@ class StyledInputInvoice extends React.Component {
               onChange={this.onChange}
               error={error}
             />
-            {(swapInfo.quote === 'STX') ? (
+            {swapInfo.quote === 'STX' ? (
               <Typography>
-                * Sponsored transaction unavailable. Proceed if you have enough STX balance to cover the withdrawal transaction fee.
+                * Sponsored transaction unavailable. Proceed if you have enough
+                STX balance to cover the withdrawal transaction fee.
               </Typography>
             ) : null}
           </Box>
