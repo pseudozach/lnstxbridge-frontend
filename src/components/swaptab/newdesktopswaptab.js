@@ -101,30 +101,11 @@ class DeskTopSwapTabContent extends React.Component {
         <Card className={classes.wrapper}>
           <CardHeader
             sx={{ textAlign: 'center' }}
-            // avatar={
-            //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            //     R
-            //   </Avatar>
-            // }
-            // action={
-            //   <IconButton aria-label="settings">
-            //     <MoreVertIcon />
-            //   </IconButton>
-            // }
             title="Swap"
-            // subheader="September 14, 2016"
           />
-          {/* <CardMedia
-          component="img"
-          height="194"
-          image="/static/images/cards/paella.jpg"
-          alt="Paella dish"
-        /> */}
           <CardContent>
             <Paper
-              // elevation={1}
               variant="outlined"
-              // className={classes.darkpaper}
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -139,7 +120,6 @@ class DeskTopSwapTabContent extends React.Component {
                     value={base}
                     defaultValue={base}
                     onChange={e => updatePair(quote, e.target.value)}
-                    // displayEmpty
                     className={classes.inputMobile}
                     inputProps={{
                       'aria-label': 'Without label',
@@ -149,7 +129,6 @@ class DeskTopSwapTabContent extends React.Component {
                       m: 1,
                       minWidth: 120,
                     }}
-                    // sx={{ color: 'white', backgroundColor: '#1a211f', display: 'block' }}
                   >
                     {currencies.map(currency => (
                       <MenuItem
@@ -166,7 +145,6 @@ class DeskTopSwapTabContent extends React.Component {
                       </MenuItem>
                     ))}
                   </Select>
-                  {/* <FormHelperText>Without label</FormHelperText> */}
                 </FormControl>
 
                 <TextField
@@ -184,10 +162,6 @@ class DeskTopSwapTabContent extends React.Component {
                 />
               </div>
               <div className={classes.flexDiv}>
-                {/* <span
-                  className={classes.fiatSpan}
-                  style={{ marginLeft: 16 }}
-                </span> */}
                 <span className={classes.fiatSpan}>{`~$ ${baseUSD}`}</span>
               </div>
             </Paper>
@@ -203,9 +177,7 @@ class DeskTopSwapTabContent extends React.Component {
             </div>
 
             <Paper
-              // elevation={1}
               variant="outlined"
-              // className={classes.darkpaper}
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -227,7 +199,6 @@ class DeskTopSwapTabContent extends React.Component {
                     }}
                     className={classes.inputMobile}
                     sx={{ m: 1, minWidth: 120 }}
-                    // sx={{ color: 'white', backgroundColor: '#1a211f', display: 'block' }}
                   >
                     {currencies.map(currency => (
                       <MenuItem
@@ -244,7 +215,6 @@ class DeskTopSwapTabContent extends React.Component {
                       </MenuItem>
                     ))}
                   </Select>
-                  {/* <FormHelperText>Without label</FormHelperText> */}
                 </FormControl>
 
                 <TextField
@@ -262,10 +232,6 @@ class DeskTopSwapTabContent extends React.Component {
                 />
               </div>
               <div className={classes.flexDiv}>
-                {/* <span
-                  className={classes.fiatSpan}
-                  style={{ marginLeft: 16 }}
-                </span> */}
                 <span className={classes.fiatSpan}>{`~$ ${quoteUSD}`}</span>
               </div>
             </Paper>
@@ -296,12 +262,6 @@ class DeskTopSwapTabContent extends React.Component {
                 </Typography>
               </AccordionDetails>
             </Accordion>
-
-            {/* <Typography variant="body2" color="text.secondary">
-            This impressive paella is a perfect party dish and a fun meal to cook
-            together with your guests. Add 1 cup of frozen peas along with the mussels,
-            if you like.
-          </Typography> */}
           </CardContent>
           <CardActions
             sx={{ flexDirection: 'column', borderTop: '1px solid #7a40ee' }}
