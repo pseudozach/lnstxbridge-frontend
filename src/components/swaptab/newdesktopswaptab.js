@@ -99,10 +99,7 @@ class DeskTopSwapTabContent extends React.Component {
     return (
       <>
         <Card className={classes.wrapper}>
-          <CardHeader
-            sx={{ textAlign: 'center' }}
-            title="Swap"
-          />
+          <CardHeader sx={{ textAlign: 'center' }} title="Swap" />
           <CardContent>
             <Paper
               variant="outlined"
