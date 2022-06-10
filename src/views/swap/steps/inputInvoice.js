@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
-import { FaBolt } from 'react-icons/fa';
+// import { FaBolt } from 'react-icons/fa';
 import * as bitcoin from 'bitcoinjs-lib';
 import View from '../../../components/view';
 import InputArea from '../../../components/inputarea';
@@ -20,6 +20,7 @@ import { stacksNetworkType } from '../../../constants';
 
 import axios from 'axios';
 import { Box } from '@mui/system';
+import lightningPayReq from 'bolt11';
 
 const InputInvoiceStyles = theme => ({
   wrapper: {
@@ -69,9 +70,37 @@ function validate(input) {
   }
 }
 
+function validateLN(input) {
+  try {
+    if (input.slice(0, 10) === 'lightning:') {
+      input = input.split('lightning:')[1];
+    }
+    if (
+      input.slice(0, 2).toLowerCase() !== 'ln' ||
+      input.slice(0, 3).toLowerCase() === 'lnurl'
+    ) {
+      // this.setState({ error: 'Invalid lightning invoice' });
+      return false;
+    }
+    const decoded = lightningPayReq.decode(input);
+    // console.log('decoded notification ', decoded);
+    if (decoded.satoshis === null || decoded.satoshis === 0) {
+      // this.setState({ error: 'Invoice amount 0' });
+      // alert('Please provide an invoice with correct value');
+      console.log('Please provide an invoice with correct value');
+      return false;
+    }
+    return true;
+  } catch (e) {
+    // console.log(e);
+    return false;
+  }
+}
+
 class StyledInputInvoice extends React.Component {
   state = {
     error: false,
+    // notificationDom: React.createRef(),
   };
 
   getUserStacksAddress = () => {
@@ -130,8 +159,7 @@ class StyledInputInvoice extends React.Component {
   onChange = input => {
     // accepting STX address for atomic swaps now
     if (
-      input.slice(0, 2).toLowerCase() === 'ln' ||
-      input.slice(0, 10) === 'lightning:' ||
+      validateLN(input) ||
       input.slice(0, 1).toUpperCase() === 'S' ||
       validate(input)
     ) {
