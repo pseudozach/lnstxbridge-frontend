@@ -36,6 +36,10 @@ class Navigation {
   navReverseExpired = () => {
     this._push(routes.reverseExpired);
   };
+
+  navContinue = () => {
+    this._push(routes.zcontinue);
+  };
 }
 
 export default Navigation;

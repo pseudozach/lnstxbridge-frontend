@@ -23,6 +23,7 @@ const Swap = lazy(() => import('./swap'));
 const Refund = lazy(() => import('./refund'));
 const ReverseSwap = lazy(() => import('./reverse'));
 const ReverseSwapTimelockExpired = lazy(() => import('./reversetimelock'));
+const Continue = lazy(() => import('./continue'));
 
 // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 // prefersDarkMode ? 'dark' : 'light',
@@ -73,6 +74,7 @@ const App = () => {
               <Route exact path={routes.swap} component={Swap} />
               <Route exact path={routes.refund} component={Refund} />
               <Route exact path={routes.reverseSwap} component={ReverseSwap} />
+              <Route exact path={routes.zcontinue} component={Continue} />
               <Route
                 exact
                 path={routes.reverseExpired}
