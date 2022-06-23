@@ -116,6 +116,19 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
         prepayMinerFee: swapInfo.isSponsored,
       })
       .then(response => {
+        // console.log(
+        //   'reverseSwapResponse data swapInfo, swapResponse, ',
+        //   swapInfo,
+        //   response.data
+        // );
+        localStorage.setItem(
+          `lnswaps_${response?.data?.id}`,
+          JSON.stringify({
+            type: 'reverse',
+            swapInfo,
+            swapResponse: response.data,
+          })
+        );
         dispatch(reverseSwapResponse(true, response.data));
 
         // To set "isFetching" to true

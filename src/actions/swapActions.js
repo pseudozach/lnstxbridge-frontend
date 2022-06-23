@@ -110,7 +110,19 @@ export const startSwap = (swapInfo, cb) => {
     axios
       .post(url, reqobj)
       .then(response => {
-        // console.log('1esponse data ', response.data);
+        // console.log(
+        //   '1esponse data swapInfo, swapResponse, ',
+        //   swapInfo,
+        //   response.data
+        // );
+        localStorage.setItem(
+          `lnswaps_${response?.data?.id}`,
+          JSON.stringify({
+            type: 'swap',
+            swapInfo,
+            swapResponse: response.data,
+          })
+        );
         dispatch(swapResponse(true, response.data));
         // console.log('2response data ', response.data);
         startListening(dispatch, response.data.id, cb);
