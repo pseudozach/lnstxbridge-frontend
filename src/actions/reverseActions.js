@@ -125,6 +125,7 @@ export const startReverseSwap = (swapInfo, nextStage, timelockExpired) => {
           `lnswaps_${response?.data?.id}`,
           JSON.stringify({
             type: 'reverse',
+            timestamp: new Date().getTime(),
             swapInfo,
             swapResponse: response.data,
           })

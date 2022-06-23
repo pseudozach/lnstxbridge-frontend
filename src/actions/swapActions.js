@@ -119,6 +119,7 @@ export const startSwap = (swapInfo, cb) => {
           `lnswaps_${response?.data?.id}`,
           JSON.stringify({
             type: 'swap',
+            timestamp: new Date().getTime(),
             swapInfo,
             swapResponse: response.data,
           })
