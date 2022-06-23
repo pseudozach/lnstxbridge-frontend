@@ -17,131 +17,172 @@ import { getHexString } from '../../utils';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import CircularProgress from '@mui/material/CircularProgress';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import axios from 'axios';
+import { boltzApi } from '../../constants';
 
 const boltz_logo = require('../../asset/icons/scuba2.png');
 
-const LandingPageDeskTopContent = ({
-  classes,
-  initSwap,
-  initReverseSwap,
-  fees,
-  rates,
-  limits,
-  currencies,
-  notificationDom,
-  toggleModal,
-  isOpen,
-  webln,
-  warnings,
-  lastSwap,
-}) => {
-  const loading = currencies.length === 0;
+// const LandingPageDeskTopContent = ({
+//   classes,
+//   initSwap,
+//   initReverseSwap,
+//   fees,
+//   rates,
+//   limits,
+//   currencies,
+//   notificationDom,
+//   toggleModal,
+//   isOpen,
+//   webln,
+//   warnings,
+//   lastSwap,
+// }) => {
+//   const loading = currencies.length === 0;
 
-  // let ls = await lastSwap();
-  // console.log(`landingpagedesktop.41 `, lastSwap);
+class LandingPageDeskTopContent extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      lnswaps: [],
+    };
+  }
 
-  // <View className={classes.infoWrapper}>
-  // <p className={classes.title}>
-  //     LN - SOV bridge is a fork of the excellent<br /> boltz.exchange.
-  //   </p>
-  //   <p className={classes.title}>
-  //     Instant, Account-Free & <br /> Non-Custodial.
-  //   </p>
-  //   <p className={classes.description}>
-  //     Trading <br />
-  //     <b>{`Shouldn't`}</b>
-  //     <br />
-  //     Require
-  //     <br />
-  //     An Account.
-  //   </p>
-  //   <Button text="WHY?" onPress={() => toggleModal()} />
-  //   <ModalComponent isOpen={isOpen} onClose={toggleModal}>
-  //     <ModalContent />
-  //   </ModalComponent>
-  // </View>
+  componentDidMount = async () => {
+    try {
+      // check localstorage for swaps and list them with their states
+      const lnswaps = [];
+      for (const item in localStorage) {
+        // console.log(`key = ${item}, value = ${localStorage[item]}`);
+        if (
+          item.includes('lnswaps_') &&
+          localStorage[item].includes('preimageHash')
+        ) {
+          const swapId = item.split('lnswaps_')[1];
+          if (!swapId) return;
+          const swapData = JSON.parse(localStorage[item]);
+          const status = await this.getSwapStatus(swapId);
+          swapData.status = status;
+          if (status === 'invoice.expired') {
+            swapData.buttonText = 'Failed';
+          } else if (status === 'transaction.claimed') {
+            swapData.buttonText = 'Finished';
+          } else if (status.includes('refund')) {
+            swapData.buttonText = 'Refund';
+          } else {
+            swapData.buttonText = 'Continue';
+          }
+          // console.log('swapId, swapData, status: ', swapId, swapData, status);
+          lnswaps.push(swapData);
+        }
+      }
+      this.setState({ lnswaps });
+    } catch (error) {
+      console.log('error parsing lnswaps: ', error.message);
+    }
+  };
 
-  return (
-    <BackGround>
-      <ReactNotification ref={notificationDom} />
-      <NavigationBar />
-      <View className={classes.wrapper}>
-        {loading ? (
-          <View className={classes.loading}>
-            {/* <img alt="logo" src={boltz_logo} className={classes.loadingLogo} />
+  getSwapStatus = async swapId => {
+    const url = `${boltzApi}/swapstatus`;
+    try {
+      const response = await axios.post(url, {
+        id: swapId,
+      });
+      // console.log('getSwapStatus ', swapId, response.data);
+      return response.data.status;
+    } catch (error) {
+      console.log('error ', error);
+    }
+  };
+
+  render() {
+    const {
+      classes,
+      initSwap,
+      initReverseSwap,
+      fees,
+      rates,
+      limits,
+      currencies,
+      notificationDom,
+      toggleModal,
+      isOpen,
+      webln,
+      warnings,
+      lastSwap,
+    } = this.props;
+
+    const loading = this.state.lnswaps.length === 0;
+
+    return (
+      <BackGround>
+        <ReactNotification ref={notificationDom} />
+        <NavigationBar />
+        <View className={classes.wrapper}>
+          {loading ? (
+            <View className={classes.loading}>
+              {/* <img alt="logo" src={boltz_logo} className={classes.loadingLogo} />
             <p className={classes.loadingText}>Loading...</p> */}
-            <CircularProgress />
-          </View>
-        ) : (
-          <DeskTopSwapTab
-            warnings={warnings}
-            onPress={state => {
-              const keys = generateKeys(
-                state.base === 'BTC' ? bitcoinNetwork : litecoinNetwork
-              );
-
-              const preimage = randomBytes(32);
-              // console.log("generated preimage: ", preimage);
-              console.log(
-                'preimage, preimagehash: ',
-                getHexString(preimage),
-                getHexString(crypto.sha256(preimage))
-              );
-
-              if (state.isReverseSwap) {
-                initReverseSwap({
-                  ...state,
-                  keys,
-                  webln,
-                  preimage: getHexString(preimage),
-                  preimageHash: getHexString(crypto.sha256(preimage)),
-                });
-
-                navigation.navReverseSwap();
-              } else {
-                initSwap({
-                  ...state,
-                  keys,
-                  webln,
-                  preimage: getHexString(preimage),
-                  preimageHash: getHexString(crypto.sha256(preimage)),
-                });
-
-                navigation.navSwap();
-              }
-            }}
-            fees={fees}
-            rates={rates}
-            limits={limits}
-            currencies={currencies}
-          />
-        )}
-      </View>
-      <Carousel
-        autoFocus={false}
-        autoPlay={false}
-        showArrows={false}
-        showStatus={false}
-        showIndicators={false}
-        showThumbs={false}
-        className={classes.carousel}
-      >
-        <div>
-          {/* <img src="asset/scuba1.png" /> */}
-          {/* <p className="legend">Previous Swap Details: </p> */}
-          <a
-            href={lastSwap.link}
-            target="_blank"
-            className={classes.carouseltext}
-            rel="noreferrer"
-          >
-            Previous Swap Amount: {lastSwap.amount} STX 🔄
-          </a>
-        </div>
-      </Carousel>
-    </BackGround>
-  );
-};
+              <CircularProgress />
+            </View>
+          ) : (
+            <div>
+              {this.state.lnswaps.map(swap =>
+                this.state.lnswaps.length > 0 ? (
+                  <Card
+                    variant="outlined"
+                    sx={{ m: 1, width: '100%' }}
+                    key={swap?.swapResponse?.id}
+                  >
+                    <CardContent>
+                      <Typography
+                        sx={{ fontSize: 14 }}
+                        color="text.secondary"
+                        gutterBottom
+                      >
+                        Swap ID: {swap?.swapResponse?.id}
+                      </Typography>
+                      <Typography variant="h5" component="div">
+                        Status: {swap?.status}
+                      </Typography>
+                      {/* sx={{ mb: 1.5 }} color="text.secondary" */}
+                      <Typography variant="body2">
+                        Pair: {swap.swapInfo.pair.id}
+                        <br />
+                        Side: {swap.swapInfo.pair.orderSide}
+                      </Typography>
+                      <Typography variant="body2">
+                        Base: {swap.swapInfo.baseAmount} {swap.swapInfo.base}
+                      </Typography>
+                      <Typography variant="body2">
+                        Quote: {swap.swapInfo.quoteAmount} {swap.swapInfo.quote}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button
+                        size="small"
+                        disabled={
+                          swap.buttonText !== 'Continue' &&
+                          swap.buttonText !== 'Refund'
+                        }
+                      >
+                        {swap.buttonText}
+                      </Button>
+                    </CardActions>
+                  </Card>
+                ) : null
+              )}
+            </div>
+          )}
+        </View>
+      </BackGround>
+    );
+  }
+}
 
 const styles = theme => ({
   carouseltext: {
