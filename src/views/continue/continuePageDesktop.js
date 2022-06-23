@@ -67,16 +67,19 @@ class LandingPageDeskTopContent extends React.Component {
           const swapData = JSON.parse(localStorage[item]);
           const status = await this.getSwapStatus(swapId);
           swapData.status = status;
-          if (status === 'invoice.expired') {
+          if (status === 'invoice.expired' || status === 'swap.expired') {
             swapData.buttonText = 'Failed';
           } else if (status === 'transaction.claimed') {
             swapData.buttonText = 'Finished';
           } else if (status.includes('refund')) {
             swapData.buttonText = 'Refund';
+            swapData.link = '/refund';
           } else {
             swapData.buttonText = 'Continue';
+            swapData.link = '/swap';
           }
-          // console.log('swapId, swapData, status: ', swapId, swapData, status);
+          swapData.link = swapData.link + '?swapId=' + swapId;
+          console.log('swapId, swapData, status: ', swapId, swapData, status);
           lnswaps.push(swapData);
         }
       }
@@ -122,15 +125,16 @@ class LandingPageDeskTopContent extends React.Component {
       <BackGround>
         <ReactNotification ref={notificationDom} />
         <NavigationBar />
+        <Typography variant="h3" sx={{ textAlign: 'center', color: 'white' }}>
+          Continue Previous Swaps
+        </Typography>
         <View className={classes.wrapper}>
           {loading ? (
             <View className={classes.loading}>
-              {/* <img alt="logo" src={boltz_logo} className={classes.loadingLogo} />
-            <p className={classes.loadingText}>Loading...</p> */}
               <CircularProgress />
             </View>
           ) : (
-            <div>
+            <div style={{ maxHeight: '100%' }}>
               {this.state.lnswaps.map(swap =>
                 this.state.lnswaps.length > 0 ? (
                   <Card
@@ -169,6 +173,7 @@ class LandingPageDeskTopContent extends React.Component {
                           swap.buttonText !== 'Continue' &&
                           swap.buttonText !== 'Refund'
                         }
+                        href={swap.link}
                       >
                         {swap.buttonText}
                       </Button>
