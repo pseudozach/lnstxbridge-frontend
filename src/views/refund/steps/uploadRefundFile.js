@@ -1,16 +1,16 @@
 import React from 'react';
 import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
-import { FaCheckCircle } from 'react-icons/fa';
+// import { FaCheckCircle } from 'react-icons/fa';
 import View from '../../../components/view';
 import InputArea from '../../../components/inputarea';
 import DropZone from '../../../components/dropzone';
-import FileUpload from '../../../components/fileupload';
+// import FileUpload from '../../../components/fileupload';
 import { lockupTransactionHash, sampleStacksTxId } from '../../../constants';
 import { CheckCircle, Upload } from '@mui/icons-material';
-import { Button, IconButton, Input } from '@mui/material';
+import { Button, Input } from '@mui/material';
 
-const UploadRefundFileStyles = theme => ({
+const UploadRefundFileStyles = () => ({
   notfullwidth: {
     width: '90%',
   },
@@ -150,7 +150,7 @@ class StyledUploadRefundFile extends React.Component {
             </DropZone>
             <View className={classes.regular}>
               <p className={`${classes.mobileInfo}`}>
-                (Optional) If you don't have the refund file, paste Stacks
+                (Optional) If you do not have the refund file, paste Stacks
                 lockStx transaction Id
               </p>
               <InputArea
@@ -187,6 +187,8 @@ StyledUploadRefundFile.propTypes = {
   isUploaded: PropTypes.bool.isRequired,
   setTransactionHash: PropTypes.func.isRequired,
   setRefundFromTx: PropTypes.func.isRequired,
+  setRefundLocal: PropTypes.func,
+  refundFile: PropTypes.object,
   // refundStx: PropTypes.func.isRequired,
 };
 
