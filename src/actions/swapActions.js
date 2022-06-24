@@ -208,7 +208,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
     case SwapUpdateEvent.InvoicePaid:
     case SwapUpdateEvent.TransactionClaimed:
       if (source) source.close();
-      callback();
+      if (callback) callback();
       break;
 
     case SwapUpdateEvent.TransactionMempool:
@@ -243,7 +243,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
         pending: true,
         message: 'Atomic Swap is ready',
       };
-      if (data.transaction && data.transaction.hex) {
+      if (data.transaction) {
         swapStatusObj.transaction = data.transaction;
       }
       dispatch(setSwapStatus(swapStatusObj));
