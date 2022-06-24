@@ -20,6 +20,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
@@ -79,6 +80,7 @@ class LandingPageDeskTopContent extends React.Component {
             swapData.link = '/swap';
           }
           swapData.link = swapData.link + '?swapId=' + swapId;
+          // TODO: check if preimagehash was refunded before
           console.log('swapId, swapData, status: ', swapId, swapData, status);
           lnswaps.push(swapData);
         }
@@ -142,14 +144,15 @@ class LandingPageDeskTopContent extends React.Component {
                     sx={{ m: 1, width: '100%' }}
                     key={swap?.swapResponse?.id}
                   >
+                    <CardHeader
+                      title={'Swap ID: ' + swap?.swapResponse?.id}
+                      subheader={
+                        swap?.timestamp
+                          ? new Date(swap?.timestamp).toLocaleString()
+                          : ''
+                      }
+                    />
                     <CardContent>
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        Swap ID: {swap?.swapResponse?.id}
-                      </Typography>
                       <Typography variant="h5" component="div">
                         Status: {swap?.status}
                       </Typography>
