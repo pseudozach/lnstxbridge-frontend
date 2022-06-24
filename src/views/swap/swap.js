@@ -34,7 +34,7 @@ class Swap extends Component {
   };
 
   componentWillUnmount = () => {
-    console.log('swap.37 componentWillUnmount ', this.props);
+    // console.log('swap.37 componentWillUnmount ', this.props);
     this.props.completeSwap();
   };
 
@@ -44,7 +44,7 @@ class Swap extends Component {
       const swapId = this.props?.location?.search.split('?swapId=')[1];
       console.log('swap.44 continue swapId ', swapId);
     } else if (!this.props.inSwapMode) {
-      console.log('swap.43 this.props.inSwapMode ', this.props);
+      // console.log('swap.43 this.props.inSwapMode ', this.props);
       navigation.navHome();
     }
   };
