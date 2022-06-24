@@ -1097,7 +1097,9 @@ class SendTransaction extends React.Component {
                 }}
                 // color={this.state.statusColor}
               >
-                {!this.state.txId && !swapStatus?.transaction?.id
+                {!this.state.txId &&
+                !swapStatus?.transaction?.id &&
+                !swapStatus?.message?.includes('Transaction is in mempool...')
                   ? `Send ${amountToLock} ${swapInfo.base}`
                   : null}
                 {swapResponse.bip21 &&
@@ -1105,7 +1107,8 @@ class SendTransaction extends React.Component {
                 swapStatus.message?.includes('Waiting')
                   ? ` to ${swapResponse.address}`
                   : null}
-                {this.state.txId && !swapStatus?.transaction?.id
+                {(this.state.txId && !swapStatus?.transaction?.id) ||
+                swapStatus?.message?.includes('Transaction is in mempool...')
                   ? `Pending confirmation of the ${amountToLock} ${swapInfo.base} sent`
                   : null}
                 {swapStatus?.transaction?.id &&
@@ -1177,7 +1180,8 @@ class SendTransaction extends React.Component {
               ref={this.ref}
               disabled={
                 (swapStatus.transaction && swapStatus.transaction.hex) ||
-                this.state.txId
+                this.state.txId ||
+                swapStatus?.message?.includes('Transaction is in mempool...')
               }
               onClick={() =>
                 swapInfo.base === 'STX'
