@@ -34,11 +34,17 @@ class Swap extends Component {
   };
 
   componentWillUnmount = () => {
+    console.log('swap.37 componentWillUnmount ', this.props);
     this.props.completeSwap();
   };
 
   redirectIfLoggedOut = () => {
-    if (!this.props.inSwapMode) {
+    // check if continuing from local
+    if (this.props?.location?.search?.includes('?swapId=')) {
+      const swapId = this.props?.location?.search.split('?swapId=')[1];
+      console.log('swap.44 continue swapId ', swapId);
+    } else if (!this.props.inSwapMode) {
+      console.log('swap.43 this.props.inSwapMode ', this.props);
       navigation.navHome();
     }
   };
@@ -58,6 +64,7 @@ class Swap extends Component {
   };
 
   completeSwap = () => {
+    console.log('swap.61 completeSwap ');
     this.props.completeSwap();
 
     window.onbeforeunload = () => {};
@@ -69,7 +76,7 @@ class Swap extends Component {
   };
 
   render() {
-    const {
+    let {
       classes,
       webln,
       setSwapInvoice,
@@ -77,8 +84,32 @@ class Swap extends Component {
       swapResponse,
       swapStatus,
       claimSwap,
+      continueSwap,
     } = this.props;
-    // console.log('swap.js 74 ', swapInfo, swapStatus);
+    console.log('swap.js 74 ', swapInfo, swapStatus, continueSwap);
+    console.log('swap.js 90 ', this.props);
+
+    // update props if continuing swap
+    if (
+      this.props?.location?.search?.includes('?swapId=') &&
+      !swapInfo.type &&
+      !swapResponse
+    ) {
+      try {
+        if (!window.location.href.includes('?')) return;
+        const swapId = window.location.href.split('?swapId=')[1];
+        if (!localStorage['lnswaps_' + swapId]) return;
+        const swapData = JSON.parse(localStorage['lnswaps_' + swapId]);
+        swapInfo = swapData.swapInfo;
+        swapResponse = swapData.swapResponse;
+        console.log('swap.105 swapfromlocal ', swapInfo, swapResponse);
+        // swapStatus.message = swapData.status;
+        continueSwap(swapData.swapResponse);
+      } catch (error) {
+        console.log('swap.109 error getting swapId: ', error.message);
+      }
+    }
+
     return (
       <BackGround>
         <Prompt />
@@ -257,6 +288,7 @@ Swap.propTypes = {
   swapStatus: PropTypes.object.isRequired,
   inSwapMode: PropTypes.bool,
   claimSwap: PropTypes.func,
+  continueSwap: PropTypes.func,
 };
 
 export default injectSheet(styles)(Swap);

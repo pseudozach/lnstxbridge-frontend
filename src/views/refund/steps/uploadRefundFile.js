@@ -77,7 +77,7 @@ class StyledUploadRefundFile extends React.Component {
       setRefundLocal(swapData);
       this.setState({ refundSet: true });
     } catch (error) {
-      console.log('error getting swapId: ', error.message);
+      console.log('uf.80 error getting swapId: ', error.message);
     }
   };
 
