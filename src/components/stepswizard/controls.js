@@ -5,6 +5,11 @@ import View from '../view';
 const Control = props => {
   const { stage, num, render } = props;
   if (stage === num) {
+    // console.log('controls.8 props ', props);
+    // let zProps = props;
+    if (window.location.href.includes('/swap?swapId=') && stage === 1) {
+      props.nextStage(2);
+    }
     return render(props);
   } else return null;
 };
