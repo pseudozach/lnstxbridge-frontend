@@ -947,13 +947,20 @@ class SendTransaction extends React.Component {
 
   render() {
     // setAllowZeroConf
-    const {
-      classes,
-      swapInfo,
-      swapResponse,
-      swapStatus,
-      claimSwap,
-    } = this.props;
+    let { classes, swapInfo, swapResponse, swapStatus, claimSwap } = this.props;
+
+    if (window.location.href.includes('/swap?swapId=') && !swapInfo.base) {
+      try {
+        const swapId = window.location.href.split('?swapId=')[1];
+        if (!localStorage['lnswaps_' + swapId]) return;
+        const swapData = JSON.parse(localStorage['lnswaps_' + swapId]);
+        swapInfo = swapData.swapInfo;
+        // swapResponse = swapData.swapResponse;
+        // console.log('sendTransaction.959 swapInfo ', swapInfo, swapResponse);
+      } catch (error) {
+        console.log('st.961 error getting swapId: ', error.message);
+      }
+    }
 
     console.log(
       'sendtransaction.682 , ',
