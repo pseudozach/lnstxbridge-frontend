@@ -23,6 +23,8 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import Divider from '@mui/material/Divider';
 import axios from 'axios';
 import { boltzApi } from '../../constants';
 
@@ -52,6 +54,16 @@ class LandingPageDeskTopContent extends React.Component {
       lnswaps: [],
     };
   }
+
+  deleteLocalSwap = swapId => {
+    if (!swapId) {
+      console.log('swapId to delete is required.');
+      return;
+    }
+    console.log('removing deleteLocalSwap ', swapId);
+    localStorage.removeItem('lnswaps_' + swapId);
+    window.location.reload();
+  };
 
   componentDidMount = async () => {
     try {
@@ -152,6 +164,7 @@ class LandingPageDeskTopContent extends React.Component {
                           : ''
                       }
                     />
+                    <Divider />
                     <CardContent>
                       <Typography variant="h5" component="div">
                         Status: {swap?.status}
@@ -169,14 +182,29 @@ class LandingPageDeskTopContent extends React.Component {
                         Quote: {swap.swapInfo.quoteAmount} {swap.swapInfo.quote}
                       </Typography>
                     </CardContent>
-                    <CardActions>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+                      <Tooltip title="Swap data will be deleted forever!">
+                        <Button
+                          disabled={swap.buttonText === 'Continue'}
+                          onClick={() =>
+                            this.deleteLocalSwap(swap?.swapResponse?.id)
+                          }
+                          variant="outlined"
+                          color="error"
+                          sx={{ mr: 1 }}
+                        >
+                          Delete
+                        </Button>
+                      </Tooltip>
                       <Button
-                        size="small"
                         disabled={
                           swap.buttonText !== 'Continue' &&
                           swap.buttonText !== 'Refund'
                         }
                         href={swap.link}
+                        variant="contained"
+                        className={classes.stacksButton}
                       >
                         {swap.buttonText}
                       </Button>
@@ -192,7 +220,13 @@ class LandingPageDeskTopContent extends React.Component {
   }
 }
 
-const styles = theme => ({
+const styles = () => ({
+  stacksButton: {
+    backgroundColor: '#7a40ee',
+    backgroundImage: 'linear-gradient(135deg, #5546ff, rgba(122, 64, 238, 0))',
+    webkitTransition: 'background-color 200ms ease-in-out',
+    transition: 'background-color 200ms ease-in-out',
+  },
   carouseltext: {
     color: 'white',
     textDecoration: 'none',
