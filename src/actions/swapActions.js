@@ -57,6 +57,33 @@ export const swapRequest = () => ({
   type: actionTypes.SWAP_REQUEST,
 });
 
+export const continueSwap = (swapData, nextStage, cb) => {
+  return dispatch => {
+    console.log(
+      'swapActions.61 continueSwap ',
+      dispatch,
+      swapData, // = swapResponse
+      cb,
+      nextStage
+      // swapData.swapResponse.id,
+      // 'calling startListening, ',
+      // startListening
+    );
+    axios
+      .post(`${boltzApi}/swapstatus`, {
+        id: swapData.id,
+      })
+      .then(statusReponse => {
+        console.log(`swapActions.77 continueSwap manual swap status update`);
+        handleSwapStatus(statusReponse.data, null, dispatch, null);
+      });
+
+    startListening(dispatch, swapData.id, cb);
+    dispatch(swapResponse(true, swapData));
+    nextStage();
+  };
+};
+
 export const startSwap = (swapInfo, cb) => {
   const url = `${boltzApi}/createswap`;
   let {
@@ -73,7 +100,7 @@ export const startSwap = (swapInfo, cb) => {
   if (invoice.slice(0, 10) === 'lightning:') {
     invoice = invoice.slice(10);
   }
-  // console.log('atomic swap swapInfo', pair, swapInfo);
+  // console.log('swapActions.91 swap swapInfo', pair, swapInfo, cb);
 
   let reqobj;
   if (
@@ -156,7 +183,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
       break;
 
     case SwapUpdateEvent.InvoiceFailedToPay:
-      source.close();
+      if (source) source.close();
       dispatch(
         setSwapStatus({
           error: true,
@@ -166,8 +193,9 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
       );
       break;
 
+    case SwapUpdateEvent.TransactionRefunded:
     case SwapUpdateEvent.SwapExpired:
-      source.close();
+      if (source) source.close();
       dispatch(
         setSwapStatus({
           error: true,
@@ -179,7 +207,7 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
 
     case SwapUpdateEvent.InvoicePaid:
     case SwapUpdateEvent.TransactionClaimed:
-      source.close();
+      if (source) source.close();
       callback();
       break;
 
@@ -258,6 +286,10 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
 };
 
 export const startListening = (dispatch, swapId, callback) => {
+  // console.log(
+  //   'swapActions.276 startListening to ',
+  //   `${boltzApi}/streamswapstatus?id=${swapId}`
+  // );
   const source = new EventSource(`${boltzApi}/streamswapstatus?id=${swapId}`);
 
   dispatch(
