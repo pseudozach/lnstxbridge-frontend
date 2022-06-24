@@ -108,10 +108,11 @@ class StepsWizard extends PureComponent {
     return 100 / this.props.range;
   };
 
-  nextStage = () => {
+  nextStage = count => {
+    let increment = count || 1;
     if (this.state.progress !== 100) {
       this.setState(pre => ({
-        stage: pre.stage + 1,
+        stage: pre.stage + increment,
         progress: pre.progress + this.progressInterval,
       }));
     }
