@@ -73,7 +73,7 @@ class StyledUploadRefundFile extends React.Component {
       const swapId = window.location.href.split('?swapId=')[1];
       if (!localStorage['lnswaps_' + swapId]) return;
       const swapData = localStorage['lnswaps_' + swapId];
-      console.log('setRefundFromLocal ', setRefundLocal, swapData);
+      // console.log('setRefundFromLocal ', setRefundLocal, swapData);
       setRefundLocal(swapData);
       this.setState({ refundSet: true });
     } catch (error) {
