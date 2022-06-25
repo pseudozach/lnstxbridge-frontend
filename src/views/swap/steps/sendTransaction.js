@@ -165,6 +165,9 @@ const SendTransactionStyles = theme => ({
 //   );
 // }
 
+function decideExplorer(txid) {
+  return txid.includes('0x') ? 'txid' : 'tx';
+}
 function createSTXPostCondition(principal, conditionCode, amount) {
   if (typeof principal === 'string') {
     principal = parsePrincipalString(principal);
@@ -1317,9 +1320,9 @@ class SendTransaction extends React.Component {
             <Button
               href={
                 swapStatus?.transaction?.id
-                  ? `${getExplorer(swapInfo.quote)}/tx/${
+                  ? `${getExplorer(swapInfo.quote)}/${decideExplorer(
                       swapStatus?.transaction?.id
-                    }`
+                    )}/${swapStatus?.transaction?.id}`
                   : this.state.explorerLink
               }
               // underline="none"
