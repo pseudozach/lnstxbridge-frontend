@@ -209,6 +209,13 @@ const handleSwapStatus = (data, source, dispatch, callback) => {
     case SwapUpdateEvent.TransactionClaimed:
       if (source) source.close();
       if (callback) callback();
+      dispatch(
+        setSwapStatus({
+          error: false,
+          pending: false,
+          message: 'Transaction claimed.',
+        })
+      );
       break;
 
     case SwapUpdateEvent.TransactionMempool:

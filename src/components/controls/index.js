@@ -85,7 +85,7 @@ const Controls = ({
 }) => {
   const loadingStyleSelect = loadingStyle ? loadingStyle : classes.text;
   const loadingTextSelect = loadingText ? loadingText : text;
-  // console.log('loading: ', loadingText, loading, loadingRender);
+  // console.log('controls.88 loading: ', loadingText, loading, loadingRender);
   // console.log('text, errorText: ', text, errorText);
   // console.log(
   //   'error, errorText, errorRender, errorAction: ',
@@ -98,7 +98,7 @@ const Controls = ({
   if (swapResponse?.id) swapId = swapResponse.id;
   if (refundFile?.swapResponse?.id) swapId = refundFile?.swapResponse?.id;
   // console.log(
-  //   'controls swapId, swapResponse, destinationAddress ',
+  //   'controls.101 swapId, swapResponse, destinationAddress ',
   //   swapId,
   //   swapResponse,
   //   destinationAddress,
