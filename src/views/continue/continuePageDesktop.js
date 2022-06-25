@@ -139,9 +139,13 @@ class LandingPageDeskTopContent extends React.Component {
       <BackGround>
         <ReactNotification ref={notificationDom} />
         <NavigationBar />
-        <Typography variant="h3" sx={{ textAlign: 'center', color: 'white' }}>
+        <Typography
+          variant="h4"
+          sx={{ m: 0.5, textAlign: 'center', color: 'white' }}
+        >
           Continue Previous Swaps
         </Typography>
+        <Divider sx={{ m: 2 }} />
         <View className={classes.wrapper}>
           {loading ? (
             <View className={classes.loading}>
@@ -153,7 +157,7 @@ class LandingPageDeskTopContent extends React.Component {
                 this.state.lnswaps.length > 0 ? (
                   <Card
                     variant="outlined"
-                    sx={{ m: 1, width: '100%' }}
+                    sx={{ m: 1 }}
                     key={swap?.swapResponse?.id}
                   >
                     <CardHeader
