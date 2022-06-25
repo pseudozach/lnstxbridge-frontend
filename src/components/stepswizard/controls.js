@@ -5,10 +5,17 @@ import View from '../view';
 const Control = props => {
   const { stage, num, render } = props;
   if (stage === num) {
-    // console.log('controls.8 props ', props);
+    console.log('sw/controls.8 props ', props);
     // let zProps = props;
     if (window.location.href.includes('/swap?swapId=') && stage === 1) {
       props.nextStage(2);
+    }
+    if (
+      window.location.href.includes('/swap?swapId=') &&
+      stage === 3 &&
+      props.swapStatus?.message?.includes('Transaction claimed')
+    ) {
+      props.nextStage(1);
     }
     return render(props);
   } else return null;

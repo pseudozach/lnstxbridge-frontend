@@ -68,7 +68,8 @@ class Swap extends Component {
     this.props.completeSwap();
 
     window.onbeforeunload = () => {};
-    window.location.reload();
+    // window.location.reload();
+    window.location.href = '/';
   };
 
   claimSwap = () => {
@@ -254,6 +255,7 @@ class Swap extends Component {
                     swapResponse={swapResponse}
                   />
                 )}
+                swapStatus={swapStatus}
               />
               <StepsWizard.Control
                 num={4}
