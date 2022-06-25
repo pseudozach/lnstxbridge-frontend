@@ -64,6 +64,7 @@ class LandingPageDeskTopContent extends React.Component {
     super();
     this.state = {
       lnswaps: [],
+      loadingSwaps: true,
     };
   }
 
@@ -110,7 +111,7 @@ class LandingPageDeskTopContent extends React.Component {
           lnswaps.push(swapData);
         }
       }
-      this.setState({ lnswaps });
+      this.setState({ lnswaps, loadingSwaps: false });
     } catch (error) {
       console.log('error parsing lnswaps: ', error.message);
     }
@@ -160,11 +161,17 @@ class LandingPageDeskTopContent extends React.Component {
         </Typography>
         <Divider sx={{ m: 2 }} />
         <View className={classes.wrapper}>
-          {loading ? (
+          {!this.state.loadingSwaps && this.state.lnswaps.length === 0 ? (
+            <Typography variant="h5" component="div" sx={{ color: 'white' }}>
+              You do not have any previous swaps on this browser yet.
+            </Typography>
+          ) : null}
+          {loading && this.state.loadingSwaps ? (
             <View className={classes.loading}>
               <CircularProgress />
             </View>
-          ) : (
+          ) : null}
+          {this.state.lnswaps.length === 0 ? null : (
             <div style={{ maxHeight: '100%' }}>
               {this.state.lnswaps.map(swap =>
                 this.state.lnswaps.length > 0 ? (
@@ -253,7 +260,7 @@ const styles = () => ({
   },
   wrapper: {
     flex: '1 0 100%',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-around',
   },
   infoWrapper: {
