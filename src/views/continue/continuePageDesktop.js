@@ -47,6 +47,18 @@ const boltz_logo = require('../../asset/icons/scuba2.png');
 // }) => {
 //   const loading = currencies.length === 0;
 
+function status2HumanReadable(str) {
+  // console.log('status2HumanReadable ', str, str.slice(0, 2));
+  if (str.slice(0, 2) === 'as') {
+    // Atomic Swap
+    str = str.replace('as', '⬇️ ');
+  }
+  str = str.replace('.', ' ');
+  return str.replace(/\w\S*/g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
 class LandingPageDeskTopContent extends React.Component {
   constructor() {
     super();
@@ -80,6 +92,7 @@ class LandingPageDeskTopContent extends React.Component {
           const swapData = JSON.parse(localStorage[item]);
           const status = await this.getSwapStatus(swapId);
           swapData.status = status;
+          swapData.statusText = status2HumanReadable(status);
           if (status === 'invoice.expired' || status === 'swap.expired') {
             swapData.buttonText = 'Failed';
           } else if (status === 'transaction.claimed') {
@@ -171,7 +184,7 @@ class LandingPageDeskTopContent extends React.Component {
                     <Divider />
                     <CardContent>
                       <Typography variant="h5" component="div">
-                        Status: {swap?.status}
+                        Status: {swap?.statusText}
                       </Typography>
                       {/* sx={{ mb: 1.5 }} color="text.secondary" */}
                       <Typography variant="body2">
