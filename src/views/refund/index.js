@@ -21,6 +21,7 @@ const mapDispatchToProps = dispatch => ({
     ),
   completeRefund: () => dispatch(actions.completeRefund()),
   setRefundFromTx: txId => dispatch(actions.setRefundFromTx(txId)),
+  setRefundLocal: swapData => dispatch(actions.setRefundLocal(swapData)),
   // refundStx: (swapInfo, swapResponse) => dispatch(actions.refundStx(swapInfo, swapResponse)),
 });
 

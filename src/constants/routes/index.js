@@ -5,3 +5,4 @@ export const refund = '/refund';
 export const swap = '/swap';
 export const reverseSwap = '/reverseswap';
 export const reverseExpired = '/expired';
+export const zcontinue = '/continue';

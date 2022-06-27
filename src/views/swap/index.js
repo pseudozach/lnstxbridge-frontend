@@ -4,6 +4,7 @@ import {
   completeSwap,
   setSwapInvoice,
   claimSwap,
+  continueSwap,
 } from '../../actions/swapActions';
 import Swap from './swap';
 
@@ -22,6 +23,8 @@ const mapDispatchToProps = dispatch => ({
   startSwap: (info, cb) => dispatch(startSwap(info, cb)),
   claimSwap: (nextStage, swapInfo, swapResponse, swapStatus) =>
     claimSwap(dispatch, nextStage, swapInfo, swapResponse, swapStatus),
+  continueSwap: (swapData, nextStage, cb) =>
+    dispatch(continueSwap(swapData, nextStage, cb)),
   // completeSwap: () => dispatch(completeReverseSwap()),
 });
 

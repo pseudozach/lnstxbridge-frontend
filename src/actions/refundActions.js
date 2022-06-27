@@ -155,6 +155,44 @@ export const setRefundFromTx = txId => {
   };
 };
 
+export const setRefundLocal = swapData => {
+  return dispatch => {
+    const fileJson = JSON.parse(swapData);
+    fileJson.currency = fileJson.swapInfo.base;
+    fileJson.privateKey = fileJson.swapInfo.keys.privateKey;
+    fileJson.redeemScript = fileJson.swapResponse.redeemScript;
+    fileJson.timeoutBlockHeight = fileJson.swapResponse.timeoutBlockHeight;
+    fileJson.preimageHash = fileJson.swapInfo.preimageHash;
+    fileJson.amount = fileJson.swapResponse.expectedAmount;
+    fileJson.contract = fileJson.swapResponse.address;
+    console.log('setRefundLocal: ', fileJson);
+
+    const verifyFile = verifyRefundFile(fileJson, [
+      'currency',
+      // 'preimageHash',
+      'amount',
+      // 'redeemScript',
+      // 'privateKey',
+      'timeoutBlockHeight',
+      'contract',
+    ]);
+
+    dispatch({
+      type: actionTypes.SET_REFUND_FILE,
+      payload: verifyFile ? fileJson : {},
+    });
+
+    if (fileJson.currency !== 'BTC') {
+      console.log('refundactions.181 setTransactionHash');
+      dispatch({
+        type: actionTypes.SET_REFUND_TXHASH,
+        payload: 'dummyvalue',
+      });
+      setTransactionHash('dummyvalue');
+    }
+  };
+};
+
 export const setTransactionHash = hash => ({
   type: actionTypes.SET_REFUND_TXHASH,
   payload: hash,
