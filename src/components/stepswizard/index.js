@@ -108,10 +108,11 @@ class StepsWizard extends PureComponent {
     return 100 / this.props.range;
   };
 
-  nextStage = () => {
+  nextStage = count => {
+    let increment = count || 1;
     if (this.state.progress !== 100) {
       this.setState(pre => ({
-        stage: pre.stage + 1,
+        stage: pre.stage + increment,
         progress: pre.progress + this.progressInterval,
       }));
     }
@@ -129,7 +130,7 @@ class StepsWizard extends PureComponent {
   render() {
     const { stage } = this.state;
     const { classes, onExit, range, refundFile } = this.props;
-    console.log('stepwizard stage, range ', stage, range);
+    // console.log('sw/index.133 stepwizard stage, range ', stage, range, this.props);
     if (range === 3) {
       // refund
       steps = ['Start', 'Upload', 'Connect', 'Refund'];

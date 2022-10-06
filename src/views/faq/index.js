@@ -19,6 +19,7 @@ const styles = theme => ({
     flex: '1 0 100%',
     alignItems: 'center',
     flexDirection: 'column',
+    width: '-webkit-fill-available',
   },
   titleWrapper: {
     alignItems: 'center',
@@ -42,6 +43,9 @@ const styles = theme => ({
       minWidth: '100%',
       maxWidth: '100%',
     },
+  },
+  acknowledgementFill: {
+    width: '-webkit-fill-available',
   },
 });
 
@@ -75,9 +79,11 @@ class Faq extends React.Component {
                   Please note that this software is currently in alpha stage and
                   is heavily worked on. If you experience any issues or have
                   some feedback feel free to join{' '}
-                  <Link to={lnSwapDiscordLink} text={'LNSwap Discord'} /> #support channel or  {' '}
+                  <Link to={lnSwapDiscordLink} text={'LNSwap Discord'} />{' '}
+                  #support channel or{' '}
                   <Link to={discordLink} text={'Stacks Discord'} /> and contact
-                  pseudozach#1633 or DM on <Link to={lnSwapTwitterLink} text={'@ln_swap'} /> on Twitter.
+                  pseudozach#1633 or DM on{' '}
+                  <Link to={lnSwapTwitterLink} text={'@ln_swap'} /> on Twitter.
                 </p>
               )}
             />
@@ -179,13 +185,17 @@ class Faq extends React.Component {
               title={style => <h1 className={style}>Acknowledgements</h1>}
               content={style => (
                 <p className={style}>
-                  * This work is supported by a grant from{' '}
+                  * LNSwap is proud to be part of{' '}
+                  <Link
+                    to={'https://trustmachines.co'}
+                    text={'Trust Machines'}
+                  />. We are working to bring great use-cases to Bitcoin by extending its capabilities.<br/>
+                  * This work was originally supported by a grant from{' '}
                   <Link
                     to={'https://github.com/stacksgov/Stacks-Grants/issues/204'}
                     text={'Stacks Foundation'}
                   />
-                  . Feel free to provide comments/feedback/support/disapproval at the Foundation grant issue. 
-                  This will allow us to shape the way this bridge is developed/used in the future. <br/>
+                  <br/>
                   * LN-STX Bridge is a fork of{' '}
                   <Link to={'https://boltz.exchange'} text={'Boltz'} />.
                 </p>

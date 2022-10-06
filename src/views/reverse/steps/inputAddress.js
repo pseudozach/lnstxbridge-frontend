@@ -3,32 +3,16 @@ import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import { address } from 'bitcoinjs-lib';
 import View from '../../../components/view';
-import InputArea from '../../../components/inputarea';
-import { getCurrencyName, getSampleAddress, getNetwork } from '../../../utils';
+import { getSampleAddress, getNetwork } from '../../../utils';
 
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
 
-import { StacksTestnet, StacksMocknet, StacksMainnet } from '@stacks/network';
 import { AppConfig, UserSession } from '@stacks/connect';
 import { stacksNetworkType } from '../../../constants';
 import { Checkbox, FormControlLabel, Typography } from '@mui/material';
 
 import axios from 'axios';
-
-let activeNetwork;
-if (stacksNetworkType === 'mocknet') {
-  activeNetwork = new StacksMocknet({ url: process.env.REACT_APP_STACKS_API });
-} else if (stacksNetworkType === 'testnet') {
-  activeNetwork = new StacksTestnet();
-} else if (stacksNetworkType === 'mainnet') {
-  activeNetwork = new StacksMainnet();
-}
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -91,7 +75,7 @@ class StyledInputAddress extends React.Component {
     const { onCheck } = this.props;
     console.log('onCheck input ', input.target.checked);
     onCheck(input.target.checked, false);
-    this.setState({sponsoredTx: input.target.checked})
+    this.setState({ sponsoredTx: input.target.checked });
   };
 
   getUserStacksAddress = () => {
@@ -113,7 +97,13 @@ class StyledInputAddress extends React.Component {
     const url = `${apiUrl}/extended/v1/address/${userAddress}/balances`;
     let response = await axios.get(url);
     const userBalance = parseInt(response.data.stx?.balance);
-    console.log('getUserBalance', userBalance, userBalance === 0, userBalance === "0", { checked: !userBalance });
+    console.log(
+      'getUserBalance',
+      userBalance,
+      userBalance === 0,
+      userBalance === '0',
+      { checked: !userBalance }
+    );
     this.onCheck({ target: { checked: !userBalance } });
     this.setState({ sponsoredTx: userBalance === 0 });
     return userBalance;
@@ -181,9 +171,10 @@ class StyledInputAddress extends React.Component {
           //   wallet.)
           // </label>
           null}
-          {(swapInfo.quote === 'STX' && sponsoredTx) ? (
+          {swapInfo.quote === 'STX' && sponsoredTx ? (
             <Typography>
-              * Sponsored transaction enabled. Use when Account has 0 STX to cover transaction fee.
+              * Sponsored transaction enabled. Use when Account has 0 STX to
+              cover transaction fee.
             </Typography>
           ) : null}
         </Box>

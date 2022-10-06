@@ -165,6 +165,9 @@ const SendTransactionStyles = theme => ({
 //   );
 // }
 
+function decideExplorer(txid) {
+  return txid.includes('0x') ? 'txid' : 'tx';
+}
 function createSTXPostCondition(principal, conditionCode, amount) {
   if (typeof principal === 'string') {
     principal = parsePrincipalString(principal);
@@ -947,13 +950,20 @@ class SendTransaction extends React.Component {
 
   render() {
     // setAllowZeroConf
-    const {
-      classes,
-      swapInfo,
-      swapResponse,
-      swapStatus,
-      claimSwap,
-    } = this.props;
+    let { classes, swapInfo, swapResponse, swapStatus, claimSwap } = this.props;
+
+    if (window.location.href.includes('/swap?swapId=') && !swapInfo.base) {
+      try {
+        const swapId = window.location.href.split('?swapId=')[1];
+        if (!localStorage['lnswaps_' + swapId]) return;
+        const swapData = JSON.parse(localStorage['lnswaps_' + swapId]);
+        swapInfo = swapData.swapInfo;
+        // swapResponse = swapData.swapResponse;
+        // console.log('sendTransaction.959 swapInfo ', swapInfo, swapResponse);
+      } catch (error) {
+        console.log('st.961 error getting swapId: ', error.message);
+      }
+    }
 
     console.log(
       'sendtransaction.682 , ',
@@ -1090,7 +1100,9 @@ class SendTransaction extends React.Component {
                 }}
                 // color={this.state.statusColor}
               >
-                {!this.state.txId && !swapStatus?.transaction?.id
+                {!this.state.txId &&
+                !swapStatus?.transaction?.id &&
+                !swapStatus?.message?.includes('Transaction is in mempool...')
                   ? `Send ${amountToLock} ${swapInfo.base}`
                   : null}
                 {swapResponse.bip21 &&
@@ -1098,7 +1110,8 @@ class SendTransaction extends React.Component {
                 swapStatus.message?.includes('Waiting')
                   ? ` to ${swapResponse.address}`
                   : null}
-                {this.state.txId && !swapStatus?.transaction?.id
+                {(this.state.txId && !swapStatus?.transaction?.id) ||
+                swapStatus?.message?.includes('Transaction is in mempool...')
                   ? `Pending confirmation of the ${amountToLock} ${swapInfo.base} sent`
                   : null}
                 {swapStatus?.transaction?.id &&
@@ -1170,7 +1183,8 @@ class SendTransaction extends React.Component {
               ref={this.ref}
               disabled={
                 (swapStatus.transaction && swapStatus.transaction.hex) ||
-                this.state.txId
+                this.state.txId ||
+                swapStatus?.message?.includes('Transaction is in mempool...')
               }
               onClick={() =>
                 swapInfo.base === 'STX'
@@ -1306,9 +1320,9 @@ class SendTransaction extends React.Component {
             <Button
               href={
                 swapStatus?.transaction?.id
-                  ? `${getExplorer(swapInfo.quote)}/tx/${
+                  ? `${getExplorer(swapInfo.quote)}/${decideExplorer(
                       swapStatus?.transaction?.id
-                    }`
+                    )}/${swapStatus?.transaction?.id}`
                   : this.state.explorerLink
               }
               // underline="none"

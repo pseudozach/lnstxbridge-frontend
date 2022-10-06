@@ -521,36 +521,41 @@ export const setExplorerTransactionUrl = url => {
   return explorerTransactionUrl;
 };
 
-export const rateProvider = (base, quote, amount) => {
+export const rateProvider = async (base, quote, amount) => {
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${longerName(
     base
   )}&vs_currencies=${shorterName(quote)}`;
-  axios.get(url).then(function(response) {
-    // console.log('axios: ', response.data);
-    console.log(
-      'rateProvider ',
-      base,
-      quote,
-      amount,
-      response.data,
-      response.data[longerName(base)],
-      response.data[longerName(base)][shorterName(quote)],
-      parseFloat(response.data[longerName(base)][shorterName(quote)]) * amount
-    );
-    return (
-      parseFloat(response.data[longerName(base)][shorterName(quote)]) * amount
-    );
-  });
+  const response = await axios.get(url);
+  //   // console.log('axios: ', response.data);
+  // console.log(
+  //   'rateProvider running with',
+  //   url,
+  //   base,
+  //   quote,
+  //   amount,
+  //   response.data,
+  //   response.data[longerName(base)],
+  //   response.data[longerName(base)][shorterName(quote)],
+  //   parseFloat(response.data[longerName(base)][shorterName(quote)]) * amount
+  // );
+  return (
+    parseFloat(response.data[longerName(base)][shorterName(quote)]) * amount
+  );
 };
 
 const longerName = asset => {
   switch (asset) {
+    case 'XBTC':
     case 'BTC':
       return 'bitcoin';
     case 'BTC ⚡':
       return 'bitcoin';
     case 'STX':
       return 'blockstack';
+    case 'XUSD':
+    case 'USDA':
+    case 'USD':
+      return 'usd';
 
     default:
       return asset;
@@ -559,12 +564,17 @@ const longerName = asset => {
 
 const shorterName = asset => {
   switch (asset) {
+    case 'XBTC':
     case 'BTC':
       return 'btc';
     case 'BTC ⚡':
       return 'btc';
     case 'STX':
       return 'stx';
+    case 'XUSD':
+    case 'USDA':
+    case 'USD':
+      return 'usd';
 
     default:
       return asset;

@@ -24,7 +24,7 @@ import { Apps } from '@mui/icons-material';
 // boltz_logo
 const boltz_logo = require('../../asset/icons/logonobg.png');
 
-const pages = ['Swap', 'Refund', 'FAQ'];
+const pages = ['Swap', 'Refund', 'Continue', 'FAQ'];
 // const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const DeskTopNavigationBar = ({ classes }) => {
@@ -53,6 +53,10 @@ const DeskTopNavigationBar = ({ classes }) => {
 
       case 'Refund':
         navigation.navRefund();
+        break;
+
+      case 'Continue':
+        navigation.navContinue();
         break;
 
       case 'FAQ':
