@@ -4,6 +4,7 @@ import injectSheet from 'react-jss';
 // import { FaBolt } from 'react-icons/fa';
 import * as bitcoin from 'bitcoinjs-lib';
 import View from '../../../components/view';
+import { boltzApi } from '../../../constants';
 import InputArea from '../../../components/inputarea';
 import {
   toSatoshi,
@@ -103,6 +104,36 @@ class StyledInputInvoice extends React.Component {
     // notificationDom: React.createRef(),
   };
 
+  resolveLNAddress = async (input, swapInfo) => {
+    try {
+      if (input.slice(0, 10) === 'lightning:') {
+        input = input.split('lightning:')[1];
+      }
+      if (input.slice(0, 6) === 'lnurl:') {
+        input = input.split('lnurl:')[1];
+      }
+      if (
+        // eslint-disable-next-line no-useless-escape
+        !/^[a-z0-9][a-z0-9-_\.]+@([a-z]|[a-z0-9]?[a-z0-9-]+[a-z0-9])\.[a-z0-9]{2,10}(?:\.[a-z]{2,10})?$/.test(
+          input
+        )
+      ) {
+        return false;
+      }
+      const response = await axios.get(
+        `${boltzApi}/resolveLNAddress?lnaddress=${input}&amount=${toSatoshi(
+          swapInfo.quoteAmount
+        )}`
+      );
+      this.setState({ value: response.data?.invoice?.pr });
+      this.onChange(response.data?.invoice?.pr);
+      return response.data?.invoice?.pr;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  };
+
   getUserStacksAddress = () => {
     if (userSession.isUserSignedIn()) {
       let userData = userSession.loadUserData();
@@ -156,7 +187,18 @@ class StyledInputInvoice extends React.Component {
     }
   }
 
-  onChange = input => {
+  onChange = async input => {
+    if (
+      // eslint-disable-next-line no-useless-escape
+      /^[a-z0-9][a-z0-9-_\.]+@([a-z]|[a-z0-9]?[a-z0-9-]+[a-z0-9])\.[a-z0-9]{2,10}(?:\.[a-z]{2,10})?$/.test(
+        input
+      )
+    ) {
+      // resolve LNAddress first if it exists
+      console.log('resolving ln address ', input);
+      input = await this.resolveLNAddress(input, this.props.swapInfo);
+    }
+
     // accepting STX address for atomic swaps now
     if (
       validateLN(input) ||
@@ -184,7 +226,9 @@ class StyledInputInvoice extends React.Component {
       ? getSampleInvoice(swapInfo.quote)
       : getSampleAddress(swapInfo.quote);
     const pasteText =
-      swapInfo.quote === 'BTC' && isLN ? 'Lightning invoice for ' : 'Address';
+      swapInfo.quote === 'BTC' && isLN
+        ? 'Lightning invoice or Lightning address for '
+        : 'Address';
     // <FaBolt size={25} color="#FFFF00" />
 
     return (
@@ -214,11 +258,11 @@ class StyledInputInvoice extends React.Component {
               label="Address"
               defaultValue={
                 localStorage.getItem('ua') ||
-                `EG: ${getSampleAddress(swapInfo.quote)}`
+                `Example: ${getSampleAddress(swapInfo.quote)}`
               }
               id="addressTextfield"
               disabled
-              placeholder={`EG: ${getSampleAddress(swapInfo.quote)}`}
+              placeholder={`Example: ${getSampleAddress(swapInfo.quote)}`}
               onChange={this.onChange}
               error={error}
             />
@@ -239,7 +283,7 @@ class StyledInputInvoice extends React.Component {
             showQrScanner={true}
             value={this.state.value}
             onChange={this.onChange}
-            placeholder={`EG: ${placeholder}`}
+            placeholder={`Example: ${placeholder}`}
           />
         )}
         {/* <TextField
@@ -249,7 +293,7 @@ class StyledInputInvoice extends React.Component {
           rows={4}
           value={this.state.value}
           onChange={this.onChange}
-          placeholder={`EG: ${placeholder}`}
+          placeholder={`Example: ${placeholder}`}
           // defaultValue="Default Value"
         /> */}
       </View>
