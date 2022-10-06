@@ -123,7 +123,7 @@ class StyledInputInvoice extends React.Component {
       const response = await axios.get(
         `${boltzApi}/resolveLNAddress?lnaddress=${input}&amount=${toSatoshi(
           swapInfo.quoteAmount
-        )}`
+        ) * 1000}` // msatoshis
       );
       this.setState({ value: response.data?.invoice?.pr });
       this.onChange(response.data?.invoice?.pr);
