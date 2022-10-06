@@ -1,6 +1,6 @@
 {
   "name": "lnstxbridge-frontend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
