@@ -101,6 +101,7 @@ function validateLN(input) {
 class StyledInputInvoice extends React.Component {
   state = {
     error: false,
+    timer: null,
     // notificationDom: React.createRef(),
   };
 
@@ -188,32 +189,47 @@ class StyledInputInvoice extends React.Component {
   }
 
   onChange = async input => {
-    if (
-      // eslint-disable-next-line no-useless-escape
-      /^[a-z0-9][a-z0-9-_\.]+@([a-z]|[a-z0-9]?[a-z0-9-]+[a-z0-9])\.[a-z0-9]{2,10}(?:\.[a-z]{2,10})?$/.test(
-        input
-      )
-    ) {
-      // resolve LNAddress first if it exists
-      console.log('resolving ln address ', input);
-      input = await this.resolveLNAddress(input, this.props.swapInfo);
+    // console.log('this.state.timer entry ', this.state.timer, input);
+    if (this.state.timer) {
+      // console.log('this.state.timer exists ', this.state.timer);
+      clearTimeout(this.state.timer);
+      // this.state.timer = null;
+      this.setState({ timer: null });
     }
+    const timer = setTimeout(async () => {
+      // console.log('delayed? ', input);
 
-    // accepting STX address for atomic swaps now
-    if (
-      validateLN(input) ||
-      input.slice(0, 1).toUpperCase() === 'S' ||
-      validate(input)
-    ) {
-      // console.log('inputinvoice validate ', input);
-      this.setState({ value: input, error: false }, () =>
-        this.props.onChange(input, false)
-      );
-    } else {
-      this.setState({ value: input, error: true }, () =>
-        this.props.onChange(input, true)
-      );
-    }
+      if (
+        // eslint-disable-next-line no-useless-escape
+        /^[a-z0-9][a-z0-9-_\.]+@([a-z]|[a-z0-9]?[a-z0-9-]+[a-z0-9])\.[a-z0-9]{2,10}(?:\.[a-z]{2,10})?$/.test(
+          input
+        )
+      ) {
+        // resolve LNAddress first if it exists
+        // console.log('resolving ln address ', input);
+        input = await this.resolveLNAddress(input, this.props.swapInfo);
+        if (typeof input !== 'string')
+          input = 'Error fetching invoice from lightning address';
+      }
+
+      // accepting STX address for atomic swaps now
+      if (
+        validateLN(input) ||
+        input.slice(0, 1).toUpperCase() === 'S' ||
+        validate(input)
+      ) {
+        this.setState({ value: input, error: false }, () =>
+          this.props.onChange(input, false)
+        );
+      } else {
+        this.setState({ value: input, error: true }, () =>
+          this.props.onChange(input, true)
+        );
+      }
+      clearTimeout(this.state.timer);
+      this.setState({ timer: null });
+    }, 500);
+    this.setState({ timer: timer });
   };
 
   render() {
