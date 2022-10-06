@@ -118,7 +118,7 @@ class Faq extends React.Component {
                   source code and verify that the claims above are valid because
                   everything is open source and can be found on{' '}
                   <Link
-                    to={'https://github.com/lnstxbridge'}
+                    to={'https://github.com/LNSwap/lnstxbridge'}
                     text={'our GitHub'}
                   />
                 </p>
