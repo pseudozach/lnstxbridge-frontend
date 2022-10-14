@@ -64,6 +64,28 @@ const LandingPageDeskTopContent = ({
   return (
     <BackGround>
       <ReactNotification ref={notificationDom} />
+      <Carousel
+        autoFocus={false}
+        autoPlay={false}
+        showArrows={false}
+        showStatus={false}
+        showIndicators={false}
+        showThumbs={false}
+        className={classes.topCarousel}
+      >
+        <div>
+          <a
+            href={
+              'https://medium.com/@ln_swap/lnswap-lp-client-app-exploit-24b056a7618e'
+            }
+            target="_blank"
+            className={classes.topCarouseltext}
+            rel="noreferrer"
+          >
+            Security Announcement
+          </a>
+        </div>
+      </Carousel>
       <NavigationBar />
       <View className={classes.wrapper}>
         {loading ? (
@@ -150,6 +172,16 @@ const styles = theme => ({
   },
   carousel: {
     marginBottom: '1em',
+  },
+  topCarousel: {
+    padding: '1em',
+    backgroundColor: 'white',
+    color: 'black !important',
+    // fontSize: '14px',
+  },
+  topCarouseltext: {
+    color: 'black',
+    // textDecoration: 'none',
   },
   wrapper: {
     flex: '1 0 100%',
