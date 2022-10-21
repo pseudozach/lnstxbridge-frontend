@@ -165,9 +165,18 @@ const SendTransactionStyles = theme => ({
 //   );
 // }
 
-function decideExplorer(txid) {
-  return txid.includes('0x') ? 'txid' : 'tx';
+// function decideExplorer(txid) {
+//   return txid.includes('0x') ? 'txid' : 'tx';
+// }
+
+function decideExplorer(symbol) {
+  if (symbol === 'STX' || symbol === 'USDA' || symbol === 'XUSD') {
+    return 'txid';
+  } else {
+    return 'tx';
+  }
 }
+
 function createSTXPostCondition(principal, conditionCode, amount) {
   if (typeof principal === 'string') {
     principal = parsePrincipalString(principal);
