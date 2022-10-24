@@ -4,7 +4,7 @@ import injectSheet from 'react-jss';
 // import View from '../view';
 // import Button from '../button';
 import { navigation } from '../../actions';
-import { network } from '../../constants';
+import { network, blogUrl } from '../../constants';
 // boltzOnion
 
 import AppBar from '@mui/material/AppBar';
@@ -24,7 +24,7 @@ import { Apps } from '@mui/icons-material';
 // boltz_logo
 const boltz_logo = require('../../asset/icons/logonobg.png');
 
-const pages = ['Swap', 'Refund', 'Continue', 'FAQ'];
+const pages = ['Swap', 'Refund', 'Continue', 'FAQ', 'Blog'];
 // const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const DeskTopNavigationBar = ({ classes }) => {
@@ -61,6 +61,10 @@ const DeskTopNavigationBar = ({ classes }) => {
 
       case 'FAQ':
         navigation.navFaq();
+        break;
+
+      case 'Blog':
+        window.open(blogUrl, '_blank').focus();
         break;
 
       default:

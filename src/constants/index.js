@@ -104,3 +104,5 @@ export const boltzAddress = process.env.REACT_APP_BOLTZ_ADDRESS;
 
 export const sampleStacksTxId =
   '0x8a7e35f55c72d672982e5c0355783c55d7958a4fa3fdf54cc90356269eed9316';
+
+export const blogUrl = 'https://medium.com/@ln_swap';
