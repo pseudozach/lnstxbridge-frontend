@@ -408,6 +408,11 @@ class SendTransaction extends React.Component {
         swapResponse.baseAmount
       );
       amountToLock = Math.floor(swapResponse.baseAmount * 1000000);
+
+      // // test locking less than needed - fails as expected
+      // amountToLock = amountToLock - 1000000;
+      // console.log('amountToLock ', amountToLock);
+
       swapamount = amountToLock.toString(16).split('.')[0] + '';
       postconditionamount = Math.ceil(amountToLock);
     } else {
@@ -1330,7 +1335,7 @@ class SendTransaction extends React.Component {
               href={
                 swapStatus?.transaction?.id
                   ? `${getExplorer(swapInfo.quote)}/${decideExplorer(
-                      swapStatus?.transaction?.id
+                      swapInfo.quote
                     )}/${swapStatus?.transaction?.id}`
                   : this.state.explorerLink
               }
