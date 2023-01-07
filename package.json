@@ -33,7 +33,7 @@
     "@fontsource/roboto": "^4.5.5",
     "@mui/icons-material": "^5.5.1",
     "@mui/material": "^5.5.2",
-    "@stacks/connect": "^6.2.0",
+    "@stacks/connect": "^6.10.2",
     "@stacks/connect-react": "^11.0.0",
     "@stacks/network": "^2.0.1",
     "@stacks/profile": "^2.0.1",
