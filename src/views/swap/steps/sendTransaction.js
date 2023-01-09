@@ -458,6 +458,7 @@ class SendTransaction extends React.Component {
 
     const postConditionCode = FungibleConditionCode.LessEqual;
     const postConditionAmount = new BN(postconditionamount);
+
     // const postConditionAmount = new BigNumber(2000000)
     // const postConditionAmount = Buffer.from('00000000000000000000000000100000','hex');
     // const postConditions = [
@@ -472,6 +473,11 @@ class SendTransaction extends React.Component {
         postConditionAmount
       ),
     ];
+    console.log(
+      'postConditionAmount, postConditions ',
+      postConditionAmount,
+      postConditions
+    );
 
     // const postConditions = [
     //   makeContractSTXPostCondition(
@@ -533,7 +539,11 @@ class SendTransaction extends React.Component {
       },
     };
     console.log('options: ', options);
-    await openContractCall(options);
+    try {
+      await openContractCall(options);
+    } catch (error) {
+      console.log('sendtx.539 lockStx error ', error);
+    }
   };
 
   lockToken = async (swapInfo, swapResponse) => {
