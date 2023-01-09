@@ -35,6 +35,7 @@
     "@mui/material": "^5.5.2",
     "@stacks/connect": "^6.10.2",
     "@stacks/network": "^2.0.1",
+    "@stacks/transactions": "^6.1.0",
     "@stacks/ui": "^7.10.0",
     "axios": "^0.21.1",
     "big-integer": "^1.6.48",
