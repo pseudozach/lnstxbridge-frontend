@@ -457,9 +457,12 @@ class SendTransaction extends React.Component {
     }
 
     const postConditionCode = FungibleConditionCode.LessEqual;
-    const postConditionAmount = new BN(postconditionamount);
+    // const postConditionAmount = new BN(postconditionamount);
 
-    // const postConditionAmount = new BigNumber(2000000)
+    const postConditionAmount = postconditionamount;
+    // console.log('postConditionAmount ', postConditionAmount);
+    // Uncaught (in promise) TypeError: Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.
+
     // const postConditionAmount = Buffer.from('00000000000000000000000000100000','hex');
     // const postConditions = [
     //   makeStandardSTXPostCondition(postConditionAddress, postConditionCode, postConditionAmount),
