@@ -32,7 +32,7 @@ import {
   // makeStandardSTXPostCondition,
   FungibleConditionCode,
   PostConditionMode,
-  // createSTXPostCondition,
+  createSTXPostCondition,
   parsePrincipalString,
   StacksMessageType,
   PostConditionType,
@@ -177,75 +177,76 @@ function decideExplorer(symbol) {
   }
 }
 
-function createSTXPostCondition(principal, conditionCode, amount) {
-  if (typeof principal === 'string') {
-    principal = parsePrincipalString(principal);
-  }
-  return {
-    type: StacksMessageType.PostCondition,
-    conditionType: PostConditionType.STX,
-    principal,
-    conditionCode,
-    amount: intToBN(amount, false),
-  };
-}
-// function intToBytes(value, signed, byteLength) {
-//   return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
+// remove manual createSTXPostCondition
+// function createSTXPostCondition(principal, conditionCode, amount) {
+//   if (typeof principal === 'string') {
+//     principal = parsePrincipalString(principal);
+//   }
+//   return {
+//     type: StacksMessageType.PostCondition,
+//     conditionType: PostConditionType.STX,
+//     principal,
+//     conditionCode,
+//     amount: intToBN(amount, false),
+//   };
 // }
-function intToBN(value, signed) {
-  const bigInt = intToBigInt(value, signed);
-  return new BN(bigInt.toString());
-}
-function intToBigInt(value, signed) {
-  if (typeof value === 'number') {
-    if (!Number.isInteger(value)) {
-      throw new RangeError(
-        `Invalid value. Values of type 'number' must be an integer.`
-      );
-    }
-    // console.log("156")
-    // return 157;
-    return bigInt(value);
-  }
-  if (typeof value === 'string') {
-    if (value.toLowerCase().startsWith('0x')) {
-      let hex = value.slice(2);
-      hex = hex.padStart(hex.length + (hex.length % 2), '0');
-      value = Buffer.from(hex, 'hex');
-    } else {
-      try {
-        // return 168;
-        return bigInt(value);
-      } catch (error) {
-        if (error instanceof SyntaxError) {
-          throw new RangeError(
-            `Invalid value. String integer '${value}' is not finite.`
-          );
-        }
-      }
-    }
-  }
-  if (typeof value === 'bigint') {
-    return value;
-  }
-  if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
-    if (signed) {
-      const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
-      // return 184;
-      return bigInt(bn.toString());
-    } else {
-      // return 188;
-      return bigInt(new BN(value, 'be').toString());
-    }
-  }
-  if (value instanceof BN || BN.isBN(value)) {
-    // return 193;
-    return bigInt(value.toString());
-  }
-  throw new TypeError(
-    `Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`
-  );
-}
+// // function intToBytes(value, signed, byteLength) {
+// //   return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
+// // }
+// function intToBN(value, signed) {
+//   const bigInt = intToBigInt(value, signed);
+//   return new BN(bigInt.toString());
+// }
+// function intToBigInt(value, signed) {
+//   if (typeof value === 'number') {
+//     if (!Number.isInteger(value)) {
+//       throw new RangeError(
+//         `Invalid value. Values of type 'number' must be an integer.`
+//       );
+//     }
+//     // console.log("156")
+//     // return 157;
+//     return bigInt(value);
+//   }
+//   if (typeof value === 'string') {
+//     if (value.toLowerCase().startsWith('0x')) {
+//       let hex = value.slice(2);
+//       hex = hex.padStart(hex.length + (hex.length % 2), '0');
+//       value = Buffer.from(hex, 'hex');
+//     } else {
+//       try {
+//         // return 168;
+//         return bigInt(value);
+//       } catch (error) {
+//         if (error instanceof SyntaxError) {
+//           throw new RangeError(
+//             `Invalid value. String integer '${value}' is not finite.`
+//           );
+//         }
+//       }
+//     }
+//   }
+//   if (typeof value === 'bigint') {
+//     return value;
+//   }
+//   if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
+//     if (signed) {
+//       const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
+//       // return 184;
+//       return bigInt(bn.toString());
+//     } else {
+//       // return 188;
+//       return bigInt(new BN(value, 'be').toString());
+//     }
+//   }
+//   if (value instanceof BN || BN.isBN(value)) {
+//     // return 193;
+//     return bigInt(value.toString());
+//   }
+//   throw new TypeError(
+//     `Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`
+//   );
+// }
 
 // class StyledSendTransaction extends React.Component {
 //   state = {
@@ -478,6 +479,7 @@ class SendTransaction extends React.Component {
     ];
     console.log(
       'postConditionAmount, postConditions ',
+      typeof postConditionAmount,
       postConditionAmount,
       postConditions
     );
