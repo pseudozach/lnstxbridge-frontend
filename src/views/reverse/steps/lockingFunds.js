@@ -23,7 +23,7 @@ import {
   // parsePrincipalString,
   // StacksMessageType,
   // PostConditionType
-  // makeContractSTXPostCondition,
+  makeContractSTXPostCondition,
   createContractPrincipal,
   parsePrincipalString,
   StacksMessageType,
@@ -94,88 +94,89 @@ const styles = () => ({
   },
 });
 
-function makeContractSTXPostCondition(
-  address,
-  contractName,
-  conditionCode,
-  amount
-) {
-  return createSTXPostCondition(
-    createContractPrincipal(address, contractName),
-    conditionCode,
-    amount
-  );
-}
+// remove custom functions
+// function makeContractSTXPostCondition(
+//   address,
+//   contractName,
+//   conditionCode,
+//   amount
+// ) {
+//   return createSTXPostCondition(
+//     createContractPrincipal(address, contractName),
+//     conditionCode,
+//     amount
+//   );
+// }
 
-const createSTXPostCondition = (principal, conditionCode, amount) => {
-  if (typeof principal === 'string') {
-    principal = parsePrincipalString(principal);
-  }
-  return {
-    type: StacksMessageType.PostCondition,
-    conditionType: PostConditionType.STX,
-    principal,
-    conditionCode,
-    amount: intToBN(amount, false),
-  };
-};
-const intToBytes = (value, signed, byteLength) => {
-  return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
-};
-const intToBN = (value, signed) => {
-  const bigInt = intToBigInt(value, signed);
-  return new BN(bigInt.toString());
-};
-const intToBigInt = (value, signed) => {
-  if (typeof value === 'number') {
-    if (!Number.isInteger(value)) {
-      throw new RangeError(
-        `Invalid value. Values of type 'number' must be an integer.`
-      );
-    }
-    // console.log("156")
-    // return 157;
-    return bigInt(value);
-  }
-  if (typeof value === 'string') {
-    if (value.toLowerCase().startsWith('0x')) {
-      let hex = value.slice(2);
-      hex = hex.padStart(hex.length + (hex.length % 2), '0');
-      value = Buffer.from(hex, 'hex');
-    } else {
-      try {
-        // return 168;
-        return bigInt(value);
-      } catch (error) {
-        if (error instanceof SyntaxError) {
-          throw new RangeError(
-            `Invalid value. String integer '${value}' is not finite.`
-          );
-        }
-      }
-    }
-  }
-  if (typeof value === 'bigint') {
-    return value;
-  }
-  if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
-    if (signed) {
-      const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
-      // return 184;
-      return bigInt(bn.toString());
-    } else {
-      // return 188;
-      return bigInt(new BN(value, 'be').toString());
-    }
-  }
-  if (value instanceof BN || BN.isBN(value)) {
-    // return 193;
-    return bigInt(value.toString());
-  }
-  throw new TypeError(
-    `Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`
-  );
-};
+// const createSTXPostCondition = (principal, conditionCode, amount) => {
+//   if (typeof principal === 'string') {
+//     principal = parsePrincipalString(principal);
+//   }
+//   return {
+//     type: StacksMessageType.PostCondition,
+//     conditionType: PostConditionType.STX,
+//     principal,
+//     conditionCode,
+//     amount: intToBN(amount, false),
+//   };
+// };
+// const intToBytes = (value, signed, byteLength) => {
+//   return intToBN(value, signed).toArrayLike(Buffer, 'be', byteLength);
+// };
+// const intToBN = (value, signed) => {
+//   const bigInt = intToBigInt(value, signed);
+//   return new BN(bigInt.toString());
+// };
+// const intToBigInt = (value, signed) => {
+//   if (typeof value === 'number') {
+//     if (!Number.isInteger(value)) {
+//       throw new RangeError(
+//         `Invalid value. Values of type 'number' must be an integer.`
+//       );
+//     }
+//     // console.log("156")
+//     // return 157;
+//     return bigInt(value);
+//   }
+//   if (typeof value === 'string') {
+//     if (value.toLowerCase().startsWith('0x')) {
+//       let hex = value.slice(2);
+//       hex = hex.padStart(hex.length + (hex.length % 2), '0');
+//       value = Buffer.from(hex, 'hex');
+//     } else {
+//       try {
+//         // return 168;
+//         return bigInt(value);
+//       } catch (error) {
+//         if (error instanceof SyntaxError) {
+//           throw new RangeError(
+//             `Invalid value. String integer '${value}' is not finite.`
+//           );
+//         }
+//       }
+//     }
+//   }
+//   if (typeof value === 'bigint') {
+//     return value;
+//   }
+//   if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
+//     if (signed) {
+//       const bn = new BN(value, 'be').fromTwos(value.byteLength * 8);
+//       // return 184;
+//       return bigInt(bn.toString());
+//     } else {
+//       // return 188;
+//       return bigInt(new BN(value, 'be').toString());
+//     }
+//   }
+//   if (value instanceof BN || BN.isBN(value)) {
+//     // return 193;
+//     return bigInt(value.toString());
+//   }
+//   throw new TypeError(
+//     `Invalid value type. Must be a number, bigint, integer-string, hex-string, BN.js instance, or Buffer.`
+//   );
+// };
 
 class LockingFunds extends React.Component {
   constructor() {
@@ -331,8 +332,11 @@ class LockingFunds extends React.Component {
     console.log('smallamount: ' + smallamount);
 
     let swapamount = smallamount.toString(16).split('.')[0] + '';
-    let postConditionAmount = new BN(
-      Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+    // let postConditionAmount = new BN(
+    //   Math.ceil(parseInt(swapResponse.onchainAmount) / 100)
+    // );
+    let postConditionAmount = Math.ceil(
+      parseInt(swapResponse.onchainAmount) / 100
     );
 
     console.log(`postConditionAmount: ${postConditionAmount}`);
