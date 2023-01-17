@@ -1,0 +1,16 @@
+{
+    "minSendable": 1000,
+    "maxSendable": 11000000000,
+    "metadata": "[[\"text/identifier\", \"lnswap@getalby.com\"], [\"text/plain\", \"Sats for lnswap\"]]",
+    "commentAllowed": 255,
+    "callback": "https://getalby.com/lnurlp/lnswap/callback",
+    "payerData": {
+        "name": {
+            "mandatory": false
+        },
+        "email": {
+            "mandatory": false
+        }
+    },
+    "tag": "payRequest"
+}
