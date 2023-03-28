@@ -15,6 +15,9 @@
 
 * start the app  
 `npm run start`
+OR
+* build and serve
+`npm run build && npm run serve`  
 
 ## use
 * visit `http://localhost:3001`
