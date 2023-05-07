@@ -64,7 +64,7 @@ const LandingPageDeskTopContent = ({
   return (
     <BackGround>
       <ReactNotification ref={notificationDom} />
-      {/* <Carousel
+      <Carousel
         autoFocus={false}
         autoPlay={false}
         showArrows={false}
@@ -74,7 +74,7 @@ const LandingPageDeskTopContent = ({
         className={classes.topCarousel}
       >
         <div>
-          <p>System Status: Degraded. Please do not start swaps until fee estimation issues are resolved.</p>
+          <p>System Status: Under Maintenance. Please do not start swaps until maintenance is finished.</p>
           <a
             href={
               'https://discord.gg/r5YXZnARGc'
@@ -86,7 +86,7 @@ const LandingPageDeskTopContent = ({
             Join Discord for Support
           </a>
         </div>
-      </Carousel> */}
+      </Carousel>
       <NavigationBar />
       <View className={classes.wrapper}>
         {loading ? (
