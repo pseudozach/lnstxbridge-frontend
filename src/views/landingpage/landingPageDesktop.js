@@ -64,7 +64,7 @@ const LandingPageDeskTopContent = ({
   return (
     <BackGround>
       <ReactNotification ref={notificationDom} />
-      <Carousel
+      {/* <Carousel
         autoFocus={false}
         autoPlay={false}
         showArrows={false}
@@ -86,7 +86,7 @@ const LandingPageDeskTopContent = ({
             Join Discord for Support
           </a>
         </div>
-      </Carousel>
+      </Carousel> */}
       <NavigationBar />
       <View className={classes.wrapper}>
         {loading ? (
