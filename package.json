@@ -4,7 +4,7 @@
   "scripts": {
     "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
-    "production": "serve -p 443 --ssl-cert fullchain.pem --ssl-key privkey.pem -s build",
+    "production": "react-scripts build && serve -p 443 --ssl-cert /etc/letsencrypt/live/testnet.lnswap.org/fullchain.pem --ssl-key /etc/letsencrypt/live/testnet.lnswap.org/privkey.pem -s build",
     "redirect": "serve -p 80 redirect/",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -25,7 +25,7 @@
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BoltzExchange/boltz-frontend.git"
+    "url": "git+https://github.com/pseudozach/lnstxbridge-frontend"
   },
   "dependencies": {
     "@emotion/react": "^11.8.2",
