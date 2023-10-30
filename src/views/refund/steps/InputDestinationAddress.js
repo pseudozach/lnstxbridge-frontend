@@ -368,7 +368,7 @@ class InputDestinationAddress extends React.Component {
     }
 
     if (refundFile.currency === 'XUSD') {
-      postconditionamount = postconditionamount * 100;
+      postconditionamount = postconditionamount * 110;
     }
 
     console.log(
