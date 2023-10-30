@@ -13,9 +13,9 @@ import {
 
 let apiUrl = process.env.REACT_APP_STACKS_API;
 if (stacksNetworkType === 'testnet') {
-  apiUrl = 'https://stacks-node-api.testnet.stacks.co';
+  apiUrl = 'https://api.testnet.hiro.so';
 } else if (stacksNetworkType === 'mainnet') {
-  apiUrl = 'https://stacks-node-api.mainnet.stacks.co';
+  apiUrl = 'https://api.hiro.so';
 }
 
 const verifyRefundFile = (fileJSON, keys) => {

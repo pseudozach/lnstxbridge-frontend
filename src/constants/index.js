@@ -44,13 +44,13 @@ export const boltzOnion = process.env.REACT_APP_BOLTZ_ONION;
 export const stacksNetworkType = process.env.REACT_APP_STACKS_NETWORK_TYPE;
 
 export const coreApiUrl = () => {
-  let apiUrl = 'https://stacks-node-api.mainnet.stacks.co';
+  let apiUrl = 'https://api.hiro.so';
   if (stacksNetworkType === 'mocknet') {
     apiUrl = 'http://localhost:3999';
   } else if (stacksNetworkType === 'testnet') {
-    apiUrl = 'https://stacks-node-api.testnet.stacks.co';
+    apiUrl = 'https://api.testnet.hiro.so';
   } else if (stacksNetworkType === 'mainnet') {
-    apiUrl = 'https://stacks-node-api.mainnet.stacks.co';
+    apiUrl = 'https://api.hiro.so';
   }
   return apiUrl;
 };

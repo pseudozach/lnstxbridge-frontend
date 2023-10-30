@@ -53,10 +53,10 @@ if (stacksNetworkType === 'mocknet') {
   activeNetwork = mocknet;
 } else if (stacksNetworkType === 'testnet') {
   activeNetwork = testnet;
-  apiUrl = 'https://stacks-node-api.testnet.stacks.co';
+  apiUrl = 'https://api.testnet.hiro.so';
 } else if (stacksNetworkType === 'mainnet') {
   activeNetwork = mainnet;
-  apiUrl = 'https://stacks-node-api.mainnet.stacks.co';
+  apiUrl = 'https://api.hiro.so';
 }
 
 const InputDestinationAddressStyles = theme => ({

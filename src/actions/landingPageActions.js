@@ -171,7 +171,7 @@ export const getPairs = () => {
 
 export const getLastSwap = async () => {
   const contract = `SP2507VNQZC9VBXM7X7KB4SF4QJDJRSWHG4V39WPY.stxswap_v10`;
-  const url = `https://stacks-node-api.mainnet.stacks.co/extended/v1/address/${contract}/transactions_with_transfers`;
+  const url = `https://api.hiro.so/extended/v1/address/${contract}/transactions_with_transfers`;
   let response = await axios.get(url);
   const resultsarr = response.data.results;
   let lastSwap = resultsarr.find(item => item.tx.tx_status === 'success');
