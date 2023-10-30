@@ -175,14 +175,6 @@ const InputDestinationAddressStyles = theme => ({
 //   );
 // }
 
-// const StyledInputDestinationAddress = ({
-//   classes,
-//   setDestinationAddress,
-//   currency,
-//   refundFile,
-//   setRefundTransactionHash,
-// }) => (
-
 class InputDestinationAddress extends React.Component {
   constructor() {
     super();
