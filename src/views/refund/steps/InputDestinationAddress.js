@@ -398,6 +398,11 @@ class InputDestinationAddress extends React.Component {
     if (assetContractName.includes('Wrapped-USD')) {
       assetName = assetContractName.toLowerCase();
     }
+    console.log('assetAddress, assetContractName, assetName: ', {
+      assetAddress,
+      assetContractName,
+      assetName,
+    });
     const fungibleAssetInfo = createAssetInfo(
       assetAddress,
       assetContractName,

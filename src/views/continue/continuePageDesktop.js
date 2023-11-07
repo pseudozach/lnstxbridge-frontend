@@ -48,8 +48,9 @@ const boltz_logo = require('../../asset/icons/scuba2.png');
 //   const loading = currencies.length === 0;
 
 function status2HumanReadable(str) {
-  // console.log('status2HumanReadable ', str, str.slice(0, 2));
-  if (str.slice(0, 2) === 'as') {
+  // console.log('status2HumanReadable ', str,);
+  if (!str) return;
+  if (str?.slice(0, 2) === 'as') {
     // Atomic Swap
     str = str.replace('as', '⬇️ ');
   }
@@ -89,26 +90,33 @@ class LandingPageDeskTopContent extends React.Component {
           localStorage[item].includes('preimageHash')
         ) {
           const swapId = item.split('lnswaps_')[1];
-          if (!swapId) return;
+          if (!swapId) continue;
           const swapData = JSON.parse(localStorage[item]);
-          const status = await this.getSwapStatus(swapId);
-          swapData.status = status;
-          swapData.statusText = status2HumanReadable(status);
-          if (status === 'invoice.expired' || status === 'swap.expired') {
-            swapData.buttonText = 'Failed';
-          } else if (status === 'transaction.claimed') {
-            swapData.buttonText = 'Finished';
-          } else if (status.includes('refund')) {
-            swapData.buttonText = 'Refund';
-            swapData.link = '/refund';
-          } else {
-            swapData.buttonText = 'Continue';
-            swapData.link = '/swap';
+          try {
+            console.log('getting swap status for ', swapId);
+            const status = await this.getSwapStatus(swapId);
+            if (!status) continue;
+            swapData.status = status;
+            swapData.statusText = status2HumanReadable(status);
+            if (status === 'invoice.expired' || status === 'swap.expired') {
+              swapData.buttonText = 'Failed';
+            } else if (status === 'transaction.claimed') {
+              swapData.buttonText = 'Finished';
+            } else if (status.includes('refund')) {
+              swapData.buttonText = 'Refund';
+              swapData.link = '/refund';
+            } else {
+              swapData.buttonText = 'Continue';
+              swapData.link = '/swap';
+            }
+            swapData.link = swapData.link + '?swapId=' + swapId;
+            // TODO: check if preimagehash was refunded before
+            console.log('swapId, swapData, status: ', swapId, swapData, status);
+            lnswaps.push(swapData);
+          } catch (error) {
+            // skip - could be testnet/mainnet swaps
+            // console.log('swap not found: ', error.message);
           }
-          swapData.link = swapData.link + '?swapId=' + swapId;
-          // TODO: check if preimagehash was refunded before
-          console.log('swapId, swapData, status: ', swapId, swapData, status);
-          lnswaps.push(swapData);
         }
       }
       this.setState({ lnswaps, loadingSwaps: false });
@@ -123,10 +131,11 @@ class LandingPageDeskTopContent extends React.Component {
       const response = await axios.post(url, {
         id: swapId,
       });
-      // console.log('getSwapStatus ', swapId, response.data);
+      console.log('getSwapStatus ', swapId, response.data);
       return response.data.status;
     } catch (error) {
       console.log('error ', error);
+      return null;
     }
   };
 
