@@ -132,8 +132,8 @@ class Faq extends React.Component {
                 <p className={style}>
                   All regular and Lightning wallets are supported. Although we
                   encourage you to run a full node and manage your own keys,
-                  there are custodial wallets solutions, like{' '}
-                  <Link to={'https://bluewallet.io/'} text={'BlueWallet'} /> or{' '}
+                  there are custodial/non-custodial wallets solutions, like{' '}
+                  <Link to={'https://getalby.com/'} text={'Alby'} /> or{' '}
                   <Link
                     to={'https://walletofsatoshi.com'}
                     text={'Wallet of Satoshi'}
