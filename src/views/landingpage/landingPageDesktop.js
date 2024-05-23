@@ -64,7 +64,7 @@ const LandingPageDeskTopContent = ({
   return (
     <BackGround>
       <ReactNotification ref={notificationDom} />
-      {/* <Carousel
+      <Carousel
         autoFocus={false}
         autoPlay={false}
         showArrows={false}
@@ -74,19 +74,19 @@ const LandingPageDeskTopContent = ({
         className={classes.topCarousel}
       >
         <div>
-          <p>System Status: Under Maintenance. Please do not start swaps until maintenance is finished.</p>
+          <p>**AS OF MAY 31, 2024** LNSWAP WILL NOT PROCESS ANY MORE SWAPS. FOR MORE INFO, </p>
           <a
             href={
-              'https://discord.gg/r5YXZnARGc'
+              'https://github.com/lnswap'
             }
             target="_blank"
             className={classes.topCarouseltext}
             rel="noreferrer"
           >
-            Join Discord for Support
+            CLICK TO VISIT GITHUB.
           </a>
         </div>
-      </Carousel> */}
+      </Carousel>
       <NavigationBar />
       <View className={classes.wrapper}>
         {loading ? (
